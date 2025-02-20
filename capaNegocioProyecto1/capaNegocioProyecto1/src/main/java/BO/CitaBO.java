@@ -80,6 +80,8 @@ public class CitaBO {
             throw new NegocioException("La cita solo puede cancelarse con 24 horas de anticipación.");
         }
 
+        
+        //probando GitHub Desktop
         try {
             return citaDAO.cancelarCita(cita);
         } catch (PersistenciaException e) {
