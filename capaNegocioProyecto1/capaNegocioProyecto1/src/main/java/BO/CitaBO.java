@@ -7,17 +7,22 @@ package BO;
 import DAO.CitaDAO;
 import DAO.ICitaDAO;
 import DTO.CitaDTO;
+import DTO.CitaSinCitaDTO;
 import DTO.HorarioDisponibleDTO;
 import Exception.NegocioException;
 import Mapper.CitaMapper;
+import Mapper.CitaSinCitaMapper;
 import Mapper.HorarioDisponibleMapper;
 import conexion.IConexionBD;
 import entidades.Cita;
+import entidades.CitaSinCita;
 import entidades.HorarioDisponible;
 import excepciones.PersistenciaException;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -29,16 +34,20 @@ public class CitaBO {
     private static final Logger logger = Logger.getLogger(CitaBO.class.getName());
     private final ICitaDAO citaDAO;
     private final CitaMapper mapper = new CitaMapper();
+    private final CitaSinCitaMapper mapper_citaSinCita = new CitaSinCitaMapper();
     private final HorarioDisponibleMapper mapper_horario = new HorarioDisponibleMapper();
 
     public CitaBO(IConexionBD conexion) {
         this.citaDAO = new CitaDAO(conexion);
     }
 
-    public boolean agendarCita(CitaDTO citaNuevo) throws NegocioException {
+    public boolean agendarCita(CitaDTO citaNuevo) throws NegocioException, PersistenciaException {
 
         Timestamp fechaHora = citaNuevo.getFecha_hora();
         Timestamp hoy = new Timestamp(System.currentTimeMillis());
+        if (fechaHora == null) {
+            throw new PersistenciaException("La fecha y hora no pueden ser nulas.");
+        }
         if (fechaHora.before(hoy)) {
             throw new NegocioException("Error. No se puede agendar una cita en el pasado.");
         }
@@ -50,6 +59,32 @@ public class CitaBO {
         } catch (PersistenciaException e) {
             logger.severe("Error al agendar la cita: " + e.getMessage());
             throw new NegocioException("Error al agendar la cita: " + e.getMessage(), e);
+        }
+    }
+
+    public boolean cancelarCita(CitaDTO citaDTO) throws NegocioException, PersistenciaException {
+        // Utilizamos el mapper para convertir CitaDTO a Cita
+        Cita cita = mapper.toEntity(citaDTO);
+
+        // Validar que la cita esté activa
+        if (!"Activa".equals(cita.getEstado())) {
+            logger.log(Level.SEVERE, "Error: Solo se pueden cancelar citas activas.");
+            throw new NegocioException("Solo se pueden cancelar citas activas.");
+        }
+
+        LocalDateTime ahora = LocalDateTime.now();
+        LocalDateTime fechaCita = cita.getFecha_hora().toLocalDateTime();
+
+        if (fechaCita.isBefore(ahora.plusHours(24))) {
+            logger.log(Level.SEVERE, "Error: La cita solo puede cancelarse con 24 horas de anticipación.");
+            throw new NegocioException("La cita solo puede cancelarse con 24 horas de anticipación.");
+        }
+
+        try {
+            return citaDAO.cancelarCita(cita);
+        } catch (PersistenciaException e) {
+            logger.severe("Error al cancelar la cita: " + e.getMessage());
+            throw new NegocioException("Error al cancelar la cita: " + e.getMessage(), e);
         }
     }
 
