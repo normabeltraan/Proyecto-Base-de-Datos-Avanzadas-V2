@@ -15,8 +15,8 @@ import java.util.List;
  *
  * @author Maximiliano
  */
-public class PacienteDTO 
-{
+public class PacienteDTO {
+
     private Usuario usuario;
     private String nombre;
     private String apellido_paterno;
@@ -27,9 +27,8 @@ public class PacienteDTO
     private Direccion direccion;
     private List<Cita> citas;
 
-    public PacienteDTO() 
-    {
-        this.citas = new ArrayList<>();  
+    public PacienteDTO() {
+        this.citas = new ArrayList<>();
     }
 
     public PacienteDTO(Usuario usuario, String nombre, String apellido_paterno, String apellido_materno, String telefono, LocalDate fecha_nacimiento, String correo_electronico, Direccion direccion, List<Cita> citas) {
@@ -41,7 +40,7 @@ public class PacienteDTO
         this.fecha_nacimiento = fecha_nacimiento;
         this.correo_electronico = correo_electronico;
         this.direccion = direccion;
-        this.citas = citas != null ? citas : new ArrayList<>();  
+        this.citas = citas != null ? citas : new ArrayList<>();
     }
 
     public PacienteDTO(String nombre, String apellido_paterno, String apellido_materno, String telefono, LocalDate fecha_nacimiento, String correo_electronico, Direccion direccion, List<Cita> citas) {

@@ -63,10 +63,9 @@ public class CitaBO {
     }
 
     public boolean cancelarCita(CitaDTO citaDTO) throws NegocioException, PersistenciaException {
-        // Utilizamos el mapper para convertir CitaDTO a Cita
+
         Cita cita = mapper.toEntity(citaDTO);
 
-        // Validar que la cita esté activa
         if (!"Activa".equals(cita.getEstado())) {
             logger.log(Level.SEVERE, "Error: Solo se pueden cancelar citas activas.");
             throw new NegocioException("Solo se pueden cancelar citas activas.");
@@ -80,8 +79,6 @@ public class CitaBO {
             throw new NegocioException("La cita solo puede cancelarse con 24 horas de anticipación.");
         }
 
-        
-        //probando GitHub Desktop
         try {
             return citaDAO.cancelarCita(cita);
         } catch (PersistenciaException e) {
