@@ -44,7 +44,6 @@ public class UsuarioBO {
         Usuario usuario = mapper_usuario.toEntity(usuarioDTO);
         Paciente paciente = mapper_paciente.toEntity(pacienteDTO);
 
-        // Validaciones de usuario y paciente
         if (usuario.getNombre_usuario() == null || usuario.getNombre_usuario().isEmpty()) {
             throw new NegocioException("El nombre de usuario no puede estar vacío.");
         }
@@ -84,6 +83,23 @@ public class UsuarioBO {
             throw new NegocioException("Error al registrar el usuario y paciente: " + e.getMessage(), e);
         }
 
+    }
+
+    public boolean iniciarSesion(UsuarioDTO usuarioDTO) throws NegocioException, PersistenciaException {
+        if (usuarioDTO.getNombre_usuario() == null || usuarioDTO.getNombre_usuario().trim().isEmpty()) {
+            throw new NegocioException("El nombre de usuario no puede estar vacío.");
+        }
+        if (usuarioDTO.getContrasenia() == null || usuarioDTO.getContrasenia().trim().isEmpty()) {
+            throw new NegocioException("La contraseña no puede estar vacía.");
+        }
+
+        Usuario usuario = mapper_usuario.toEntity(usuarioDTO);
+
+        try {
+            return usuarioDAO.iniciarSesion(usuario);
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error al autenticar el usuario: " + e.getMessage(), e);
+        }
     }
 
 }

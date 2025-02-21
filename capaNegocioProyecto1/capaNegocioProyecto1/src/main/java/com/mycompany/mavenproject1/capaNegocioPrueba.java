@@ -41,7 +41,7 @@ import java.util.Scanner;
  */
 public class capaNegocioPrueba {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NegocioException, PersistenciaException {
         //Prueba agendar cita
 //        Scanner scanner = new Scanner(System.in);
 //        IConexionBD conexionBD = new ConexionBD();
@@ -160,46 +160,57 @@ public class capaNegocioPrueba {
 //        } finally {
 //            scanner.close();
 //        }
-    
         //Prueba registrar usuario
-        IConexionBD conexionBD = new ConexionBD(); 
-        
+        IConexionBD conexionBD = new ConexionBD();
+
         UsuarioBO usuarioBO = new UsuarioBO(conexionBD);
-        
-        Direccion direccionPaciente = new Direccion("Verde", "Morado", "Azul");
 
-        Usuario usuarioPaciente = new Usuario("sofia", "123sofia");
-        
-        Paciente paciente = new Paciente(
-            usuarioPaciente,
-            "Sofia",
-            "Beltran",
-            "Martin",
-            "334455",
-            LocalDate.of(1999, 5, 25),
-            "sofia@gmail.com",
-            direccionPaciente,
-            new ArrayList<>()
-        );
+//        Direccion direccionPaciente = new Direccion("Real", "Hermosillo", "Rosa");
+//
+//        Usuario usuarioPaciente = new Usuario("daniela", "cano");
+//
+//        Paciente paciente = new Paciente(
+//                usuarioPaciente,
+//                "Daniela",
+//                "Cano",
+//                "Arias",
+//                "248",
+//                LocalDate.of(2004, 10, 29),
+//                "danicano@gmail.com",
+//                direccionPaciente,
+//                new ArrayList<>()
+//        );
+//
+//        UsuarioMapper usuarioMapper = new UsuarioMapper();
+//        PacienteMapper pacienteMapper = new PacienteMapper();
+//
+//        UsuarioDTO usuarioDTO = usuarioMapper.toDTO(usuarioPaciente);
+//        PacienteDTO pacienteDTO = pacienteMapper.toDTO(paciente);
+//
+//        try {
+//            boolean resultado = usuarioBO.registrarUsuarioPaciente(usuarioDTO, pacienteDTO);
+//
+//            if (resultado) {
+//                System.out.println("Usuario y paciente registrados exitosamente.");
+//            } else {
+//                System.out.println("Error al registrar el usuario y paciente.");
+//            }
+//        } catch (NegocioException | PersistenciaException e) {
+//            System.out.println("Ocurrió un error: " + e.getMessage());
+//        }
+    
+        //Prueba iniciar sesion
+        UsuarioDTO usuarioIniciarSesion = new UsuarioDTO();
+        usuarioIniciarSesion.setNombre_usuario("josesanchez");
+        usuarioIniciarSesion.setContrasenia("josesan78");
 
-        UsuarioMapper usuarioMapper = new UsuarioMapper();
-        PacienteMapper pacienteMapper = new PacienteMapper();
+        boolean autenticado = usuarioBO.iniciarSesion(usuarioIniciarSesion);
 
-        UsuarioDTO usuarioDTO = usuarioMapper.toDTO(usuarioPaciente);
-        PacienteDTO pacienteDTO = pacienteMapper.toDTO(paciente);
-        
-        try {
-            boolean resultado = usuarioBO.registrarUsuarioPaciente(usuarioDTO, pacienteDTO);
-
-            if (resultado) {
-                System.out.println("Usuario y paciente registrados exitosamente.");
-            } else {
-                System.out.println("Error al registrar el usuario y paciente.");
-            }
-        } catch (NegocioException | PersistenciaException e) {
-            System.out.println("Ocurrió un error: " + e.getMessage());
+        if (autenticado) {
+            System.out.println("Inicio de sesión exitoso.");
+        } else {
+            System.out.println("Error al iniciar sesión.");
         }
+
     }
-
 }
-
