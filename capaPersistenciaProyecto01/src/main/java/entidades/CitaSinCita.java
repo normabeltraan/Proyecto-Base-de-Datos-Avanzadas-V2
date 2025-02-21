@@ -11,18 +11,18 @@ package entidades;
 public class CitaSinCita {
 
     private Cita cita;
-    private String folioEmergencia;
+    private String folio_emergencia;
 
     public CitaSinCita() {
     }
 
-    public CitaSinCita(Cita cita, String folioEmergencia) {
+    public CitaSinCita(Cita cita, String folio_emergencia) {
         this.cita = cita;
-        this.folioEmergencia = folioEmergencia;
+        this.folio_emergencia = folio_emergencia;
     }
 
-    public CitaSinCita(String folioEmergencia) {
-        this.folioEmergencia = folioEmergencia;
+    public CitaSinCita(String folio_emergencia) {
+        this.folio_emergencia = folio_emergencia;
     }
 
     public Cita getCita() {
@@ -33,17 +33,17 @@ public class CitaSinCita {
         this.cita = cita;
     }
 
-    public String getFolioEmergencia() {
-        return folioEmergencia;
+    public String getFolio_emergencia() {
+        return folio_emergencia;
     }
 
-    public void setFolioEmergencia(String folioEmergencia) {
-        this.folioEmergencia = folioEmergencia;
+    public void setFolio_emergencia(String folioEmergencia) {
+        this.folio_emergencia = folioEmergencia;
     }
 
     @Override
     public String toString() {
-        return "CitaSinCita{" + "cita=" + cita + ", folioEmergencia=" + folioEmergencia + '}';
+        return "CitaSinCita{" + "cita=" + cita + ", folioEmergencia=" + folio_emergencia + '}';
     }
 
 }

@@ -18,4 +18,6 @@ public interface IMedicoDAO {
     public List<String> obtenerEspecialidades() throws SQLException, PersistenciaException;
     
     public List<Medico> obtenerMedicosPorEspecialidad(String especialidad) throws PersistenciaException;
+    
+    public Medico obtenerMedicoPorId(int idMedico) throws PersistenciaException;
 }

@@ -13,18 +13,18 @@ import entidades.Cita;
 public class CitaSinCitaDTO 
 {
     private Cita cita;
-    private String folioEmergencia;
+    private String folio_emergencia;
 
     public CitaSinCitaDTO() {
     }
 
-    public CitaSinCitaDTO(Cita cita, String folioEmergencia) {
+    public CitaSinCitaDTO(Cita cita, String folio_emergencia) {
         this.cita = cita;
-        this.folioEmergencia = folioEmergencia;
+        this.folio_emergencia = folio_emergencia;
     }
 
-    public CitaSinCitaDTO(String folioEmergencia) {
-        this.folioEmergencia = folioEmergencia;
+    public CitaSinCitaDTO(String folio_emergencia) {
+        this.folio_emergencia = folio_emergencia;
     }
 
     public Cita getCita() {
@@ -35,16 +35,16 @@ public class CitaSinCitaDTO
         this.cita = cita;
     }
 
-    public String getFolioEmergencia() {
-        return folioEmergencia;
+    public String getFolio_emergencia() {
+        return folio_emergencia;
     }
 
-    public void setFolioEmergencia(String folioEmergencia) {
-        this.folioEmergencia = folioEmergencia;
+    public void setFolio_emergencia(String folio_emergencia) {
+        this.folio_emergencia = folio_emergencia;
     }
 
     @Override
     public String toString() {
-        return "CitaSinCitaDTO{" + "cita=" + cita + ", folioEmergencia=" + folioEmergencia + '}';
+        return "CitaSinCitaDTO{" + "cita=" + cita + ", folioEmergencia=" + folio_emergencia + '}';
     } 
 }

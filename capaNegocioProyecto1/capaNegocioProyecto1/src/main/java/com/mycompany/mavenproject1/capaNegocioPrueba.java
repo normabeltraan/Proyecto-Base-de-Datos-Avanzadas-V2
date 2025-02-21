@@ -4,11 +4,13 @@
 package com.mycompany.mavenproject1;
 
 import BO.CitaBO;
+import BO.CitaSinCitaBO;
 import BO.MedicoBO;
 import BO.UsuarioBO;
 import DAO.CitaDAO;
 import DAO.ICitaDAO;
 import DTO.CitaDTO;
+import DTO.CitaSinCitaDTO;
 import DTO.HorarioDisponibleDTO;
 import DTO.MedicoDTO;
 import DTO.PacienteDTO;
@@ -44,9 +46,9 @@ public class capaNegocioPrueba {
     public static void main(String[] args) throws NegocioException, PersistenciaException {
         //Prueba agendar cita
 //        Scanner scanner = new Scanner(System.in);
-//        IConexionBD conexionBD = new ConexionBD();
+        IConexionBD conexionBD = new ConexionBD();
 //
-//        MedicoBO medicoBO = new MedicoBO(conexionBD);
+        MedicoBO medicoBO = new MedicoBO(conexionBD);
 //        CitaBO citaBO = new CitaBO(conexionBD);
 //
 //        try {
@@ -161,10 +163,7 @@ public class capaNegocioPrueba {
 //            scanner.close();
 //        }
         //Prueba registrar usuario
-        IConexionBD conexionBD = new ConexionBD();
-
-        UsuarioBO usuarioBO = new UsuarioBO(conexionBD);
-
+//        UsuarioBO usuarioBO = new UsuarioBO(conexionBD);
 //        Direccion direccionPaciente = new Direccion("Real", "Hermosillo", "Rosa");
 //
 //        Usuario usuarioPaciente = new Usuario("daniela", "cano");
@@ -198,19 +197,62 @@ public class capaNegocioPrueba {
 //        } catch (NegocioException | PersistenciaException e) {
 //            System.out.println("Ocurrió un error: " + e.getMessage());
 //        }
-    
         //Prueba iniciar sesion
-        UsuarioDTO usuarioIniciarSesion = new UsuarioDTO();
-        usuarioIniciarSesion.setNombre_usuario("josesanchez");
-        usuarioIniciarSesion.setContrasenia("josesan78");
+//        UsuarioDTO usuarioIniciarSesion = new UsuarioDTO();
+//        usuarioIniciarSesion.setNombre_usuario("josesanchez");
+//        usuarioIniciarSesion.setContrasenia("josesan78");
+//
+//        boolean autenticado = usuarioBO.iniciarSesion(usuarioIniciarSesion);
+//
+//        if (autenticado) {
+//            System.out.println("Inicio de sesión exitoso.");
+//        } else {
+//            System.out.println("Error al iniciar sesión.");
+//        }
 
-        boolean autenticado = usuarioBO.iniciarSesion(usuarioIniciarSesion);
+        //Prueba agendar cita de emergencia
+        CitaSinCitaBO citaSinCitaBO = new CitaSinCitaBO(conexionBD);
+        Scanner scanner = new Scanner(System.in);
 
-        if (autenticado) {
-            System.out.println("Inicio de sesión exitoso.");
-        } else {
-            System.out.println("Error al iniciar sesión.");
+        try {
+            System.out.println("Introduce el ID del paciente para la cita de emergencia:");
+            int idPaciente = scanner.nextInt();
+
+
+            System.out.println("Selecciona una especialidad para la cita de emergencia:");
+            List<String> especialidades = medicoBO.obtenerEspecialidades();
+            for (int i = 0; i < especialidades.size(); i++) {
+                System.out.println((i + 1) + ". " + especialidades.get(i));
+            }
+
+            int especialidadIndex = scanner.nextInt();
+
+            String especialidadSeleccionada = null;
+
+            if (especialidadIndex > 0 && especialidadIndex <= especialidades.size()) {
+                especialidadSeleccionada = especialidades.get(especialidadIndex - 1);
+                System.out.println("Especialidad seleccionada: " + especialidadSeleccionada);
+            } else {
+                System.out.println("Selección no válida. Por favor, elige un número dentro del rango.");
+            }
+
+            if (especialidadSeleccionada != null) {
+                CitaSinCitaDTO cita = citaSinCitaBO.agendarCitaEmergencia(especialidadSeleccionada, idPaciente);
+
+                if (cita != null) {
+                    System.out.println("Cita de emergencia agendada con éxito para el paciente ID: " + idPaciente);
+                    System.out.println("Folio: " + cita.getFolio_emergencia());
+                    System.out.println("Hora: " + cita.getCita().getFecha_hora());
+                    System.out.println("Médico: " + cita.getCita().getMedico());
+                } else {
+                    System.out.println("Error al agendar la cita de emergencia.");
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Ocurrió un error: " + e.getMessage());
+        } finally {
+            scanner.close();
         }
-
     }
 }

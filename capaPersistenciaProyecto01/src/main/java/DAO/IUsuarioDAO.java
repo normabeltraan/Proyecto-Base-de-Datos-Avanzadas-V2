@@ -4,10 +4,17 @@
  */
 package DAO;
 
+import entidades.Paciente;
+import entidades.Usuario;
+import excepciones.PersistenciaException;
+
 /**
  *
  * @author norma
  */
 public interface IUsuarioDAO {
-    
+
+    public boolean registrarUsuarioPaciente(Usuario usuario, Paciente paciente) throws PersistenciaException;
+
+    public boolean iniciarSesion(Usuario usuario) throws PersistenciaException;
 }

@@ -5,7 +5,9 @@
 package DAO;
 
 import conexion.IConexionBD;
+import entidades.Cita;
 import entidades.CitaSinCita;
+import entidades.Medico;
 import excepciones.PersistenciaException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -27,21 +29,33 @@ public class CitaSinCitaDAO implements ICitaSinCitaDAO {
     }
 
     @Override
-    public String agendarCitaEmergencia(String especialidad, int idPaciente) throws PersistenciaException {
-        String folioEmergencia = null;
-
+    public CitaSinCita agendarCitaEmergencia(String especialidad, int idPaciente) throws PersistenciaException {
+        CitaSinCita citaSinCita = null;
         String consultaSQL = "{CALL AGREGAR_CITA_EMERGENCIA(?, ?)}";
+
         try (Connection con = this.conexion.crearConexion(); CallableStatement cb = con.prepareCall(consultaSQL)) {
-            // Establecer los parámetros de entrada
+
             cb.setString(1, especialidad);
             cb.setInt(2, idPaciente);
 
-            // Ejecutar el procedimiento
-            ResultSet rs = cb.executeQuery();
+            boolean hasResultSet = cb.execute();
 
-            // Si hay resultados, obtener el folio
-            if (rs.next()) {
-                folioEmergencia = rs.getString("Folio");
+            if (hasResultSet) {
+                try (ResultSet rs = cb.getResultSet()) {
+                    if (rs.next()) {
+                        String folioEmergencia = rs.getString("folio_emergencia");
+                        Timestamp fechaHora = rs.getTimestamp("fecha_hora");
+                        int idMedico = rs.getInt("id_usuario_medico");
+                        String especialidadMedico = rs.getString("especialidad");
+
+                        MedicoDAO medicoDAO = new MedicoDAO(this.conexion);
+                        Medico medico = medicoDAO.obtenerMedicoPorId(idMedico);
+
+                        Cita cita = new Cita(fechaHora, "Pendiente", "Emergencia", null, medico);
+
+                        citaSinCita = new CitaSinCita(cita, folioEmergencia);
+                    }
+                }
             }
 
         } catch (SQLException e) {
@@ -49,7 +63,7 @@ public class CitaSinCitaDAO implements ICitaSinCitaDAO {
             throw new PersistenciaException("Error al agregar la cita de emergencia", e);
         }
 
-        return folioEmergencia;
+        return citaSinCita;
     }
 
 }

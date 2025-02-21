@@ -16,6 +16,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -76,40 +77,39 @@ public class PacienteDAO implements IPacienteDAO {
 
         return null;
     }
-    
+
     @Override
     public List<Consulta> obtenerHistorialConsultas(int id) throws PersistenciaException {
-        
+
         List<Consulta> consultasP = new ArrayList<>();
-        
-        String consultaSQL = 
-                "SELECT * FROM CONSULTAS CONS " +
-                "JOIN CITAS CI ON CI.ID_CITA = CONS.ID_CITA " +
-                "JOIN USUARIOS U_PACIENTE ON CI.ID_USUARIO_PACIENTE = U_PACIENTE.ID_USUARIO " +
-                "JOIN USUARIOS U_MEDICO ON CI.ID_USUARIO_MEDICO = U_MEDICO.ID_USUARIO " +
-                "WHERE CI.ID_USUARIO_PACIENTE = ?";
-        
-        try(Connection con = this.conexion.crearConexion(); 
-                PreparedStatement ps = con.prepareStatement(consultaSQL)){
-            
+
+        String consultaSQL
+                = "SELECT * FROM CONSULTAS CONS "
+                + "JOIN CITAS CI ON CI.ID_CITA = CONS.ID_CITA "
+                + "JOIN USUARIOS U_PACIENTE ON CI.ID_USUARIO_PACIENTE = U_PACIENTE.ID_USUARIO "
+                + "JOIN USUARIOS U_MEDICO ON CI.ID_USUARIO_MEDICO = U_MEDICO.ID_USUARIO "
+                + "WHERE CI.ID_USUARIO_PACIENTE = ?";
+
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+
             ps.setInt(1, id);
-            
-            try(ResultSet rs = ps.executeQuery()){
-                
-                while(rs.next()){
-                    
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                while (rs.next()) {
+
                     Usuario usuarioPaciente = new Usuario();
                     usuarioPaciente.setId_usuario(rs.getInt("id_usuario_paciente"));
-                    
+
                     Usuario usuarioMedico = new Usuario();
-                    usuarioMedico.setId_usuario(rs.getInt("id_usuario_medico"));                    
-                    
+                    usuarioMedico.setId_usuario(rs.getInt("id_usuario_medico"));
+
                     Medico medico = new Medico();
                     medico.setUsuario(usuarioMedico);
-                    
+
                     Paciente paciente = new Paciente();
                     paciente.setUsuario(usuarioPaciente);
-                    
+
                     Cita cita = new Cita();
                     cita.setEstado(rs.getString("estado"));
                     cita.setFecha_hora(rs.getTimestamp("fecha_hora"));
@@ -117,25 +117,52 @@ public class PacienteDAO implements IPacienteDAO {
                     cita.setTipo(rs.getString("tipo"));
                     cita.setMedico(medico);
                     cita.setPaciente(paciente);
-                    
+
                     Consulta consulta = new Consulta();
                     consulta.setCita(cita);
                     consulta.setDiagnostico(rs.getString("diagnostico"));
                     consulta.setObservaciones(rs.getString("observaciones"));
                     consulta.setTratamiento(rs.getString("tratamiento"));
                     consulta.setId_consulta(rs.getInt("id_consulta"));
-                    
+
                     consultasP.add(consulta);
                 }
-                
+
             }
-            
+
         } catch (SQLException ex) {
             logger.severe("Error al obtener historial consultas: " + ex.getMessage());
             throw new PersistenciaException("Error al obtener el historial de consultas", ex);
         }
         return consultasP;
 
+    }
+
+    @Override
+    public int insertarDireccion(Direccion direccion) throws PersistenciaException {
+        String consultaSQL = "INSERT INTO direcciones (calle, colonia, ciudad) VALUES (?, ?, ?)";
+
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, direccion.getCalle());
+            ps.setString(2, direccion.getColonia());
+            ps.setString(3, direccion.getCiudad());
+
+            int filasAfectadas = ps.executeUpdate();
+
+            if (filasAfectadas > 0) {
+                try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return generatedKeys.getInt(1);
+                    }
+                }
+            }
+
+            return -1;
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error al insertar la dirección", e);
+            throw new PersistenciaException("Error al insertar la dirección", e);
+        }
     }
 
     @Override
@@ -152,6 +179,5 @@ public class PacienteDAO implements IPacienteDAO {
     public boolean actualizarPaciente(Paciente paciente) throws PersistenciaException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
 
 }

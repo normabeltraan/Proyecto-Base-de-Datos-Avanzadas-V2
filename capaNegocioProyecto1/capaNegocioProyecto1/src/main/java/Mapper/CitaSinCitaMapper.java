@@ -16,7 +16,6 @@ import java.util.List;
  */
 public class CitaSinCitaMapper {
 
-    // Método para convertir un CitaSinCita a una entidad Cita
     public CitaSinCita toEntity(CitaSinCitaDTO citaSinCitaDTO) {
         if (citaSinCitaDTO == null) {
             return null;
@@ -28,7 +27,7 @@ public class CitaSinCitaMapper {
                 citaSinCitaDTO.getCita().getPaciente(),
                 citaSinCitaDTO.getCita().getMedico()
         );
-        return new CitaSinCita(cita, citaSinCitaDTO.getFolioEmergencia());
+        return new CitaSinCita(cita, citaSinCitaDTO.getFolio_emergencia());
     }
 
     public CitaSinCitaDTO toDTO(CitaSinCita citaSinCita) {
@@ -38,7 +37,7 @@ public class CitaSinCitaMapper {
         Cita cita = citaSinCita.getCita(); 
         return new CitaSinCitaDTO(
                 cita, 
-                citaSinCita.getFolioEmergencia()
+                citaSinCita.getFolio_emergencia()
         );
     }
 
