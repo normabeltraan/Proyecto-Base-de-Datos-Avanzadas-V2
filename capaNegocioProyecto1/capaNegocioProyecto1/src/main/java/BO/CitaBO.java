@@ -71,6 +71,14 @@ public class CitaBO {
             throw new NegocioException("Solo se pueden cancelar citas activas.");
         }
 
+        LocalDateTime ahora = LocalDateTime.now();
+        LocalDateTime fechaCita = cita.getFecha_hora().toLocalDateTime();
+
+        if (fechaCita.isBefore(ahora.plusHours(24))) {
+            logger.log(Level.SEVERE, "Error: La cita solo puede cancelarse con 24 horas de anticipación.");
+            throw new NegocioException("La cita solo puede cancelarse con 24 horas de anticipación.");
+        }
+
         try {
             return citaDAO.cancelarCita(cita);
         } catch (PersistenciaException e) {
