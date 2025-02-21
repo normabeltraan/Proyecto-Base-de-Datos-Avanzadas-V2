@@ -5,15 +5,18 @@ package com.mycompany.mavenproject1;
 
 import BO.CitaBO;
 import BO.MedicoBO;
+import BO.UsuarioBO;
 import DAO.CitaDAO;
 import DAO.ICitaDAO;
 import DTO.CitaDTO;
 import DTO.HorarioDisponibleDTO;
 import DTO.MedicoDTO;
 import DTO.PacienteDTO;
+import DTO.UsuarioDTO;
 import Exception.NegocioException;
 import Mapper.MedicoMapper;
 import Mapper.PacienteMapper;
+import Mapper.UsuarioMapper;
 import static com.mysql.cj.conf.PropertyKey.logger;
 import conexion.ConexionBD;
 import conexion.IConexionBD;
@@ -125,37 +128,78 @@ public class capaNegocioPrueba {
 //        }
 
         //Prueba cancelar cita
-        Scanner scanner = new Scanner(System.in);
+//        Scanner scanner = new Scanner(System.in);
+//        IConexionBD conexionBD = new ConexionBD();
+//        CitaBO citaBO = new CitaBO(conexionBD);
+//
+//        try {
+//            System.out.println("Introduce el ID de la cita a cancelar:");
+//            int idCita = scanner.nextInt();
+//
+//            CitaDTO citaDTO = new CitaDTO();
+//            citaDTO.setId_cita(idCita);
+//            citaDTO.setEstado("Activa");
+//            String fechaHoraStr = "2025-02-20 08:00:00";  
+//
+//            Timestamp timestamp = Timestamp.valueOf(fechaHoraStr);
+//            citaDTO.setFecha_hora(timestamp);
+//
+//            System.out.println("Intentando cancelar la cita con ID: " + idCita);
+//
+//            boolean resultado = citaBO.cancelarCita(citaDTO);
+//
+//            if (resultado) {
+//                System.out.println("La cita fue cancelada exitosamente.");
+//            } else {
+//                System.out.println("No se pudo cancelar la cita.");
+//            }
+//        } catch (NegocioException | PersistenciaException e) {
+//            System.out.println("Ocurrió un error: " + e.getMessage());
+//        } catch (Exception e) {
+//            System.out.println("Ocurrió un error inesperado: " + e.getMessage());
+//        } finally {
+//            scanner.close();
+//        }
+    
+        //Prueba registrar usuario
         IConexionBD conexionBD = new ConexionBD(); 
-        CitaBO citaBO = new CitaBO(conexionBD);
+        
+        UsuarioBO usuarioBO = new UsuarioBO(conexionBD);
+        
+        Direccion direccionPaciente = new Direccion("Verde", "Morado", "Azul");
 
+        Usuario usuarioPaciente = new Usuario("sofia", "123sofia");
+        
+        Paciente paciente = new Paciente(
+            usuarioPaciente,
+            "Sofia",
+            "Beltran",
+            "Martin",
+            "334455",
+            LocalDate.of(1999, 5, 25),
+            "sofia@gmail.com",
+            direccionPaciente,
+            new ArrayList<>()
+        );
+
+        UsuarioMapper usuarioMapper = new UsuarioMapper();
+        PacienteMapper pacienteMapper = new PacienteMapper();
+
+        UsuarioDTO usuarioDTO = usuarioMapper.toDTO(usuarioPaciente);
+        PacienteDTO pacienteDTO = pacienteMapper.toDTO(paciente);
+        
         try {
-            System.out.println("Introduce el ID de la cita a cancelar:");
-            int idCita = scanner.nextInt();
-
-            CitaDTO citaDTO = new CitaDTO();
-            citaDTO.setId_cita(idCita);
-            citaDTO.setEstado("Activa");
-            String fechaHoraStr = "2025-02-20 08:00:00";  
-
-            Timestamp timestamp = Timestamp.valueOf(fechaHoraStr);
-            citaDTO.setFecha_hora(timestamp);
-
-            System.out.println("Intentando cancelar la cita con ID: " + idCita);
-
-            boolean resultado = citaBO.cancelarCita(citaDTO);
+            boolean resultado = usuarioBO.registrarUsuarioPaciente(usuarioDTO, pacienteDTO);
 
             if (resultado) {
-                System.out.println("La cita fue cancelada exitosamente.");
+                System.out.println("Usuario y paciente registrados exitosamente.");
             } else {
-                System.out.println("No se pudo cancelar la cita.");
+                System.out.println("Error al registrar el usuario y paciente.");
             }
         } catch (NegocioException | PersistenciaException e) {
             System.out.println("Ocurrió un error: " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Ocurrió un error inesperado: " + e.getMessage());
-        } finally {
-            scanner.close();
         }
     }
+
 }
+
