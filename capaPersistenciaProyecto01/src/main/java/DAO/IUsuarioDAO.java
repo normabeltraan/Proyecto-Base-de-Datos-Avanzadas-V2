@@ -17,4 +17,8 @@ public interface IUsuarioDAO {
     public boolean registrarUsuarioPaciente(Usuario usuario, Paciente paciente) throws PersistenciaException;
 
     public boolean iniciarSesion(Usuario usuario) throws PersistenciaException;
+    
+    public boolean comprobarExistenciaNombreUsuario(String nombreUsuario) throws PersistenciaException;
+    
+    public boolean comprobarExistenciaCorreoElectronico(String correoElectronico) throws PersistenciaException;
 }

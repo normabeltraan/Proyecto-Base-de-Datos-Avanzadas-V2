@@ -29,14 +29,14 @@ public class CitaSinCitaDAO implements ICitaSinCitaDAO {
     }
 
     @Override
-    public CitaSinCita agendarCitaEmergencia(String especialidad, int idPaciente) throws PersistenciaException {
+    public CitaSinCita agendarCitaEmergencia(String especialidad, int id_paciente) throws PersistenciaException {
         CitaSinCita citaSinCita = null;
         String consultaSQL = "{CALL AGREGAR_CITA_EMERGENCIA(?, ?)}";
 
         try (Connection con = this.conexion.crearConexion(); CallableStatement cb = con.prepareCall(consultaSQL)) {
 
             cb.setString(1, especialidad);
-            cb.setInt(2, idPaciente);
+            cb.setInt(2, id_paciente);
 
             boolean hasResultSet = cb.execute();
 
@@ -51,7 +51,7 @@ public class CitaSinCitaDAO implements ICitaSinCitaDAO {
                         MedicoDAO medicoDAO = new MedicoDAO(this.conexion);
                         Medico medico = medicoDAO.obtenerMedicoPorId(idMedico);
 
-                        Cita cita = new Cita(fechaHora, "Pendiente", "Emergencia", null, medico);
+                        Cita cita = new Cita(fechaHora, "Activa", "Cita Emergencia", null, medico);
 
                         citaSinCita = new CitaSinCita(cita, folioEmergencia);
                     }

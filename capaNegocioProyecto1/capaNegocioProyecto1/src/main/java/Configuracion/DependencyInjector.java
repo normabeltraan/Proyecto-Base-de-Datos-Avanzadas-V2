@@ -1,5 +1,10 @@
 
+package Configuracion;
+
 import BO.CitaBO;
+import BO.CitaSinCitaBO;
+import BO.MedicoBO;
+import BO.UsuarioBO;
 import conexion.ConexionBD;
 import conexion.IConexionBD;
 
@@ -20,28 +25,28 @@ public class DependencyInjector {
 //        return pacienteBO;
 //    }
 //    
-//    /**
-//     * 
-//     * @return 
-//     */
-//    public static MedicoBO crearMedicoBO() {
-//        IConexionBD conexion = new ConexionBD();
-//        MedicoBO medicoBO = new MedicoBO(conexion);
-//
-//        return medicoBO;
-//    }
-//    
-//    /**
-//     * 
-//     * @return 
-//     */
-//    public static UsuarioBO crearUsuarioBO() {
-//        IConexionBD conexion = new ConexionBD();
-//        UsuarioBO usuarioBO = new UsuarioBO(conexion);
-//
-//        return usuarioBO;
-//    }
-//    
+    /**
+     * 
+     * @return 
+     */
+    public static MedicoBO crearMedicoBO() {
+        IConexionBD conexion = new ConexionBD();
+        MedicoBO medicoBO = new MedicoBO(conexion);
+
+        return medicoBO;
+    }
+    
+    /**
+     * 
+     * @return 
+     */
+    public static UsuarioBO crearUsuarioBO() {
+        IConexionBD conexion = new ConexionBD();
+        UsuarioBO usuarioBO = new UsuarioBO(conexion);
+
+        return usuarioBO;
+    }
+    
 
     /**
      *
@@ -54,17 +59,17 @@ public class DependencyInjector {
         return citaBO;
     }
 
-//    /**
-//     * 
-//     * @return 
-//     */
-//    public static CitaSinCitaBO crearCitaSinCitaBO() {
-//        IConexionBD conexion = new ConexionBD();
-//        CitaSinCitaBO citaSinCitaBO = new CitaSinCitaBO(conexion);
-//
-//        return citaSinCitaBO;
-//    }
-//    
+    /**
+     * 
+     * @return 
+     */
+    public static CitaSinCitaBO crearCitaSinCitaBO() {
+        IConexionBD conexion = new ConexionBD();
+        CitaSinCitaBO citaSinCitaBO = new CitaSinCitaBO(conexion);
+
+        return citaSinCitaBO;
+    }
+    
 //    /**
 //     * 
 //     * @return 

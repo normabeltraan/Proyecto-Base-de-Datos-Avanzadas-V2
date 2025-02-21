@@ -15,10 +15,10 @@ Mapper\PacienteMapper.class
 BO\CitaBO.class
 Mapper\HorarioMapper.class
 DTO\HorarioDisponibleDTO.class
-DependencyInjector.class
 DTO\DireccionDTO.class
 DTO\MedicoDTO.class
 DTO\PacienteDTO.class
+Configuracion\DependencyInjector.class
 Mapper\CitaSinCitaMapper.class
 Mapper\DireccionMapper.class
 Mapper\MedicoMapper.class

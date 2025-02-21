@@ -17,49 +17,49 @@ import java.util.List;
  */
 public class PacienteDTO {
 
-    private Usuario usuario;
+    private UsuarioDTO usuarioDTO;
     private String nombre;
     private String apellido_paterno;
     private String apellido_materno;
     private String telefono;
     private LocalDate fecha_nacimiento;
     private String correo_electronico;
-    private Direccion direccion;
+    private DireccionDTO direccionDTO;
     private List<Cita> citas;
 
     public PacienteDTO() {
         this.citas = new ArrayList<>();
     }
 
-    public PacienteDTO(Usuario usuario, String nombre, String apellido_paterno, String apellido_materno, String telefono, LocalDate fecha_nacimiento, String correo_electronico, Direccion direccion, List<Cita> citas) {
-        this.usuario = usuario;
+    public PacienteDTO(UsuarioDTO usuario, String nombre, String apellido_paterno, String apellido_materno, String telefono, LocalDate fecha_nacimiento, String correo_electronico, DireccionDTO direccion, List<Cita> citas) {
+        this.usuarioDTO = usuario;
         this.nombre = nombre;
         this.apellido_paterno = apellido_paterno;
         this.apellido_materno = apellido_materno;
         this.telefono = telefono;
         this.fecha_nacimiento = fecha_nacimiento;
         this.correo_electronico = correo_electronico;
-        this.direccion = direccion;
+        this.direccionDTO = direccion;
         this.citas = citas != null ? citas : new ArrayList<>();
     }
 
-    public PacienteDTO(String nombre, String apellido_paterno, String apellido_materno, String telefono, LocalDate fecha_nacimiento, String correo_electronico, Direccion direccion, List<Cita> citas) {
+    public PacienteDTO(String nombre, String apellido_paterno, String apellido_materno, String telefono, LocalDate fecha_nacimiento, String correo_electronico, DireccionDTO direccion, List<Cita> citas) {
         this.nombre = nombre;
         this.apellido_paterno = apellido_paterno;
         this.apellido_materno = apellido_materno;
         this.telefono = telefono;
         this.fecha_nacimiento = fecha_nacimiento;
         this.correo_electronico = correo_electronico;
-        this.direccion = direccion;
+        this.direccionDTO = direccion;
         this.citas = citas != null ? citas : new ArrayList<>();
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public UsuarioDTO getUsuario() {
+        return usuarioDTO;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setUsuario(UsuarioDTO usuario) {
+        this.usuarioDTO = usuario;
     }
 
     public String getNombre() {
@@ -110,12 +110,12 @@ public class PacienteDTO {
         this.correo_electronico = correo_electronico;
     }
 
-    public Direccion getDireccion() {
-        return direccion;
+    public DireccionDTO getDireccion() {
+        return direccionDTO;
     }
 
-    public void setDireccion(Direccion direccion) {
-        this.direccion = direccion;
+    public void setDireccion(DireccionDTO direccion) {
+        this.direccionDTO = direccion;
     }
 
     public List<Cita> getCitas() {
@@ -128,6 +128,6 @@ public class PacienteDTO {
 
     @Override
     public String toString() {
-        return "PacienteDTO{" + "usuario=" + usuario + ", nombre=" + nombre + ", apellido_paterno=" + apellido_paterno + ", apellido_materno=" + apellido_materno + ", telefono=" + telefono + ", fecha_nacimiento=" + fecha_nacimiento + ", correo_electronico=" + correo_electronico + ", direccion=" + direccion + ", citas=" + citas + '}';
+        return "PacienteDTO{" + "usuario=" + usuarioDTO + ", nombre=" + nombre + ", apellido_paterno=" + apellido_paterno + ", apellido_materno=" + apellido_materno + ", telefono=" + telefono + ", fecha_nacimiento=" + fecha_nacimiento + ", correo_electronico=" + correo_electronico + ", direccion=" + direccionDTO + ", citas=" + citas + '}';
     }
 }

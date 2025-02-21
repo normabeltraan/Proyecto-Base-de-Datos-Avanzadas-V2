@@ -47,6 +47,10 @@ public class UsuarioBO {
         if (usuario.getNombre_usuario() == null || usuario.getNombre_usuario().isEmpty()) {
             throw new NegocioException("El nombre de usuario no puede estar vacío.");
         }
+
+        if (usuarioDAO.comprobarExistenciaNombreUsuario(usuario.getNombre_usuario())) {
+            throw new NegocioException("El nombre de usuario ya está registrado.");
+        }
         if (usuario.getContrasenia() == null || usuario.getContrasenia().isEmpty()) {
             throw new NegocioException("La contraseña no puede estar vacía.");
         }
@@ -63,7 +67,10 @@ public class UsuarioBO {
             throw new NegocioException("La fecha de nacimiento es obligatoria.");
         }
         if (paciente.getCorreo_electronico() == null || !paciente.getCorreo_electronico().contains("@")) {
-            throw new NegocioException("El correo electrónico no es válido.");
+            throw new NegocioException("El correo electrónico no es válido. Tiene que tener '@' ");
+        }
+        if (usuarioDAO.comprobarExistenciaCorreoElectronico(paciente.getCorreo_electronico())) {
+            throw new NegocioException("El correo electrónico ya está registrado.");
         }
         if (paciente.getDireccion() == null) {
             throw new NegocioException("La dirección no es válida.");

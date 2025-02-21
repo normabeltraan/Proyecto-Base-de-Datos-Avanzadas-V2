@@ -32,9 +32,9 @@ public class UsuarioDAO implements IUsuarioDAO {
 
     @Override
     public boolean registrarUsuarioPaciente(Usuario usuario, Paciente paciente) throws PersistenciaException {
-        String storedProcedure = "{CALL REGISTRAR_USUARIO_PACIENTE(?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+        String consultaSQL = "{CALL REGISTRAR_USUARIO_PACIENTE(?, ?, ?, ?, ?, ?, ?, ?, ?)}";
 
-        try (Connection con = conexion.crearConexion(); CallableStatement cb = con.prepareCall(storedProcedure)) {
+        try (Connection con = conexion.crearConexion(); CallableStatement cb = con.prepareCall(consultaSQL)) {
 
             cb.setString(1, usuario.getNombre_usuario());
             cb.setString(2, usuario.getContrasenia());
@@ -58,9 +58,9 @@ public class UsuarioDAO implements IUsuarioDAO {
 
     @Override
     public boolean iniciarSesion(Usuario usuario) throws PersistenciaException {
-        String query = "SELECT COUNT(*) FROM USUARIOS WHERE nombre_usuario = ? AND contrasenia = ?";
+        String consultaSQL = "SELECT COUNT(*) FROM USUARIOS WHERE nombre_usuario = ? AND contrasenia = ?";
 
-        try (Connection con = conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(query)) {
+        try (Connection con = conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
 
             ps.setString(1, usuario.getNombre_usuario());
             ps.setString(2, usuario.getContrasenia());
@@ -69,14 +69,47 @@ public class UsuarioDAO implements IUsuarioDAO {
 
             if (rs.next()) {
                 int count = rs.getInt(1);
-                return count > 0; 
+                return count > 0;
             }
 
-            return false; 
+            return false;
 
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error al iniciar sesión", e);
             throw new PersistenciaException("Error al iniciar sesión", e);
         }
     }
+
+    @Override
+    public boolean comprobarExistenciaNombreUsuario(String nombreUsuario) throws PersistenciaException {
+        String consultaSQL = "SELECT COUNT(*) FROM usuarios WHERE nombre_usuario = ?";
+        try (Connection con = conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+            ps.setString(1, nombreUsuario);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al verificar el nombre de usuario", e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean comprobarExistenciaCorreoElectronico(String correoElectronico) throws PersistenciaException {
+        String consultaSQL = "SELECT COUNT(*) FROM pacientes WHERE correo_electronico = ?";
+        try (Connection con = conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+            ps.setString(1, correoElectronico);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al verificar el correo electrónico", e);
+        }
+        return false;
+    }
+
 }
