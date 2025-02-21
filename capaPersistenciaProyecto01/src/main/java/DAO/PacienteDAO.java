@@ -102,8 +102,7 @@ public class PacienteDAO implements IPacienteDAO {
                     usuarioPaciente.setId_usuario(rs.getInt("id_usuario_paciente"));
                     
                     Usuario usuarioMedico = new Usuario();
-                    usuarioMedico.setId_usuario(rs.getInt("id_usuario_medico"));
-                    
+                    usuarioMedico.setId_usuario(rs.getInt("id_usuario_medico"));                    
                     
                     Medico medico = new Medico();
                     medico.setUsuario(usuarioMedico);
