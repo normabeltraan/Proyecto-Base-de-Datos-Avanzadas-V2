@@ -4,8 +4,10 @@
  */
 package DAO;
 
+import entidades.Consulta;
 import entidades.Paciente;
 import excepciones.PersistenciaException;
+import java.util.List;
 
 /**
  *
@@ -20,5 +22,7 @@ public interface IPacienteDAO {
     public boolean actualizarPaciente(Paciente paciente) throws PersistenciaException;
 
     public Paciente obtenerPacientePorUsuario(int idUsuario) throws PersistenciaException;
+    
+    public List<Consulta> obtenerHistorialConsultas(int id) throws PersistenciaException;
 
 }

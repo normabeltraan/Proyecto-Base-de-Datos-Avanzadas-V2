@@ -54,6 +54,28 @@ public class Consulta {
         this.cita = cita;
     }
 
+    public int getId_consulta() {
+        return id_consulta;
+    }
+
+    public String getDiagnostico() {
+        return diagnostico;
+    }
+
+    public String getTratamiento() {
+        return tratamiento;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public Cita getCita() {
+        return cita;
+    }
+    
+    
+
     @Override
     public String toString() {
         return "Consulta{" + "id_consulta=" + id_consulta + ", diagnostico=" + diagnostico + ", tratamiento=" + tratamiento + ", observaciones=" + observaciones + ", cita=" + cita + '}';

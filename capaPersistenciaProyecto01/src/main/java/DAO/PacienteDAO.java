@@ -5,7 +5,10 @@
 package DAO;
 
 import conexion.IConexionBD;
+import entidades.Cita;
+import entidades.Consulta;
 import entidades.Direccion;
+import entidades.Medico;
 import entidades.Paciente;
 import entidades.Usuario;
 import excepciones.PersistenciaException;
@@ -14,6 +17,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -71,6 +76,68 @@ public class PacienteDAO implements IPacienteDAO {
 
         return null;
     }
+    
+    @Override
+    public List<Consulta> obtenerHistorialConsultas(int id) throws PersistenciaException {
+        
+        List<Consulta> consultasP = new ArrayList<>();
+        
+        String consultaSQL = 
+                "SELECT * FROM CONSULTAS CONS " +
+                "JOIN CITAS CI ON CI.ID_CITA = CONS.ID_CITA " +
+                "JOIN USUARIOS U_PACIENTE ON CI.ID_USUARIO_PACIENTE = U_PACIENTE.ID_USUARIO " +
+                "JOIN USUARIOS U_MEDICO ON CI.ID_USUARIO_MEDICO = U_MEDICO.ID_USUARIO " +
+                "WHERE CI.ID_USUARIO_PACIENTE = ?";
+        
+        try(Connection con = this.conexion.crearConexion(); 
+                PreparedStatement ps = con.prepareStatement(consultaSQL)){
+            
+            ps.setInt(1, id);
+            
+            try(ResultSet rs = ps.executeQuery()){
+                
+                while(rs.next()){
+                    
+                    Usuario usuarioPaciente = new Usuario();
+                    usuarioPaciente.setId_usuario(rs.getInt("id_usuario_paciente"));
+                    
+                    Usuario usuarioMedico = new Usuario();
+                    usuarioMedico.setId_usuario(rs.getInt("id_usuario_medico"));
+                    
+                    
+                    Medico medico = new Medico();
+                    medico.setUsuario(usuarioMedico);
+                    
+                    Paciente paciente = new Paciente();
+                    paciente.setUsuario(usuarioPaciente);
+                    
+                    Cita cita = new Cita();
+                    cita.setEstado(rs.getString("estado"));
+                    cita.setFecha_hora(rs.getTimestamp("fecha_hora"));
+                    cita.setId_cita(rs.getInt("id_cita"));
+                    cita.setTipo(rs.getString("tipo"));
+                    cita.setMedico(medico);
+                    cita.setPaciente(paciente);
+                    
+                    Consulta consulta = new Consulta();
+                    consulta.setCita(cita);
+                    consulta.setDiagnostico(rs.getString("diagnostico"));
+                    consulta.setObservaciones(rs.getString("observaciones"));
+                    consulta.setTratamiento(rs.getString("tratamiento"));
+                    consulta.setId_consulta(rs.getInt("id_consulta"));
+                    
+                    consultasP.add(consulta);
+                }
+                
+            }
+            
+        } catch (SQLException ex) {
+            logger.severe("Error al obtener historial consultas: " + ex.getMessage());
+            throw new PersistenciaException("Error al obtener el historial de consultas", ex);
+        }
+        return consultasP;
+
+    }
 
     @Override
     public boolean registrarPaciente(Paciente paciente) throws PersistenciaException {
@@ -86,5 +153,6 @@ public class PacienteDAO implements IPacienteDAO {
     public boolean actualizarPaciente(Paciente paciente) throws PersistenciaException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
 
 }
