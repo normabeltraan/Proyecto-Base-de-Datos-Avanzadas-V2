@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class UsuarioMapper {
 
-    public static Usuario toEntity(UsuarioDTO usuarioDTO) {
+    public Usuario toEntity(UsuarioDTO usuarioDTO) {
         if (usuarioDTO == null) {
             return null;
         }

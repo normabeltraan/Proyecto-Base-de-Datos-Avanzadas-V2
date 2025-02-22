@@ -21,6 +21,8 @@ public interface IPacienteDAO {
     public boolean registrarPaciente(Paciente paciente) throws PersistenciaException;
 
     public boolean eliminarPaciente() throws PersistenciaException;
+    
+    public boolean existePaciente(String nombrePaciente) throws PersistenciaException;
 
     public boolean actualizarPaciente(Paciente paciente) throws PersistenciaException;
 

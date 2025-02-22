@@ -84,7 +84,7 @@ public class PacienteDAO implements IPacienteDAO {
         List<Consulta> consultasP = new ArrayList<>();
 
         String consultaSQL
-                = "SELECT P.ID_USUARIO AS id_usuario_paciente, " +
+                = "SELECT " +
                 "CONCAT(P.NOMBRE, ' ', P.APELLIDO_PATERNO, ' ', IFNULL(P.APELLIDO_MATERNO, '')) AS nombre_completo_paciente, " +
                 "MED.ESPECIALIDAD, " +
                 "MED.NOMBRE AS nombre_medico, " +
@@ -110,13 +110,7 @@ public class PacienteDAO implements IPacienteDAO {
                 while (rs.next()) {
 
                     Usuario usuarioPaciente = new Usuario();
-                    usuarioPaciente.setId_usuario(rs.getInt("id_usuario_paciente"));
-
-                    //Usuario usuarioMedico = new Usuario();
-                    //usuarioMedico.setId_usuario(rs.getInt("id_usuario_medico"));
-
                     Medico medico = new Medico();
-                    //medico.setUsuario(usuarioMedico);
                     medico.setNombre(rs.getString("nombre_medico"));
                     medico.setApellido_paterno(rs.getString("apellido_paterno_medico"));
                     medico.setEspecialidad(rs.getString("especialidad"));
@@ -127,7 +121,6 @@ public class PacienteDAO implements IPacienteDAO {
                     Cita cita = new Cita();
                     cita.setEstado(rs.getString("estado"));
                     cita.setFecha_hora(rs.getTimestamp("fecha_hora"));
-                    //cita.setId_cita(rs.getInt("id_cita"));
                     cita.setTipo(rs.getString("tipo"));
                     cita.setMedico(medico);
                     cita.setPaciente(paciente);
@@ -135,10 +128,8 @@ public class PacienteDAO implements IPacienteDAO {
                     Consulta consulta = new Consulta();
                     consulta.setCita(cita);
                     consulta.setDiagnostico(rs.getString("diagnostico"));
-                    //consulta.setObservaciones(rs.getString("observaciones"));
                     consulta.setTratamiento(rs.getString("tratamiento"));
-                    //consulta.setId_consulta(rs.getInt("id_consulta"));
-
+                    
                     consultasP.add(consulta);
                 }
 
@@ -239,7 +230,28 @@ public class PacienteDAO implements IPacienteDAO {
         }
     }
     
-    
+    @Override
+    public boolean existePaciente(String nombrePaciente) throws PersistenciaException {
+        String consultaSQL = "SELECT * FROM PACIENTES WHERE "
+                + "CONCAT(NOMBRE, ' ', APELLIDO_PATERNO, ' ', APELLIDO_MATERNO) = ?";
+        
+        
+        try (Connection con = this.conexion.crearConexion();
+                PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+            
+            ps.setString(1, nombrePaciente);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }  catch (SQLException ex) {
+            throw new PersistenciaException("Error al verificar la existencia del paciente.", ex);
+        }
+        
+        return false;
+    }
 
     @Override
     public boolean registrarPaciente(Paciente paciente) throws PersistenciaException {
@@ -260,6 +272,7 @@ public class PacienteDAO implements IPacienteDAO {
     public List<Cita> obtenerCitasProgramadas(int idUsuario) throws PersistenciaException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+
 
 
 }

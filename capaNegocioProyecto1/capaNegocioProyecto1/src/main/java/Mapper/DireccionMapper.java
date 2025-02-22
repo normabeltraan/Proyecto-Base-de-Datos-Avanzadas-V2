@@ -13,7 +13,7 @@ import entidades.Direccion;
  */
 public class DireccionMapper {
 
-    public static Direccion toEntity(DireccionDTO direccionDTO) {
+    public Direccion toEntity(DireccionDTO direccionDTO) {
         if (direccionDTO == null) {
             return null;
         }
