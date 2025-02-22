@@ -4,8 +4,10 @@
  */
 package GUI;
 
+import BO.PacienteBO;
 import BO.UsuarioBO;
 import Configuracion.DependencyInjector;
+import DTO.PacienteDTO;
 import DTO.UsuarioDTO;
 import Exception.NegocioException;
 import excepciones.PersistenciaException;
@@ -22,6 +24,7 @@ import javax.swing.JOptionPane;
 public class IniciarSesion extends javax.swing.JFrame {
 
     private UsuarioBO usuarioBO = DependencyInjector.crearUsuarioBO();
+    private PacienteBO pacienteBO = DependencyInjector.crearPacienteBO();
 
     /**
      * Creates new form IniciarSesion
@@ -37,10 +40,7 @@ public class IniciarSesion extends javax.swing.JFrame {
     }
 
     private void cerrarAplicacion() {
-        // Realizar cualquier tarea de cierre o liberación de recursos aquí
-        System.out.println("Cerrando la aplicación...");
-        // Si hay conexiones abiertas o recursos que liberar, hazlo aquí.
-        System.exit(0); // Terminar la aplicación
+        System.exit(0);
     }
 
     /**
@@ -56,9 +56,9 @@ public class IniciarSesion extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         txtUsuario = new javax.swing.JTextField();
-        txtConstrasenia = new javax.swing.JTextField();
         btnIniciarSesion = new javax.swing.JButton();
         btnRegistrarse = new javax.swing.JButton();
+        txtContrasenia = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -88,6 +88,12 @@ public class IniciarSesion extends javax.swing.JFrame {
             }
         });
 
+        txtContrasenia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtContraseniaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -95,20 +101,21 @@ public class IniciarSesion extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(169, 169, 169)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtUsuario)
-                            .addComponent(txtConstrasenia, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(246, 246, 246)
                         .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(218, 218, 218)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnRegistrarse)
-                            .addComponent(btnIniciarSesion))))
+                            .addComponent(btnIniciarSesion)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(169, 169, 169)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtContrasenia, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)))))
                 .addContainerGap(227, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -122,9 +129,9 @@ public class IniciarSesion extends javax.swing.JFrame {
                 .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
                 .addComponent(jLabel3)
-                .addGap(26, 26, 26)
-                .addComponent(txtConstrasenia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38)
+                .addGap(34, 34, 34)
+                .addComponent(txtContrasenia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30)
                 .addComponent(btnIniciarSesion)
                 .addGap(18, 18, 18)
                 .addComponent(btnRegistrarse)
@@ -152,13 +159,17 @@ public class IniciarSesion extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_btnRegistrarseActionPerformed
 
+    private void txtContraseniaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtContraseniaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtContraseniaActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnIniciarSesion;
     private javax.swing.JButton btnRegistrarse;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JTextField txtConstrasenia;
+    private javax.swing.JPasswordField txtContrasenia;
     private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
 
@@ -166,11 +177,26 @@ public class IniciarSesion extends javax.swing.JFrame {
         try {
             UsuarioDTO usuarioDTO = new UsuarioDTO();
             usuarioDTO.setNombre_usuario(txtUsuario.getText().trim());
-            usuarioDTO.setContrasenia(txtConstrasenia.getText().trim());
+            usuarioDTO.setContrasenia(new String(txtContrasenia.getPassword()).trim());
+
 
             if (usuarioBO.iniciarSesion(usuarioDTO)) {
-                JOptionPane.showMessageDialog(this, "¡Bienvenido, " + usuarioDTO.getNombre_usuario() + "!",
-                        "Inicio de sesión exitoso", JOptionPane.INFORMATION_MESSAGE);
+
+                String tipoUsuario = usuarioBO.obtenerTipoUsuario(usuarioDTO.getNombre_usuario());
+                
+                if ("paciente".equals(tipoUsuario)) {
+                    JOptionPane.showMessageDialog(this, "Bienvenido, " + usuarioDTO.getNombre_usuario(),
+                            "Inicio de sesión exitoso", JOptionPane.INFORMATION_MESSAGE);
+                    PacienteDTO pacienteDTO = pacienteBO.obtenerPacientePorNombreUsuario(usuarioDTO.getNombre_usuario());
+                    
+                    new PerfilPaciente(pacienteDTO).setVisible(true);
+                    this.dispose();
+                } else if ("medico".equals(tipoUsuario)) {
+                    JOptionPane.showMessageDialog(this, "Bienvenido, " + usuarioDTO.getNombre_usuario(),
+                            "Inicio de sesión exitoso", JOptionPane.INFORMATION_MESSAGE);
+                    new PerfilMedico().setVisible(true);
+                    this.dispose();
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Nombre de usuario o contraseña incorrectos",
                         "Error de inicio de sesión", JOptionPane.ERROR_MESSAGE);

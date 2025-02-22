@@ -6,6 +6,7 @@ package Mapper;
 
 import DTO.DireccionDTO;
 import DTO.PacienteDTO;
+import DTO.UsuarioDTO;
 import entidades.Direccion;
 import entidades.Paciente;
 import entidades.Usuario;
@@ -17,23 +18,23 @@ import java.util.List;
  * @author Maximiliano
  */
 public class PacienteMapper {
-    
+
     private UsuarioMapper usuarioMapper;
     private DireccionMapper direccionMapper;
 
     public PacienteMapper() {
-        this.usuarioMapper = new UsuarioMapper(); 
+        this.usuarioMapper = new UsuarioMapper();
         this.direccionMapper = new DireccionMapper();
     }
-    
+
     public Paciente toEntity(PacienteDTO pacienteDTO) {
         if (pacienteDTO == null) {
             return null;
         }
-        
+
         Usuario usuario = UsuarioMapper.toEntity(pacienteDTO.getUsuario());
         Direccion direccion = DireccionMapper.toEntity(pacienteDTO.getDireccion());
-        
+
         return new Paciente(
                 usuario,
                 pacienteDTO.getNombre(),
@@ -42,7 +43,7 @@ public class PacienteMapper {
                 pacienteDTO.getTelefono(),
                 pacienteDTO.getFecha_nacimiento(),
                 pacienteDTO.getCorreo_electronico(),
-                direccion, 
+                direccion,
                 pacienteDTO.getCitas() != null ? pacienteDTO.getCitas() : new ArrayList<>()
         );
     }
@@ -51,17 +52,20 @@ public class PacienteMapper {
         if (paciente == null) {
             return null;
         }
-        
+
         DireccionDTO direccionDTO = DireccionMapper.toDTO(paciente.getDireccion());
-        
+
+        UsuarioDTO usuarioDTO = usuarioMapper.toDTO(paciente.getUsuario());
+
         return new PacienteDTO(
+                usuarioDTO, 
                 paciente.getNombre(),
                 paciente.getApellido_paterno(),
                 paciente.getApellido_materno(),
                 paciente.getTelefono(),
                 paciente.getFecha_nacimiento(),
                 paciente.getCorreo_electronico(),
-                direccionDTO, 
+                direccionDTO,
                 paciente.getCitas() != null ? paciente.getCitas() : new ArrayList<>()
         );
     }

@@ -65,8 +65,13 @@ public class CitaDAO implements ICitaDAO {
             return true;
 
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error al agendar la cita", e);
-            throw new PersistenciaException("Error al agendar cita", e);
+            if (e.getMessage().contains("El paciente ya tiene una cita con este médico en esa fecha")) {
+                logger.log(Level.SEVERE, "El paciente ya tiene una cita con este médico en esa fecha.");
+                throw new PersistenciaException("El paciente ya tiene una cita con este médico en esa fecha", e);
+            } else {
+                logger.log(Level.SEVERE, "El paciente ya tiene una cita con este médico en esa fecha. " + e.getMessage());
+                throw new PersistenciaException("El paciente ya tiene una cita con este médico en esa fecha. ", e);
+            }
         }
     }
 

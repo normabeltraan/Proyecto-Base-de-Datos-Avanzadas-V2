@@ -37,7 +37,7 @@ public class PacienteDAO implements IPacienteDAO {
     private static final Logger logger = Logger.getLogger(PacienteDAO.class.getName());
 
     @Override
-    public Paciente obtenerPacientePorUsuario(int idUsuario) throws PersistenciaException {
+    public Paciente obtenerPacientePorIdUsuario(int idUsuario) throws PersistenciaException {
         String consultaSQL = "SELECT P.*, U.nombre_usuario "
                 + "FROM PACIENTES P "
                 + "JOIN USUARIOS U ON P.id_usuario = U.id_usuario "
@@ -162,6 +162,50 @@ public class PacienteDAO implements IPacienteDAO {
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error al insertar la dirección", e);
             throw new PersistenciaException("Error al insertar la dirección", e);
+        }
+    }
+
+    @Override
+    public Paciente obtenerPacientePorNombreUsuario(String nombreUsuario) throws PersistenciaException {
+        String consultaSQL = "SELECT p.id_usuario, p.nombre, p.apellido_paterno, p.apellido_materno, p.telefono, "
+                + "p.fecha_nacimiento, p.correo_electronico, p.id_direccion, "
+                + "d.colonia, d.ciudad, d.calle "
+                + "FROM PACIENTES p "
+                + "JOIN USUARIOS u ON p.id_usuario = u.id_usuario "
+                + "JOIN DIRECCIONES d ON p.id_direccion = d.id_direccion "
+                + "WHERE u.nombre_usuario = ?";
+
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+            ps.setString(1, nombreUsuario);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                Paciente paciente = new Paciente();
+                Usuario usuario = new Usuario();
+                usuario.setId_usuario(rs.getInt("id_usuario"));
+                paciente.setUsuario(usuario); 
+
+                paciente.setNombre(rs.getString("nombre"));
+                paciente.setApellido_paterno(rs.getString("apellido_paterno"));
+                paciente.setApellido_materno(rs.getString("apellido_materno"));
+                paciente.setCorreo_electronico(rs.getString("correo_electronico"));
+                paciente.setTelefono(rs.getString("telefono"));
+                paciente.setFecha_nacimiento(rs.getDate("fecha_nacimiento").toLocalDate());
+
+                Direccion direccion = new Direccion();
+                direccion.setColonia(rs.getString("colonia"));
+                direccion.setCiudad(rs.getString("ciudad"));
+                direccion.setCalle(rs.getString("calle"));
+
+                paciente.setDireccion(direccion);
+
+                return paciente;
+            } else {
+                throw new PersistenciaException("Paciente no encontrado para el nombre de usuario: " + nombreUsuario);
+            }
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al obtener el paciente: " + e.getMessage(), e);
         }
     }
 

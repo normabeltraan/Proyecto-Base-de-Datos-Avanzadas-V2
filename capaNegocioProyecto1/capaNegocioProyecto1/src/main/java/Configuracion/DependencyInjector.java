@@ -4,6 +4,7 @@ package Configuracion;
 import BO.CitaBO;
 import BO.CitaSinCitaBO;
 import BO.MedicoBO;
+import BO.PacienteBO;
 import BO.UsuarioBO;
 import conexion.ConexionBD;
 import conexion.IConexionBD;
@@ -14,17 +15,17 @@ import conexion.IConexionBD;
  * @author Maximiliano
  */
 public class DependencyInjector {
-//    /**
-//     * 
-//     * @return 
-//     */
-//    public static PacienteBO crearPacienteBO() {
-//        IConexionBD conexion = new ConexionBD();
-//        PacienteBO pacienteBO = new PacienteBO(conexion);
-//
-//        return pacienteBO;
-//    }
-//    
+    /**
+     * 
+     * @return 
+     */
+    public static PacienteBO crearPacienteBO() {
+        IConexionBD conexion = new ConexionBD();
+        PacienteBO pacienteBO = new PacienteBO(conexion);
+
+        return pacienteBO;
+    }
+    
     /**
      * 
      * @return 

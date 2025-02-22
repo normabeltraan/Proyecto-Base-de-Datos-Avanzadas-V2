@@ -112,4 +112,33 @@ public class UsuarioDAO implements IUsuarioDAO {
         return false;
     }
 
+    @Override
+    public String obtenerTipoUsuario(String nombreUsuario) throws PersistenciaException {
+        String tipoUsuario = ""; 
+
+        String consultaSQL = "SELECT "
+                + "CASE "
+                + "   WHEN u.id_usuario = p.id_usuario THEN 'paciente' "
+                + "   WHEN u.id_usuario = m.id_usuario THEN 'medico' "
+                + "END AS tipo_usuario "
+                + "FROM USUARIOS u "
+                + "LEFT JOIN PACIENTES p ON u.id_usuario = p.id_usuario "
+                + "LEFT JOIN MEDICOS m ON u.id_usuario = m.id_usuario "
+                + "WHERE u.nombre_usuario = ?";
+
+        try (Connection con = conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+
+            ps.setString(1, nombreUsuario);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    tipoUsuario = rs.getString("tipo_usuario");
+                }
+            }
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al obtener el tipo de usuario", e);
+        }
+
+        return tipoUsuario;
+    }
+
 }

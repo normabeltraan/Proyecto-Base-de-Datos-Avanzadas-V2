@@ -108,5 +108,9 @@ public class UsuarioBO {
             throw new NegocioException("Error al autenticar el usuario: " + e.getMessage(), e);
         }
     }
+    
+    public String obtenerTipoUsuario(String nombreUsuario) throws PersistenciaException {
+        return usuarioDAO.obtenerTipoUsuario(nombreUsuario);
+    }
 
 }

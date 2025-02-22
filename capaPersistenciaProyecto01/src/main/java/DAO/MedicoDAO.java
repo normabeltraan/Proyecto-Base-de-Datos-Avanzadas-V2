@@ -104,10 +104,17 @@ public class MedicoDAO implements IMedicoDAO {
 
     @Override
     public Medico obtenerMedicoPorId(int id_medico) throws PersistenciaException {
-        String consultaSQL = "SELECT * FROM Medicos WHERE id_usuario = ?";
+        // Consulta que obtiene los datos del Medico y Usuario relacionado
+        String consultaSQL = "SELECT m.id_usuario, m.nombre, m.apellido_paterno, m.apellido_materno, "
+                + "m.estado, m.especialidad, m.cedula, u.nombre_usuario, u.contrasenia "
+                + "FROM MEDICOS m "
+                + "JOIN USUARIOS u ON m.id_usuario = u.id_usuario "
+                + "WHERE m.id_usuario = ?";
+
         try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
 
-            ps.setInt(1, id_medico);
+            ps.setInt(1, id_medico); 
+
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
@@ -118,12 +125,19 @@ public class MedicoDAO implements IMedicoDAO {
                 String especialidad = rs.getString("especialidad");
                 String cedula = rs.getString("cedula");
 
-                return new Medico(nombre, apellidoPaterno, apellidoMaterno, estado, especialidad, cedula, null, null);
+                Usuario usuario = new Usuario();
+                usuario.setId_usuario(rs.getInt("id_usuario"));
+                usuario.setNombre_usuario(rs.getString("nombre_usuario"));
+                usuario.setContrasenia(rs.getString("contrasenia"));
+
+                return new Medico(usuario, nombre, apellidoPaterno, apellidoMaterno, estado, especialidad, cedula, null, null);
             }
         } catch (SQLException e) {
             logger.severe("Error al obtener médicos: " + e.getMessage());
             throw new PersistenciaException("Error al obtener médicos", e);
         }
+
         return null;
     }
+
 }

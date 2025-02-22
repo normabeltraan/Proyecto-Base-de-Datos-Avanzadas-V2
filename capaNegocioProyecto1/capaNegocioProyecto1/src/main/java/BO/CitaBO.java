@@ -57,8 +57,13 @@ public class CitaBO {
             return citaDAO.agendarCita(cita);
 
         } catch (PersistenciaException e) {
-            logger.severe("Error al agendar la cita: " + e.getMessage());
-            throw new NegocioException("Error al agendar la cita: " + e.getMessage(), e);
+            if (e.getMessage().contains("El paciente ya tiene una cita con este médico en esa fecha")) {
+                logger.severe("El paciente ya tiene una cita con este médico en esa fecha.");
+                throw new NegocioException("El paciente ya tiene una cita con este médico en esa fecha.");
+            } else {
+                logger.severe("El paciente ya tiene una cita con este médico en esa fecha. " + e.getMessage());
+                throw new NegocioException("El paciente ya tiene una cita con este médico en esa fecha. " + e.getMessage());
+            }
         }
     }
 
