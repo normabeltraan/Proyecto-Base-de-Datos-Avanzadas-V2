@@ -84,10 +84,13 @@ public class PacienteDAO implements IPacienteDAO {
         List<Consulta> consultasP = new ArrayList<>();
 
         String consultaSQL
-                = "SELECT * FROM CONSULTAS CONS "
+                = "SELECT U_PACIENTE.ID_USUARIO AS id_usuario_paciente,MED.ESPECIALIDAD, MED.NOMBRE, MED.APELLIDO_PATERNO, "
+                + "CI.FECHA_HORA, CONS.DIAGNOSTICO, CONS.TRATAMIENTO, CI.ESTADO, CI.TIPO "
+                + "FROM CONSULTAS CONS "
                 + "JOIN CITAS CI ON CI.ID_CITA = CONS.ID_CITA "
                 + "JOIN USUARIOS U_PACIENTE ON CI.ID_USUARIO_PACIENTE = U_PACIENTE.ID_USUARIO "
-                + "JOIN USUARIOS U_MEDICO ON CI.ID_USUARIO_MEDICO = U_MEDICO.ID_USUARIO "
+                + "JOIN MEDICOS MED ON CI.ID_USUARIO_MEDICO = MED.ID_USUARIO "
+                //+ "JOIN USUARIOS U_MEDICO ON CI.ID_USUARIO_MEDICO = U_MEDICO.ID_USUARIO "
                 + "WHERE CI.ID_USUARIO_PACIENTE = ?";
 
         try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
@@ -101,11 +104,14 @@ public class PacienteDAO implements IPacienteDAO {
                     Usuario usuarioPaciente = new Usuario();
                     usuarioPaciente.setId_usuario(rs.getInt("id_usuario_paciente"));
 
-                    Usuario usuarioMedico = new Usuario();
-                    usuarioMedico.setId_usuario(rs.getInt("id_usuario_medico"));
+                    //Usuario usuarioMedico = new Usuario();
+                    //usuarioMedico.setId_usuario(rs.getInt("id_usuario_medico"));
 
                     Medico medico = new Medico();
-                    medico.setUsuario(usuarioMedico);
+                    //medico.setUsuario(usuarioMedico);
+                    medico.setNombre(rs.getString("nombre"));
+                    medico.setApellido_paterno(rs.getString("apellido_paterno"));
+                    medico.setEspecialidad(rs.getString("especialidad"));
 
                     Paciente paciente = new Paciente();
                     paciente.setUsuario(usuarioPaciente);
@@ -113,7 +119,7 @@ public class PacienteDAO implements IPacienteDAO {
                     Cita cita = new Cita();
                     cita.setEstado(rs.getString("estado"));
                     cita.setFecha_hora(rs.getTimestamp("fecha_hora"));
-                    cita.setId_cita(rs.getInt("id_cita"));
+                    //cita.setId_cita(rs.getInt("id_cita"));
                     cita.setTipo(rs.getString("tipo"));
                     cita.setMedico(medico);
                     cita.setPaciente(paciente);
@@ -121,9 +127,9 @@ public class PacienteDAO implements IPacienteDAO {
                     Consulta consulta = new Consulta();
                     consulta.setCita(cita);
                     consulta.setDiagnostico(rs.getString("diagnostico"));
-                    consulta.setObservaciones(rs.getString("observaciones"));
+                    //consulta.setObservaciones(rs.getString("observaciones"));
                     consulta.setTratamiento(rs.getString("tratamiento"));
-                    consulta.setId_consulta(rs.getInt("id_consulta"));
+                    //consulta.setId_consulta(rs.getInt("id_consulta"));
 
                     consultasP.add(consulta);
                 }
@@ -135,7 +141,6 @@ public class PacienteDAO implements IPacienteDAO {
             throw new PersistenciaException("Error al obtener el historial de consultas", ex);
         }
         return consultasP;
-
     }
 
     @Override
