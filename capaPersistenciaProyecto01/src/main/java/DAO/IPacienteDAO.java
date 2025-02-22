@@ -4,6 +4,7 @@
  */
 package DAO;
 
+import entidades.Cita;
 import entidades.Consulta;
 import entidades.Direccion;
 import entidades.Paciente;
@@ -23,16 +24,20 @@ public interface IPacienteDAO {
 
     public Paciente obtenerPacientePorIdUsuario(int idUsuario) throws PersistenciaException;
 
-    public List<Consulta> obtenerHistorialConsultas(int id) throws PersistenciaException;
-
+    public List<Consulta> obtenerHistorialConsultasDelPaciente(String nombrePaciente) throws PersistenciaException;
+    
     public int insertarDireccion(Direccion direccion) throws PersistenciaException;
-
-    public Paciente obtenerPacientePorNombreUsuario(String nombreUsuario) throws PersistenciaException;
-
-    public int obtenerIdUsuarioPorCorreo(String correoElectronico) throws PersistenciaException;
-
+    
     public boolean actualizarDireccionPorUsuario(Direccion direccion, Integer idUsuario) throws PersistenciaException;
-
+    
     public Integer obtenerIdDireccionPorUsuario(Integer idUsuario) throws PersistenciaException;
-
+    
+     public Paciente obtenerPacientePorNombreUsuario(String nombreUsuario) throws PersistenciaException;
+     
+     public boolean existePaciente(String nombrePaciente) throws PersistenciaException;
+     
+     public int obtenerIdUsuarioPorCorreo(String correoElectronico) throws PersistenciaException;
+     
+     public List<Cita> obtenerCitasProgramadas(int idUsuario) throws PersistenciaException;
+    
 }

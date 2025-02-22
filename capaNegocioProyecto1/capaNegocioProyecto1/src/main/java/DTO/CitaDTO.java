@@ -41,6 +41,12 @@ public class CitaDTO
         this.paciente = paciente;
         this.medico = medico;
     }
+    
+    public CitaDTO(String estado, Timestamp fecha_hora, String tipo){
+        this.estado = estado;
+        this.fecha_hora = fecha_hora;
+        this.tipo = tipo;
+    }
 
     public int getId_cita() {
         return id_cita;

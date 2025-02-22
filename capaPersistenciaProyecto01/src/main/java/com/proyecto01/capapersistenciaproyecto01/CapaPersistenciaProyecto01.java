@@ -74,22 +74,26 @@ public class CapaPersistenciaProyecto01 {
         try {
             IConexionBD conexion = new ConexionBD(); 
             PacienteDAO pacienteDAO = new PacienteDAO(conexion);
-            int idPaciente = 1; 
-            List<Consulta> historial = pacienteDAO.obtenerHistorialConsultas(idPaciente);
-            historial.forEach(System.out::println);
-            /**
+            String nombrePaciente = "Karla Cota Hernandez"; 
+            List<Consulta> historial = pacienteDAO.obtenerHistorialConsultasDelPaciente(nombrePaciente);
+            //historial.forEach(System.out::println);
+            //**
             for (Consulta consulta : historial) {
-                System.out.println("Consulta ID: " + consulta.getId_consulta());
+                //System.out.println("Consulta ID: " + consulta.getId_consulta());
+                //System.out.println("Especialidad: " + consulta.getCita().getMedico().getEspecialidad());
+                //System.out.println("Medico: " + consulta.getCita().getMedico().getNombre() + " " + consulta.getCita().getMedico().getApellido_paterno());
+                //System.out.println("Médico: " + consulta.getCita().getMedico().getUsuario().getNombre_usuario());
+                System.out.println("Fecha y hora de la cita: " + consulta.getCita().getFecha_hora());
+                System.out.println("Tipo: " + consulta.getCita().getTipo());
+                System.out.println("Estado: " + consulta.getCita().getEstado());
                 System.out.println("Diagnóstico: " + consulta.getDiagnostico());
-                System.out.println("Observaciones: " + consulta.getObservaciones());
+                //System.out.println("Observaciones: " + consulta.getObservaciones());
                 System.out.println("Tratamiento: " + consulta.getTratamiento());
-                System.out.println("Fecha de la cita: " + consulta.getCita().getFecha_hora());
-                System.out.println("Médico: " + consulta.getCita().getMedico().getUsuario().getNombre_usuario());
-                System.out.println("Paciente: " + consulta.getCita().getPaciente().getUsuario().getNombre_usuario());
+                //System.out.println("Paciente: " + consulta.getCita().getPaciente().getUsuario().getNombre_usuario());
                 System.out.println("-----------------------------------");
                
             }
-            * **/
+            //* **/
         } catch (PersistenciaException e) {
             System.err.println("Error al obtener el historial: " + e.getMessage());
         }
