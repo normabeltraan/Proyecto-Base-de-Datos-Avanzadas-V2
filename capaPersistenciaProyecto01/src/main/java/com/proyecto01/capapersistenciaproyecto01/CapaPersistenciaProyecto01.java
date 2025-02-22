@@ -74,8 +74,8 @@ public class CapaPersistenciaProyecto01 {
         try {
             IConexionBD conexion = new ConexionBD(); 
             PacienteDAO pacienteDAO = new PacienteDAO(conexion);
-            int idPaciente = 1; 
-            List<Consulta> historial = pacienteDAO.obtenerHistorialConsultas(idPaciente);
+            String nombrePaciente = "Karla Cota Hernandez"; 
+            List<Consulta> historial = pacienteDAO.obtenerHistorialConsultasDelPaciente(nombrePaciente);
             //historial.forEach(System.out::println);
             //**
             for (Consulta consulta : historial) {

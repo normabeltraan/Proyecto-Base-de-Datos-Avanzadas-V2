@@ -79,23 +79,31 @@ public class PacienteDAO implements IPacienteDAO {
     }
 
     @Override
-    public List<Consulta> obtenerHistorialConsultas(int id) throws PersistenciaException {
+    public List<Consulta> obtenerHistorialConsultasDelPaciente(String nombrePaciente) throws PersistenciaException {
 
         List<Consulta> consultasP = new ArrayList<>();
 
         String consultaSQL
-                = "SELECT U_PACIENTE.ID_USUARIO AS id_usuario_paciente,MED.ESPECIALIDAD, MED.NOMBRE, MED.APELLIDO_PATERNO, "
-                + "CI.FECHA_HORA, CONS.DIAGNOSTICO, CONS.TRATAMIENTO, CI.ESTADO, CI.TIPO "
-                + "FROM CONSULTAS CONS "
-                + "JOIN CITAS CI ON CI.ID_CITA = CONS.ID_CITA "
-                + "JOIN USUARIOS U_PACIENTE ON CI.ID_USUARIO_PACIENTE = U_PACIENTE.ID_USUARIO "
-                + "JOIN MEDICOS MED ON CI.ID_USUARIO_MEDICO = MED.ID_USUARIO "
-                //+ "JOIN USUARIOS U_MEDICO ON CI.ID_USUARIO_MEDICO = U_MEDICO.ID_USUARIO "
-                + "WHERE CI.ID_USUARIO_PACIENTE = ?";
-
+                = "SELECT P.ID_USUARIO AS id_usuario_paciente, " +
+                "CONCAT(P.NOMBRE, ' ', P.APELLIDO_PATERNO, ' ', IFNULL(P.APELLIDO_MATERNO, '')) AS nombre_completo_paciente, " +
+                "MED.ESPECIALIDAD, " +
+                "MED.NOMBRE AS nombre_medico, " +
+                "MED.APELLIDO_PATERNO AS apellido_paterno_medico, " +
+                "IFNULL(MED.APELLIDO_MATERNO, '') AS apellido_materno_medico, " +
+                "CI.FECHA_HORA, " +
+                "CONS.DIAGNOSTICO, " +
+                "CONS.TRATAMIENTO, " +
+                "CI.ESTADO, " +
+                "CI.TIPO " +
+                "FROM CONSULTAS CONS " +
+                "JOIN CITAS CI ON CI.ID_CITA = CONS.ID_CITA " +
+                "JOIN PACIENTES P ON CI.ID_USUARIO_PACIENTE = P.ID_USUARIO " +
+                "JOIN MEDICOS MED ON CI.ID_USUARIO_MEDICO = MED.ID_USUARIO " +
+                "WHERE CONCAT(P.NOMBRE, ' ', P.APELLIDO_PATERNO, ' ', IFNULL(P.APELLIDO_MATERNO, '')) = ?";
+        
         try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
 
-            ps.setInt(1, id);
+            ps.setString(1, nombrePaciente);
 
             try (ResultSet rs = ps.executeQuery()) {
 
@@ -109,8 +117,8 @@ public class PacienteDAO implements IPacienteDAO {
 
                     Medico medico = new Medico();
                     //medico.setUsuario(usuarioMedico);
-                    medico.setNombre(rs.getString("nombre"));
-                    medico.setApellido_paterno(rs.getString("apellido_paterno"));
+                    medico.setNombre(rs.getString("nombre_medico"));
+                    medico.setApellido_paterno(rs.getString("apellido_paterno_medico"));
                     medico.setEspecialidad(rs.getString("especialidad"));
 
                     Paciente paciente = new Paciente();
@@ -142,6 +150,23 @@ public class PacienteDAO implements IPacienteDAO {
         }
         return consultasP;
     }
+    
+    
+    /**
+    @Override
+    public List<Cita> obtenerCitasProgramadas(int idUsuario) throws PersistenciaException {
+        List<Cita> citasProgramadas = new ArrayList<>();
+        
+        String consultaSQL = "SELECT CI.FECHA_HORA, MED.ESPECIALIDAD, MED.NOMBRE AS NOMBRE_MEDICO, "
+                + "MED.APELLIDO_PATERNO AS APELLIDO_MEDICO "
+                + "FROM CITAS CI "
+                + "JOIN MEDICOS MED ON CI.ID_USUARIO_MEDICO = MED.ID_USUARIO "
+                + "WHERE CI.ID_USUARIO_PACIENTE = ? "
+                + "AND CI.ESTADO = 'ACTIVA'";
+        
+    }
+    
+    **/
 
     @Override
     public int insertarDireccion(Direccion direccion) throws PersistenciaException {
@@ -213,6 +238,8 @@ public class PacienteDAO implements IPacienteDAO {
             throw new PersistenciaException("Error al obtener el paciente: " + e.getMessage(), e);
         }
     }
+    
+    
 
     @Override
     public boolean registrarPaciente(Paciente paciente) throws PersistenciaException {
@@ -228,5 +255,11 @@ public class PacienteDAO implements IPacienteDAO {
     public boolean actualizarPaciente(Paciente paciente) throws PersistenciaException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public List<Cita> obtenerCitasProgramadas(int idUsuario) throws PersistenciaException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 
 }
