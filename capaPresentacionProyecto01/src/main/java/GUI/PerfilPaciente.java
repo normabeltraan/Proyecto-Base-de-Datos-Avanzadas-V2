@@ -140,13 +140,13 @@ public class PerfilPaciente extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVerCancelarCitasProgramadasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerCancelarCitasProgramadasActionPerformed
-//        new VerCancelarCitasProgramadas().setVisible(true);
-//        this.setVisible(false);
+        new VerCancelarCitasProgramadas(paciente).setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btnVerCancelarCitasProgramadasActionPerformed
 
     private void btnActualizarDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarDatosActionPerformed
-//        new ActualizarDatos().setVisible(true);
-//        this.setVisible(false);
+        new ActualizarDatos(paciente).setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btnActualizarDatosActionPerformed
 
     private void btnAgendarCitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgendarCitaActionPerformed
