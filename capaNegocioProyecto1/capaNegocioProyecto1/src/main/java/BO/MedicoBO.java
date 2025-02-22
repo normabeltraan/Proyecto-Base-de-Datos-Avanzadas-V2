@@ -12,6 +12,7 @@ import Mapper.MedicoMapper;
 import conexion.IConexionBD;
 import entidades.Medico;
 import excepciones.PersistenciaException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -54,7 +55,33 @@ public class MedicoBO {
             throw new NegocioException("El ID del médico debe ser mayor que cero.");
         }
         Medico medico = medicoDAO.obtenerMedicoPorId(id_medico);
-  
+
         return mapper.toDTO(medico);
+    }
+
+    public MedicoDTO obtenerMedicoPorNombreUsuario(String nombreUsuario) throws PersistenciaException, NegocioException {
+        if (nombreUsuario == null || nombreUsuario.isEmpty()) {
+            throw new NegocioException("El nombre de usuario no es válido.");
+        }
+
+        Medico medico = medicoDAO.obtenerMedicoPorNombreUsuario(nombreUsuario);
+
+        return mapper.toDTO(medico);
+    }
+
+    public String cambiarEstadoMedico(MedicoDTO medico, String nuevo_estado) throws NegocioException, SQLException, PersistenciaException {
+        try {
+            if ("Inactivo".equals(nuevo_estado) && medicoDAO.medicoCitasActivas(medico.getUsuario().getId_usuario())) {
+                return "No puedes darte de baja porque tienes citas activas.";
+            }
+            boolean actualizado = medicoDAO.actualizarEstadoMedico(medico.getUsuario().getId_usuario(), nuevo_estado);
+            if (actualizado) {
+                return "El estado se ha actualizado exitosamente a: " + nuevo_estado;
+            } else {
+                return "Hubo un error al intentar actualizar el estado.";
+            }
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error al cambiar el estado del medico", e);
+        }
     }
 }

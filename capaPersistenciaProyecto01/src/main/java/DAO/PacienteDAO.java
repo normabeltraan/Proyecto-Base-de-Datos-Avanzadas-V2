@@ -12,11 +12,14 @@ import entidades.Medico;
 import entidades.Paciente;
 import entidades.Usuario;
 import excepciones.PersistenciaException;
+import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -140,13 +143,13 @@ public class PacienteDAO implements IPacienteDAO {
 
     @Override
     public int insertarDireccion(Direccion direccion) throws PersistenciaException {
-        String consultaSQL = "INSERT INTO direcciones (calle, colonia, ciudad) VALUES (?, ?, ?)";
+        String consultaSQL = "INSERT INTO direcciones (colonia, ciudad, calle) VALUES (?, ?, ?)";
 
         try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setString(1, direccion.getCalle());
-            ps.setString(2, direccion.getColonia());
-            ps.setString(3, direccion.getCiudad());
+            ps.setString(1, direccion.getColonia());
+            ps.setString(2, direccion.getCiudad());
+            ps.setString(3, direccion.getCalle());
 
             int filasAfectadas = ps.executeUpdate();
 
@@ -162,6 +165,52 @@ public class PacienteDAO implements IPacienteDAO {
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error al insertar la dirección", e);
             throw new PersistenciaException("Error al insertar la dirección", e);
+        }
+    }
+
+    @Override
+    public boolean actualizarDireccionPorUsuario(Direccion direccion, Integer idUsuario) throws PersistenciaException {
+        Integer idDireccion = obtenerIdDireccionPorUsuario(idUsuario);
+        if (idDireccion == null) {
+            throw new PersistenciaException("No se encontró dirección asociada al usuario.");
+        }
+
+        String consultaSQL = "UPDATE direcciones SET colonia = ?, ciudad = ?, calle = ? WHERE id_direccion = ?";
+
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+            
+            ps.setString(1, direccion.getColonia());
+            ps.setString(2, direccion.getCiudad());
+            ps.setString(3, direccion.getCalle());
+            ps.setInt(4, idDireccion);
+
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
+
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error al actualizar la dirección", e);
+            throw new PersistenciaException("Error al actualizar la dirección", e);
+        }
+    }
+
+    @Override
+    public Integer obtenerIdDireccionPorUsuario(Integer idUsuario) throws PersistenciaException {
+        String consultaSQL = "SELECT id_direccion FROM pacientes WHERE id_usuario = ?";
+
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+            ps.setInt(1, idUsuario);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id_direccion");
+                } else {
+                    return null;
+                }
+            }
+
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error al obtener el id_direccion por id_usuario", e);
+            throw new PersistenciaException("Error al obtener el id_direccion", e);
         }
     }
 
@@ -184,7 +233,7 @@ public class PacienteDAO implements IPacienteDAO {
                 Paciente paciente = new Paciente();
                 Usuario usuario = new Usuario();
                 usuario.setId_usuario(rs.getInt("id_usuario"));
-                paciente.setUsuario(usuario); 
+                paciente.setUsuario(usuario);
 
                 paciente.setNombre(rs.getString("nombre"));
                 paciente.setApellido_paterno(rs.getString("apellido_paterno"));
@@ -194,6 +243,7 @@ public class PacienteDAO implements IPacienteDAO {
                 paciente.setFecha_nacimiento(rs.getDate("fecha_nacimiento").toLocalDate());
 
                 Direccion direccion = new Direccion();
+                direccion.setId_direccion(rs.getInt("id_direccion"));
                 direccion.setColonia(rs.getString("colonia"));
                 direccion.setCiudad(rs.getString("ciudad"));
                 direccion.setCalle(rs.getString("calle"));
@@ -210,18 +260,48 @@ public class PacienteDAO implements IPacienteDAO {
     }
 
     @Override
-    public boolean registrarPaciente(Paciente paciente) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public int obtenerIdUsuarioPorCorreo(String correoElectronico) throws PersistenciaException {
+        String consultaSQL = "SELECT id_usuario FROM Usuario WHERE correo_electronico = ?";
+
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+
+            ps.setString(1, correoElectronico);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id_usuario");
+                }
+            }
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al obtener el id del usuario por correo electrónico.", e);
+        }
+        return -1;
     }
 
     @Override
-    public boolean eliminarPaciente() throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public boolean actualizarDatosPaciente(int idUsuario, String nombre, String apellidoPaterno, String apellidoMaterno, String telefono,
+            LocalDate fechaNacimiento, String correoElectronico) throws PersistenciaException {
 
-    @Override
-    public boolean actualizarPaciente(Paciente paciente) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        String consultaSQL = "{CALL ACTUALIZAR_DATOS_PACIENTE(?, ?, ?, ?, ?, ?, ?)}";
+
+        try (Connection con = this.conexion.crearConexion(); CallableStatement cb = con.prepareCall(consultaSQL)) {
+
+            cb.setInt(1, idUsuario);
+            cb.setString(2, nombre);
+            cb.setString(3, apellidoPaterno);
+            cb.setString(4, apellidoMaterno);
+            cb.setString(5, telefono);
+            cb.setDate(6, Date.valueOf(fechaNacimiento));
+            cb.setString(7, correoElectronico);
+
+            cb.execute();
+            return true;
+
+        } catch (SQLException e) {
+            if ("45000".equals(e.getSQLState())) {
+                throw new PersistenciaException("El paciente tiene citas activas y no puede actualizar sus datos.", e);
+            }
+            throw new PersistenciaException("Error al ejecutar el procedimiento almacenado.", e);
+        }
     }
 
 }

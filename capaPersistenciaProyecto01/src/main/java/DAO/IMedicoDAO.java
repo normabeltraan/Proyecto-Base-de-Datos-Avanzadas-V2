@@ -16,8 +16,14 @@ import java.util.List;
 public interface IMedicoDAO {
 
     public List<String> obtenerEspecialidades() throws SQLException, PersistenciaException;
-    
+
     public List<Medico> obtenerMedicosPorEspecialidad(String especialidad) throws PersistenciaException;
-    
+
     public Medico obtenerMedicoPorId(int idMedico) throws PersistenciaException;
+
+    public Medico obtenerMedicoPorNombreUsuario(String nombreUsuario) throws PersistenciaException;
+
+    public boolean medicoCitasActivas(int idMedico) throws SQLException, PersistenciaException;
+
+    public boolean actualizarEstadoMedico(int idMedico, String nuevoEstado) throws SQLException, PersistenciaException;
 }

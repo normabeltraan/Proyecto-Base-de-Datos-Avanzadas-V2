@@ -10,9 +10,9 @@ import java.util.List;
  *
  * @author Maximiliano
  */
-public class MedicoDTO 
-{
-    private Usuario usuario;
+public class MedicoDTO {
+
+    private UsuarioDTO usuarioDTO; 
     private String nombre;
     private String apellido_paterno;
     private String apellido_materno;
@@ -29,16 +29,16 @@ public class MedicoDTO
     }
 
     // Constructor con todos los parámetros
-    public MedicoDTO(Usuario usuario, String nombre, String apellido_paterno, String apellido_materno, String estado, String especialidad, String cedula, List<Cita> citas, List<Horario> horarios) {
-        this.usuario = usuario;
+    public MedicoDTO(UsuarioDTO usuarioDTO, String nombre, String apellido_paterno, String apellido_materno, String estado, String especialidad, String cedula, List<Cita> citas, List<Horario> horarios) {
+        this.usuarioDTO = usuarioDTO;
         this.nombre = nombre;
         this.apellido_paterno = apellido_paterno;
         this.apellido_materno = apellido_materno;
         this.estado = estado;
         this.especialidad = especialidad;
         this.cedula = cedula;
-        this.citas = citas != null ? citas : new ArrayList<>();  
-        this.horarios = horarios != null ? horarios : new ArrayList<>();  
+        this.citas = citas != null ? citas : new ArrayList<>();
+        this.horarios = horarios != null ? horarios : new ArrayList<>();
     }
 
     // Constructor sin usuario
@@ -53,12 +53,12 @@ public class MedicoDTO
         this.horarios = horarios != null ? horarios : new ArrayList<>();
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public UsuarioDTO getUsuario() {
+        return usuarioDTO;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setUsuario(UsuarioDTO usuario) {
+        this.usuarioDTO = usuario;
     }
 
     public String getNombre() {
@@ -127,6 +127,6 @@ public class MedicoDTO
 
     @Override
     public String toString() {
-        return "MedicoDTO{" + "usuario=" + usuario + ", nombre=" + nombre + ", apellido_paterno=" + apellido_paterno + ", apellido_materno=" + apellido_materno + ", estado=" + estado + ", especialidad=" + especialidad + ", cedula=" + cedula + ", citas=" + citas + ", horarios=" + horarios + '}';
+        return "MedicoDTO{" + "usuario=" + usuarioDTO + ", nombre=" + nombre + ", apellido_paterno=" + apellido_paterno + ", apellido_materno=" + apellido_materno + ", estado=" + estado + ", especialidad=" + especialidad + ", cedula=" + cedula + ", citas=" + citas + ", horarios=" + horarios + '}';
     }
 }

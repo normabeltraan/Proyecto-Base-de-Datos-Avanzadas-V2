@@ -4,9 +4,11 @@
  */
 package GUI;
 
+import BO.MedicoBO;
 import BO.PacienteBO;
 import BO.UsuarioBO;
 import Configuracion.DependencyInjector;
+import DTO.MedicoDTO;
 import DTO.PacienteDTO;
 import DTO.UsuarioDTO;
 import Exception.NegocioException;
@@ -25,6 +27,7 @@ public class IniciarSesion extends javax.swing.JFrame {
 
     private UsuarioBO usuarioBO = DependencyInjector.crearUsuarioBO();
     private PacienteBO pacienteBO = DependencyInjector.crearPacienteBO();
+    private MedicoBO medicoBO = DependencyInjector.crearMedicoBO();
 
     /**
      * Creates new form IniciarSesion
@@ -179,22 +182,27 @@ public class IniciarSesion extends javax.swing.JFrame {
             usuarioDTO.setNombre_usuario(txtUsuario.getText().trim());
             usuarioDTO.setContrasenia(new String(txtContrasenia.getPassword()).trim());
 
-
             if (usuarioBO.iniciarSesion(usuarioDTO)) {
 
                 String tipoUsuario = usuarioBO.obtenerTipoUsuario(usuarioDTO.getNombre_usuario());
-                
+
                 if ("paciente".equals(tipoUsuario)) {
                     JOptionPane.showMessageDialog(this, "Bienvenido, " + usuarioDTO.getNombre_usuario(),
                             "Inicio de sesión exitoso", JOptionPane.INFORMATION_MESSAGE);
                     PacienteDTO pacienteDTO = pacienteBO.obtenerPacientePorNombreUsuario(usuarioDTO.getNombre_usuario());
-                    
+
                     new PerfilPaciente(pacienteDTO).setVisible(true);
+                    
+                    System.out.println(pacienteDTO.getDireccion().getCalle());
+                    System.out.println(pacienteDTO.getDireccion().getId_direccion());
+                    
                     this.dispose();
                 } else if ("medico".equals(tipoUsuario)) {
                     JOptionPane.showMessageDialog(this, "Bienvenido, " + usuarioDTO.getNombre_usuario(),
                             "Inicio de sesión exitoso", JOptionPane.INFORMATION_MESSAGE);
-                    new PerfilMedico().setVisible(true);
+                    MedicoDTO medicoDTO = medicoBO.obtenerMedicoPorNombreUsuario(usuarioDTO.getNombre_usuario());
+                    
+                    new PerfilMedico(medicoDTO).setVisible(true);
                     this.dispose();
                 }
             } else {

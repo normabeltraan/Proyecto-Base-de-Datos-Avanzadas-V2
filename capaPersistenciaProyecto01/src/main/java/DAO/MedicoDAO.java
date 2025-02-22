@@ -104,7 +104,6 @@ public class MedicoDAO implements IMedicoDAO {
 
     @Override
     public Medico obtenerMedicoPorId(int id_medico) throws PersistenciaException {
-        // Consulta que obtiene los datos del Medico y Usuario relacionado
         String consultaSQL = "SELECT m.id_usuario, m.nombre, m.apellido_paterno, m.apellido_materno, "
                 + "m.estado, m.especialidad, m.cedula, u.nombre_usuario, u.contrasenia "
                 + "FROM MEDICOS m "
@@ -113,7 +112,7 @@ public class MedicoDAO implements IMedicoDAO {
 
         try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
 
-            ps.setInt(1, id_medico); 
+            ps.setInt(1, id_medico);
 
             ResultSet rs = ps.executeQuery();
 
@@ -140,4 +139,65 @@ public class MedicoDAO implements IMedicoDAO {
         return null;
     }
 
+    @Override
+    public Medico obtenerMedicoPorNombreUsuario(String nombreUsuario) throws PersistenciaException {
+        String consultaSQL = "SELECT m.id_usuario, m.nombre, m.apellido_paterno, m.apellido_materno, m.estado, "
+                + "m.especialidad, m.cedula "
+                + "FROM MEDICOS m "
+                + "JOIN USUARIOS u ON m.id_usuario = u.id_usuario "
+                + "WHERE u.nombre_usuario = ?";
+
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+            ps.setString(1, nombreUsuario);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                Medico medico = new Medico();
+                Usuario usuario = new Usuario();
+                usuario.setId_usuario(rs.getInt("id_usuario"));
+                medico.setUsuario(usuario);
+
+                medico.setNombre(rs.getString("nombre"));
+                medico.setApellido_paterno(rs.getString("apellido_paterno"));
+                medico.setApellido_materno(rs.getString("apellido_materno"));
+                medico.setEstado(rs.getString("estado"));
+                medico.setEspecialidad(rs.getString("especialidad"));
+                medico.setCedula(rs.getString("cedula"));
+
+                return medico;
+            } else {
+                throw new PersistenciaException("Médico no encontrado para el nombre de usuario: " + nombreUsuario);
+            }
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al obtener el médico: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public boolean medicoCitasActivas(int idMedico) throws SQLException, PersistenciaException {
+        String consultaSQL = "SELECT COUNT(*) FROM CITAS WHERE id_usuario_medico = ? AND estado = 'Activa'";
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+            ps.setInt(1, idMedico);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al verificar citas activas", e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean actualizarEstadoMedico(int idMedico, String nuevoEstado) throws SQLException, PersistenciaException {
+        String consultaSQL = "UPDATE MEDICOS SET estado = ? WHERE id_usuario = ?";
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+            ps.setString(1, nuevoEstado);
+            ps.setInt(2, idMedico);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al actualizar el estado del medico", e);
+        }
+    }
 }

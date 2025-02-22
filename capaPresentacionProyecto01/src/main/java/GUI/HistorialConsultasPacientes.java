@@ -101,8 +101,8 @@ public class HistorialConsultasPacientes extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-         new PerfilMedico().setVisible(true);
-        this.setVisible(false);
+//         new PerfilMedico().setVisible(true);
+//        this.setVisible(false);
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**

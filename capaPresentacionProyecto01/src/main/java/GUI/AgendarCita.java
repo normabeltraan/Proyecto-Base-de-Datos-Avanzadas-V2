@@ -301,14 +301,11 @@ public class AgendarCita extends javax.swing.JFrame {
                 Timestamp fechaHora2 = Timestamp.valueOf(fechaHora);
 
                 MedicoDTO medico = medicoBO.obtenerMedicoPorId(idMedico);
-                System.out.println(medico);
 
                 MedicoMapper medicoMapper = new MedicoMapper();
                 Medico medico2 = medicoMapper.toEntity(medico);
 
                 PacienteMapper pacienteMapper = new PacienteMapper();
-                System.out.println(paciente.getUsuario() + " aa");
-                System.out.println(medico2.getUsuario() + " aa");
                 Paciente paciente2 = pacienteMapper.toEntity(paciente);
 
                 CitaDTO citaNuevo = new CitaDTO(fechaHora2, "Activa", "Cita Agendada", paciente2, medico2);
