@@ -18,6 +18,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import entidades.Horario;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.logging.Level;
 
 /**
  *
@@ -185,57 +189,6 @@ public class MedicoDAO implements IMedicoDAO {
 
 
     @Override
-    public List<Cita> consultarAgendaMedico(int idMedico) throws PersistenciaException {
-//        List<Cita> citas = new ArrayList<>();
-//
-//        java.sql.Date fechaActual = new java.sql.Date(System.currentTimeMillis());
-//
-//        String consultaSQL = "SELECT c.id_cita, c.fecha_cita, c.hora_cita, c.tipo_cita, c.estado, "
-//                + "p.nombre, p.apellido_paterno, p.apellido_materno "
-//                + "FROM CITAS c "
-//                + "JOIN PACIENTES p ON c.id_paciente = p.id_paciente "
-//                + "WHERE c.id_medico = ? AND c.fecha_cita = ?";
-//
-//        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
-//
-//            ps.setInt(1, idMedico);
-//            ps.setDate(2, fechaActual);  
-//
-//            try (ResultSet rs = ps.executeQuery()) {
-//
-//                while (rs.next()) {
-//                    Cita cita = new Cita();
-//                    cita.setId_cita(rs.getInt("id_cita"));
-//                    cita.setFecha_cita(rs.getDate("fecha_cita"));
-//                    cita.setHora_cita(rs.getTime("hora_cita"));
-//                    cita.setTipo_cita(rs.getString("tipo_cita"));
-//                    cita.setEstado(rs.getString("estado"));
-//
-//                    Paciente paciente = new Paciente();
-//                    paciente.setNombre(rs.getString("nombre"));
-//                    paciente.setApellido_paterno(rs.getString("apellido_paterno"));
-//                    paciente.setApellido_materno(rs.getString("apellido_materno"));
-//
-//                    cita.setPaciente(paciente); // Asignamos el paciente a la cita
-//
-//                    citas.add(cita); // Añadimos la cita a la lista
-//                }
-//            } catch (SQLException e) {
-//                logger.severe("Error al consultar la agenda del médico: " + e.getMessage());
-//                throw new PersistenciaException("Error al consultar la agenda del médico", e);
-//            }
-//
-//        } catch (SQLException e) {
-//            logger.severe("Error al consultar la agenda del médico: " + e.getMessage());
-//            throw new PersistenciaException("Error al consultar la agenda del médico", e);
-//        }
-//
-//        return citas; 
-        return null;
-    }
-
-
-    @Override
     public Medico obtenerMedicoPorNombreUsuario(String nombreUsuario) throws PersistenciaException {
         String consultaSQL = "SELECT m.id_usuario, m.nombre, m.apellido_paterno, m.apellido_materno, m.estado, "
                 + "m.especialidad, m.cedula "
@@ -296,4 +249,129 @@ public class MedicoDAO implements IMedicoDAO {
             throw new PersistenciaException("Error al actualizar el estado del medico", e);
         }
     }
+
+
+    //@Override
+    //public List<Cita> consultarAgendaMedico(int idMedico) throws PersistenciaException {
+//        List<Cita> citas = new ArrayList<>();
+//
+//        java.sql.Date fechaActual = new java.sql.Date(System.currentTimeMillis());
+//
+//        String consultaSQL = "SELECT c.id_cita, c.fecha_cita, c.hora_cita, c.tipo_cita, c.estado, "
+//                + "p.nombre, p.apellido_paterno, p.apellido_materno "
+//                + "FROM CITAS c "
+//                + "JOIN PACIENTES p ON c.id_paciente = p.id_paciente "
+//                + "WHERE c.id_medico = ? AND c.fecha_cita = ?";
+//
+//        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+//
+//            ps.setInt(1, idMedico);
+//            ps.setDate(2, fechaActual);  
+//
+//            try (ResultSet rs = ps.executeQuery()) {
+//
+//                while (rs.next()) {
+//                    Cita cita = new Cita();
+//                    cita.setId_cita(rs.getInt("id_cita"));
+//                    cita.setFecha_cita(rs.getDate("fecha_cita"));
+//                    cita.setHora_cita(rs.getTime("hora_cita"));
+//                    cita.setTipo_cita(rs.getString("tipo_cita"));
+//                    cita.setEstado(rs.getString("estado"));
+//
+//                    Paciente paciente = new Paciente();
+//                    paciente.setNombre(rs.getString("nombre"));
+//                    paciente.setApellido_paterno(rs.getString("apellido_paterno"));
+//                    paciente.setApellido_materno(rs.getString("apellido_materno"));
+//
+//                    cita.setPaciente(paciente); // Asignamos el paciente a la cita
+//
+//                    citas.add(cita); // Añadimos la cita a la lista
+//                }
+//            } catch (SQLException e) {
+//                logger.severe("Error al consultar la agenda del médico: " + e.getMessage());
+//                throw new PersistenciaException("Error al consultar la agenda del médico", e);
+//            }
+//
+//        } catch (SQLException e) {
+//            logger.severe("Error al consultar la agenda del médico: " + e.getMessage());
+//            throw new PersistenciaException("Error al consultar la agenda del médico", e);
+//        }
+//
+//        return citas; 
+        //return null;
+    //}
+    
+    @Override
+    public List <Cita> consultarAgendaMedico(int id_medico) throws PersistenciaException {
+        List<Cita> citasDia = new ArrayList<>();
+        String consultaSQL = "SELECT DATE_FORMAT(c.fecha_hora, '%H:%i') AS hora,  "
+            + "CONCAT(p.nombre, ' ', p.apellido_paterno, IFNULL(CONCAT(' ', p.apellido_materno),'')) AS paciente " 
+            + "FROM CITAS c JOIN PACIENTES p ON c.id_usuario_paciente = p.id_usuario " 
+            + "WHERE c.id_usuario_medico = ? AND DATE(c.fecha_hora) = CURDATE() " 
+            + "ORDER BY c.fecha_hora";
+        
+        try(Connection con = this.conexion.crearConexion();
+                PreparedStatement ps = con.prepareStatement(consultaSQL)){
+            
+            ps.setInt(1, id_medico);
+            
+            try(ResultSet rs = ps.executeQuery()){
+                while (rs.next()){
+                    Cita cita = new Cita();
+                    String horaStr = rs.getString("hora");
+                    Timestamp horaTimestamp = Timestamp.valueOf("1970-01-01 " + horaStr + ":00");
+                    
+                    cita.setFecha_hora(horaTimestamp);
+                    Paciente paciente = new Paciente();
+                    paciente.setNombre(rs.getString("paciente"));
+                    cita.setPaciente(paciente);
+                    
+                    citasDia.add(cita);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Error al consultar la agenda del médico", ex);
+            throw new PersistenciaException("Error al consultar la agenda del médico.", ex);
+        }
+        return citasDia;
+    }
+
+//    @Override
+//    public List<Cita> consultarAgendaMedico(int idMedico) throws PersistenciaException {
+//    String consultaSQL = "SELECT " +
+//            "CONCAT(p.nombre, ' ', p.apellido_paterno, ' ', p.apellido_materno) AS nombre_paciente, " +
+//            "CURDATE() AS fecha_actual, " +
+//            "c.fecha_hora AS hora_atencion " +
+//            "FROM citas c " +
+//            "JOIN pacientes p ON c.id_usuario_paciente = p.id_usuario " +
+//            "WHERE c.id_usuario_medico = ? " +
+//            "AND DATE(c.fecha_hora) = CURDATE() " +
+//            "AND (c.tipo = 'Agendada' OR c.tipo = 'Emergencia') " +
+//            "ORDER BY c.fecha_hora";
+//
+//    List<Cita> citas = new ArrayList<>();
+//
+//    try (Connection con = this.conexion.crearConexion();
+//         PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+//
+//        ps.setInt(1, idMedico);
+//        ResultSet rs = ps.executeQuery();
+//
+//        while (rs.next()) {
+//            String nombrePaciente = rs.getString("nombre_paciente");
+//            Timestamp horaAtencion = rs.getTimestamp("hora_atencion");
+//
+//            Cita cita = new Cita();
+//            cita.setNombrePaciente(nombrePaciente);
+//            cita.setFecha_hora(horaAtencion);
+//
+//            citas.add(cita);
+//        }
+//
+//    } catch (SQLException e) {
+//        throw new PersistenciaException("Error al obtener la agenda del médico", e);
+//    }
+//
+//    return citas;
+//}
 }

@@ -28,6 +28,7 @@ import java.util.logging.Logger;
  * @author norma
  */
 public class CitaDAO implements ICitaDAO {
+    //aaaaaaaaaa
 
     IConexionBD conexion;
 
