@@ -84,4 +84,26 @@ public class MedicoBO {
             throw new NegocioException("Error al cambiar el estado del medico", e);
         }
     }
+    
+    public MedicoDTO perfilMedico(int id_medico) throws NegocioException {
+    if (id_medico <= 0) {
+        throw new NegocioException("El ID del médico debe ser mayor que cero.");
+    }
+
+    try {
+        Medico medico = medicoDAO.obtenerPerfilMedico(id_medico);
+
+        if (medico == null) {
+            throw new NegocioException("No se encontró un médico con el ID proporcionado.");
+        }
+
+        return mapper.toDTO(medico);
+    } catch (PersistenciaException e) {
+        logger.severe("Error en la capa de persistencia al obtener el perfil del médico: " + e.getMessage());
+        throw new NegocioException("Error al obtener el perfil del médico", e);
+    } catch (Exception e) {
+        logger.severe("Error inesperado al obtener el perfil del médico: " + e.getMessage());
+        throw new NegocioException("Ocurrió un error inesperado al obtener el perfil del médico", e);
+    }
+  }
 }
