@@ -35,6 +35,9 @@ public class PacienteMapper {
         Usuario usuario = this.usuarioMapper.toEntity(pacienteDTO.getUsuario());
         Direccion direccion = this.direccionMapper.toEntity(pacienteDTO.getDireccion());
 
+        if (usuario == null){
+            throw new IllegalArgumentException("El usuario no puede ser nulo");
+        }
         return new Paciente(
                 usuario,
                 pacienteDTO.getNombre(),

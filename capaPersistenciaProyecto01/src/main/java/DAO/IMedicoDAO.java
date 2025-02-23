@@ -5,7 +5,9 @@
 package DAO;
 
 import entidades.Medico;
+import entidades.Cita;
 import excepciones.PersistenciaException;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -20,10 +22,15 @@ public interface IMedicoDAO {
     public List<Medico> obtenerMedicosPorEspecialidad(String especialidad) throws PersistenciaException;
 
     public Medico obtenerMedicoPorId(int idMedico) throws PersistenciaException;
-
+    
+    public Medico obtenerPerfilMedico(int idMedico) throws PersistenciaException;
+    
+    public List<Cita> consultarAgendaMedico(int idMedico) throws PersistenciaException ;
+    
     public Medico obtenerMedicoPorNombreUsuario(String nombreUsuario) throws PersistenciaException;
 
     public boolean medicoCitasActivas(int idMedico) throws SQLException, PersistenciaException;
 
     public boolean actualizarEstadoMedico(int idMedico, String nuevoEstado) throws SQLException, PersistenciaException;
+    
 }

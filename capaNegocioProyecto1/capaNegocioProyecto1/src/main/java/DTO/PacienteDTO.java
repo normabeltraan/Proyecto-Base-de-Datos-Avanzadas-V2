@@ -45,6 +45,7 @@ public class PacienteDTO {
     }
 
     public PacienteDTO(String nombre, String apellido_paterno, String apellido_materno, String telefono, LocalDate fecha_nacimiento, String correo_electronico, DireccionDTO direccion, List<Cita> citas) {
+        this.usuarioDTO = new UsuarioDTO();
         this.nombre = nombre;
         this.apellido_paterno = apellido_paterno;
         this.apellido_materno = apellido_materno;
@@ -54,6 +55,23 @@ public class PacienteDTO {
         this.direccionDTO = direccion != null ? direccion : new DireccionDTO(); 
         this.citas = citas != null ? citas : new ArrayList<>();
     }
+
+    public UsuarioDTO getUsuarioDTO() {
+        return usuarioDTO;
+    }
+
+    public DireccionDTO getDireccionDTO() {
+        return direccionDTO;
+    }
+
+    public void setUsuarioDTO(UsuarioDTO usuarioDTO) {
+        this.usuarioDTO = usuarioDTO;
+    }
+
+    public void setDireccionDTO(DireccionDTO direccionDTO) {
+        this.direccionDTO = direccionDTO;
+    }
+    
 
     public UsuarioDTO getUsuario() {
         return usuarioDTO;

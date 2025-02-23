@@ -8,20 +8,24 @@ import DAO.IPacienteDAO;
 import DAO.IUsuarioDAO;
 import DAO.PacienteDAO;
 import DAO.UsuarioDAO;
+import DTO.CitaDTO;
 import DTO.UsuarioDTO;
 import DTO.DireccionDTO;
 import DTO.PacienteDTO;
 import Mapper.DireccionMapper;
 import DTO.ConsultaDTO;
 import Exception.NegocioException;
+import Mapper.CitaMapper;
 import Mapper.ConsultaMapper;
 import Mapper.PacienteMapper;
 import Mapper.UsuarioMapper;
 import conexion.IConexionBD;
+import entidades.Cita;
 import entidades.Consulta;
 import entidades.Paciente;
 import excepciones.PersistenciaException;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,6 +44,7 @@ public class PacienteBO {
     private final PacienteMapper mapper_paciente = new PacienteMapper();
     private final UsuarioMapper mapper_usuario = new UsuarioMapper();
     private final DireccionMapper mapper_direccion = new DireccionMapper();
+    private final CitaMapper mapper_cita = new CitaMapper();
 
     public PacienteBO(IConexionBD conexion) {
         this.pacienteDAO = new PacienteDAO(conexion);
@@ -137,6 +142,45 @@ public class PacienteBO {
             logger.log(Level.SEVERE, "Error al obtener el historial de consultas.", ex);
             throw new NegocioException("Error al obtener el historial de consultas.", ex);
         }
+    }
+    
+    public List<CitaDTO> obtenerCitasProgramadas(PacienteDTO pacienteDTO) throws NegocioException{
+        try{
+            
+            if(pacienteDTO == null){
+                throw new NegocioException("El paciente no puede ser nulo.");
+            }
+            
+            if (pacienteDTO.getUsuario() == null){
+                throw new NegocioException("El paciente no tiene usuario valido");
+            }
+            Paciente paciente = mapper_paciente.toEntity(pacienteDTO);
+            
+            int idPaciente = pacienteDAO.obtenerIdPacientePorNombre(
+                    paciente.getNombre(),
+                    paciente.getApellido_paterno(),
+                    paciente.getApellido_materno()
+            );
+            
+            if (idPaciente == -1){
+                throw new NegocioException("No se encontro el paciente.");
+            }
+            if (paciente.getUsuario() == null){
+                throw new NegocioException("El paciente no tiene usuario");
+            }
+            
+            paciente.getUsuario().setId_usuario(idPaciente);
+            List<Cita> citas = pacienteDAO.obtenerCitasProgramadas(paciente);
+            List<CitaDTO> citasDTO = mapper_cita.toDTOList(citas);
+
+        
+        return citasDTO;
+            
+        }
+        catch (PersistenciaException ex){
+            throw new NegocioException("Error al obtener citas programadas.");
+        }
+        
     }
 
 }

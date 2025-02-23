@@ -148,19 +148,47 @@ public class PacienteDAO implements IPacienteDAO {
         return consultasP;
     }
 
-    /**
-     * @Override public List<Cita> obtenerCitasProgramadas(int idUsuario) throws
-     * PersistenciaException { List<Cita> citasProgramadas = new ArrayList<>();
-     *
-     * String consultaSQL = "SELECT CI.FECHA_HORA, MED.ESPECIALIDAD, MED.NOMBRE
-     * AS NOMBRE_MEDICO, " + "MED.APELLIDO_PATERNO AS APELLIDO_MEDICO " + "FROM
-     * CITAS CI " + "JOIN MEDICOS MED ON CI.ID_USUARIO_MEDICO = MED.ID_USUARIO "
-     * + "WHERE CI.ID_USUARIO_PACIENTE = ? " + "AND CI.ESTADO = 'ACTIVA'";
-     *
-     * }
-     *
-     *
-     */
+    @Override
+    public List<Cita> obtenerCitasProgramadas(Paciente paciente) throws PersistenciaException {
+        List<Cita> citasProgramadas = new ArrayList<>();
+
+        String consultaSQL
+                = "SELECT CI.FECHA_HORA, MED.ESPECIALIDAD, "
+                + "CONCAT(MED.NOMBRE, ' ', MED.APELLIDO_PATERNO, ' ', IFNULL(MED.APELLIDO_MATERNO, '')) AS NOMBRE_COMPLETO_MEDICO "
+                + "FROM CITAS CI "
+                + "JOIN MEDICOS MED ON CI.ID_USUARIO_MEDICO = MED.ID_USUARIO "
+                + "WHERE CI.ID_USUARIO_PACIENTE = ? "
+                + "AND CI.ESTADO = 'ACTIVA' "
+                + "ORDER BY CI.FECHA_HORA ASC";
+
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+
+            ps.setInt(1, paciente.getUsuario().getId_usuario());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Medico medico = new Medico();
+                    medico.setNombre(rs.getString("NOMBRE_COMPLETO_MEDICO"));
+                    medico.setEspecialidad(rs.getString("ESPECIALIDAD"));
+
+                    Cita cita = new Cita();
+                    cita.setFecha_hora(rs.getTimestamp("FECHA_HORA"));
+                    cita.setMedico(medico);
+                    cita.setPaciente(paciente);
+
+                    citasProgramadas.add(cita);
+                }
+
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(PacienteDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new PersistenciaException("Error al obtener citas programadas.");
+        }
+
+        return citasProgramadas;
+    }
+
     @Override
     public int insertarDireccion(Direccion direccion) throws PersistenciaException {
         String consultaSQL = "INSERT INTO direcciones (colonia, ciudad, calle) VALUES (?, ?, ?)";
@@ -345,11 +373,25 @@ public class PacienteDAO implements IPacienteDAO {
         }
     }
 
-    @Override
-    public List<Cita> obtenerCitasProgramadas(int idUsuario) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+    public int obtenerIdPacientePorNombre(String nombre, String apellidoPaterno, String apellidoMaterno) throws PersistenciaException {
+        String consultaSQL = "SELECT ID_USUARIO FROM PACIENTES WHERE NOMBRE = ? AND APELLIDO_PATERNO = ? AND APELLIDO_MATERNO = ?";
 
-    
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+
+            ps.setString(1, nombre);
+            ps.setString(2, apellidoPaterno);
+            ps.setString(3, apellidoMaterno);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("ID_USUARIO");
+                } else {
+                    return -1;
+                }
+            }
+        } catch (SQLException ex) {
+            throw new PersistenciaException("Error al obtener el ID del paciente", ex);
+        }
+    }
 
 }
