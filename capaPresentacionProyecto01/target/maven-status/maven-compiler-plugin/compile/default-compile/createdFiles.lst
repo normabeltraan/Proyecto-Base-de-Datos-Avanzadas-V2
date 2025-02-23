@@ -1,4 +1,5 @@
 GUI\PerfilPaciente$3.class
+GUI\ActualizarDatos$4.class
 GUI\GenerarCitaEmergencia$2.class
 GUI\PerfilMedico$4.class
 GUI\AtenderConsulta$1.class
@@ -53,6 +54,7 @@ GUI\AgendarCita$2.class
 GUI\HistorialConsultasPacientes$1.class
 GUI\ConsultarAgenda$3.class
 GUI\AtenderConsultaEmergencia$1.class
+GUI\PerfilMedico$6.class
 GUI\PerfilMedico.class
 GUI\ActualizarDatos$2.class
 GUI\HistorialConsultas.class

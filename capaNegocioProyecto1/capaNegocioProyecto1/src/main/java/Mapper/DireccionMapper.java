@@ -13,15 +13,15 @@ import entidades.Direccion;
  */
 public class DireccionMapper {
 
-    public static Direccion toEntity(DireccionDTO direccionDTO) {
+    public Direccion toEntity(DireccionDTO direccionDTO) {
         if (direccionDTO == null) {
             return null;
         }
 
         return new Direccion(
-                direccionDTO.getCalle(),
                 direccionDTO.getColonia(),
-                direccionDTO.getCiudad()
+                direccionDTO.getCiudad(),
+                direccionDTO.getCalle()
         );
     }
 
@@ -31,9 +31,10 @@ public class DireccionMapper {
         }
 
         return new DireccionDTO(
-                direccion.getCalle(),
+                direccion.getId_direccion(),
                 direccion.getColonia(),
-                direccion.getCiudad()
+                direccion.getCiudad(),
+                direccion.getCalle()
         );
     }
 }

@@ -29,7 +29,6 @@ public class CitaSinCitaBO {
     }
 
     public CitaSinCitaDTO agendarCitaEmergencia(String especialidad, int id_paciente) throws NegocioException, PersistenciaException {
-
         if (especialidad == null || especialidad.trim().isEmpty()) {
             throw new IllegalArgumentException("La especialidad no puede estar vacía");
         }

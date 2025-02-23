@@ -10,6 +10,7 @@ import entidades.Direccion;
 import entidades.Paciente;
 import entidades.Usuario;
 import excepciones.PersistenciaException;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -18,20 +19,27 @@ import java.util.List;
  */
 public interface IPacienteDAO {
 
-    public boolean registrarPaciente(Paciente paciente) throws PersistenciaException;
-
-    public boolean eliminarPaciente() throws PersistenciaException;
-
-    public boolean actualizarPaciente(Paciente paciente) throws PersistenciaException;
+    public boolean actualizarDatosPaciente(int idUsuario, String nombre, String apellidoPaterno, String apellidoMaterno, String telefono,
+            LocalDate fechaNacimiento, String correoElectronico) throws PersistenciaException;
 
     public Paciente obtenerPacientePorIdUsuario(int idUsuario) throws PersistenciaException;
-    
+
     public List<Consulta> obtenerHistorialConsultasDelPaciente(String nombrePaciente) throws PersistenciaException;
     
     public int insertarDireccion(Direccion direccion) throws PersistenciaException;
     
-    public Paciente obtenerPacientePorNombreUsuario(String nombreUsuario) throws PersistenciaException;
+    public boolean actualizarDireccionPorUsuario(Direccion direccion, Integer idUsuario) throws PersistenciaException;
     
-    public List<Cita> obtenerCitasProgramadas(int idUsuario) throws PersistenciaException;
+    public Integer obtenerIdDireccionPorUsuario(Integer idUsuario) throws PersistenciaException;
+    
+     public Paciente obtenerPacientePorNombreUsuario(String nombreUsuario) throws PersistenciaException;
+     
+     public boolean existePaciente(String nombrePaciente) throws PersistenciaException;
+     
+     public int obtenerIdUsuarioPorCorreo(String correoElectronico) throws PersistenciaException;    
+
+    public List<Cita> obtenerCitasProgramadas(Paciente paciente) throws PersistenciaException;
+    
+    public int obtenerIdPacientePorNombre(String nombre, String apellidoPaterno, String apellidoMaterno) throws PersistenciaException;
 
 }

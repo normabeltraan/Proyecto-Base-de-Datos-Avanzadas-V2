@@ -170,6 +170,7 @@ public class GenerarCitaEmergencia extends javax.swing.JFrame {
 
     private void folio() {
         String especialidadSeleccionada = (String) txtEspecialidad.getSelectedItem();
+        System.out.println(especialidadSeleccionada);
         if (especialidadSeleccionada == null || especialidadSeleccionada.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Por favor, selecciona una especialidad", "Error", JOptionPane.ERROR_MESSAGE);
             return;

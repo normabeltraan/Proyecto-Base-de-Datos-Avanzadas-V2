@@ -46,7 +46,7 @@ public class CitaSinCitaDAO implements ICitaSinCitaDAO {
                         String folioEmergencia = rs.getString("folio_emergencia");
                         Timestamp fechaHora = rs.getTimestamp("fecha_hora");
                         int idMedico = rs.getInt("id_usuario_medico");
-                        String especialidadMedico = rs.getString("especialidad");
+                        String especialidad_medico = rs.getString("especialidad");
 
                         MedicoDAO medicoDAO = new MedicoDAO(this.conexion);
                         Medico medico = medicoDAO.obtenerMedicoPorId(idMedico);
@@ -60,7 +60,7 @@ public class CitaSinCitaDAO implements ICitaSinCitaDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new PersistenciaException("Error al agregar la cita de emergencia", e);
+            throw new PersistenciaException("Error al generar la cita de emergencia, el paciente ya tiene cita con le médico en la fecha de la fecha más disponible", e);
         }
 
         return citaSinCita;

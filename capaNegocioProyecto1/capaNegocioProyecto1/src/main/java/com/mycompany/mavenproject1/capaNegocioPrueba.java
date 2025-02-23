@@ -6,11 +6,13 @@ package com.mycompany.mavenproject1;
 import BO.CitaBO;
 import BO.CitaSinCitaBO;
 import BO.MedicoBO;
+import BO.PacienteBO;
 import BO.UsuarioBO;
 import DAO.CitaDAO;
 import DAO.ICitaDAO;
 import DTO.CitaDTO;
 import DTO.CitaSinCitaDTO;
+import DTO.ConsultaDTO;
 import DTO.HorarioDisponibleDTO;
 import DTO.MedicoDTO;
 import DTO.PacienteDTO;
@@ -49,6 +51,9 @@ public class capaNegocioPrueba {
         IConexionBD conexionBD = new ConexionBD();
 //
         MedicoBO medicoBO = new MedicoBO(conexionBD);
+        
+        
+        
 //        CitaBO citaBO = new CitaBO(conexionBD);
 //
 //        try {
@@ -211,48 +216,48 @@ public class capaNegocioPrueba {
 //        }
 
         //Prueba agendar cita de emergencia
-        CitaSinCitaBO citaSinCitaBO = new CitaSinCitaBO(conexionBD);
-        Scanner scanner = new Scanner(System.in);
-
-        try {
-            System.out.println("Introduce el ID del paciente para la cita de emergencia:");
-            int idPaciente = scanner.nextInt();
-
-
-            System.out.println("Selecciona una especialidad para la cita de emergencia:");
-            List<String> especialidades = medicoBO.obtenerEspecialidades();
-            for (int i = 0; i < especialidades.size(); i++) {
-                System.out.println((i + 1) + ". " + especialidades.get(i));
-            }
-
-            int especialidadIndex = scanner.nextInt();
-
-            String especialidadSeleccionada = null;
-
-            if (especialidadIndex > 0 && especialidadIndex <= especialidades.size()) {
-                especialidadSeleccionada = especialidades.get(especialidadIndex - 1);
-                System.out.println("Especialidad seleccionada: " + especialidadSeleccionada);
-            } else {
-                System.out.println("Selección no válida. Por favor, elige un número dentro del rango.");
-            }
-
-            if (especialidadSeleccionada != null) {
-                CitaSinCitaDTO cita = citaSinCitaBO.agendarCitaEmergencia(especialidadSeleccionada, idPaciente);
-
-                if (cita != null) {
-                    System.out.println("Cita de emergencia agendada con éxito para el paciente ID: " + idPaciente);
-                    System.out.println("Folio: " + cita.getFolio_emergencia());
-                    System.out.println("Hora: " + cita.getCita().getFecha_hora());
-                    System.out.println("Médico: " + cita.getCita().getMedico());
-                } else {
-                    System.out.println("Error al agendar la cita de emergencia.");
-                }
-            }
-
-        } catch (Exception e) {
-            System.out.println("Ocurrió un error: " + e.getMessage());
-        } finally {
-            scanner.close();
-        }
+//        CitaSinCitaBO citaSinCitaBO = new CitaSinCitaBO(conexionBD);
+//        Scanner scanner = new Scanner(System.in);
+//
+//        try {
+//            System.out.println("Introduce el ID del paciente para la cita de emergencia:");
+//            int idPaciente = scanner.nextInt();
+//
+//
+//            System.out.println("Selecciona una especialidad para la cita de emergencia:");
+//            List<String> especialidades = medicoBO.obtenerEspecialidades();
+//            for (int i = 0; i < especialidades.size(); i++) {
+//                System.out.println((i + 1) + ". " + especialidades.get(i));
+//            }
+//
+//            int especialidadIndex = scanner.nextInt();
+//
+//            String especialidadSeleccionada = null;
+//
+//            if (especialidadIndex > 0 && especialidadIndex <= especialidades.size()) {
+//                especialidadSeleccionada = especialidades.get(especialidadIndex - 1);
+//                System.out.println("Especialidad seleccionada: " + especialidadSeleccionada);
+//            } else {
+//                System.out.println("Selección no válida. Por favor, elige un número dentro del rango.");
+//            }
+//
+//            if (especialidadSeleccionada != null) {
+//                CitaSinCitaDTO cita = citaSinCitaBO.agendarCitaEmergencia(especialidadSeleccionada, idPaciente);
+//
+//                if (cita != null) {
+//                    System.out.println("Cita de emergencia agendada con éxito para el paciente ID: " + idPaciente);
+//                    System.out.println("Folio: " + cita.getFolio_emergencia());
+//                    System.out.println("Hora: " + cita.getCita().getFecha_hora());
+//                    System.out.println("Médico: " + cita.getCita().getMedico());
+//                } else {
+//                    System.out.println("Error al agendar la cita de emergencia.");
+//                }
+//            }
+//
+//        } catch (Exception e) {
+//            System.out.println("Ocurrió un error: " + e.getMessage());
+//        } finally {
+//            scanner.close();
+//        }
     }
 }

@@ -66,8 +66,8 @@ public class UsuarioBO {
         if (paciente.getFecha_nacimiento() == null) {
             throw new NegocioException("La fecha de nacimiento es obligatoria.");
         }
-        if (paciente.getCorreo_electronico() == null || !paciente.getCorreo_electronico().contains("@")) {
-            throw new NegocioException("El correo electrónico no es válido. Tiene que tener '@' ");
+        if (pacienteDTO.getCorreo_electronico() == null || !pacienteDTO.getCorreo_electronico().contains("@")) {
+            throw new NegocioException("El correo electrónico tiene que tener @.");
         }
         if (usuarioDAO.comprobarExistenciaCorreoElectronico(paciente.getCorreo_electronico())) {
             throw new NegocioException("El correo electrónico ya está registrado.");
@@ -108,7 +108,7 @@ public class UsuarioBO {
             throw new NegocioException("Error al autenticar el usuario: " + e.getMessage(), e);
         }
     }
-    
+
     public String obtenerTipoUsuario(String nombreUsuario) throws PersistenciaException {
         return usuarioDAO.obtenerTipoUsuario(nombreUsuario);
     }
