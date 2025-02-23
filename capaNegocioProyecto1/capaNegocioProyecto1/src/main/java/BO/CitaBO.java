@@ -68,9 +68,12 @@ public class CitaBO {
     }
 
     public boolean cancelarCita(CitaDTO citaDTO) throws NegocioException, PersistenciaException {
-
+        
+        System.out.println(citaDTO);
         Cita cita = mapper.toEntity(citaDTO);
-
+        
+        System.out.println(cita);
+        
         if (!"Activa".equals(cita.getEstado())) {
             logger.log(Level.SEVERE, "Error: Solo se pueden cancelar citas activas.");
             throw new NegocioException("Solo se pueden cancelar citas activas.");

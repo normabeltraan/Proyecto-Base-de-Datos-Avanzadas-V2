@@ -198,47 +198,47 @@ public class CapaPersistenciaProyecto01 {
 //                }
 
                     
-            IMedicoDAO medicoDAO = new MedicoDAO(conexionBD);
-
-            try {
-            // PRUEBA 1: Obtener perfil del médico
-            int idMedico = 1; // Cambia este ID por un ID válido en tu base de datos
-            Medico medico = medicoDAO.obtenerMedicoPorId(idMedico);
-
-            if (medico != null) {
-                System.out.println("=== PERFIL DEL MÉDICO ===");
-                System.out.println("Nombre: " + medico.getNombre());
-                System.out.println("Apellido Paterno: " + medico.getApellido_paterno());
-                System.out.println("Apellido Materno: " + (medico.getApellido_materno() != null ? medico.getApellido_materno() : "No tiene"));
-                System.out.println("Especialidad: " + medico.getEspecialidad());
-                System.out.println("Cédula Profesional: " + medico.getCedula());
-                System.out.println("Horario de Atención: " + medico.getHorarioAtencion());
-                System.out.println("Estado: " + medico.getEstado());
-                System.out.println();
-            } else {
-                System.out.println("No se encontró un médico con el ID proporcionado.");
-            }
-
-            // PRUEBA 2: Consultar agenda del médico
-            Date fechaActual = Date.valueOf(LocalDate.now()); // Fecha actual
-            List<Cita> citas = medicoDAO.consultarAgendaMedico(idMedico, fechaActual);
-
-            System.out.println("=== AGENDA DEL MÉDICO PARA HOY (" + fechaActual + ") ===");
-            if (citas.isEmpty()) {
-                System.out.println("No hay citas agendadas para hoy.");
-            } else {
-                for (Cita cita : citas) {
-                    System.out.println("Hora: " + cita.getHora());
-                    System.out.println("Tipo: " + cita.getTipo());
-                    System.out.println("Estado: " + cita.getEstado());
-                    System.out.println("Paciente: " + cita.getPaciente().getNombre());
-                    System.out.println("------------------------------");
-                }
-            }
-        } catch (PersistenciaException e) {
-            System.err.println("Error en la prueba: " + e.getMessage());
-        }
-        
-    }
-
+//            IMedicoDAO medicoDAO = new MedicoDAO(conexionBD);
+//
+//            try {
+//            // PRUEBA 1: Obtener perfil del médico
+//            int idMedico = 1; // Cambia este ID por un ID válido en tu base de datos
+//            Medico medico = medicoDAO.obtenerMedicoPorId(idMedico);
+//
+//            if (medico != null) {
+//                System.out.println("=== PERFIL DEL MÉDICO ===");
+//                System.out.println("Nombre: " + medico.getNombre());
+//                System.out.println("Apellido Paterno: " + medico.getApellido_paterno());
+//                System.out.println("Apellido Materno: " + (medico.getApellido_materno() != null ? medico.getApellido_materno() : "No tiene"));
+//                System.out.println("Especialidad: " + medico.getEspecialidad());
+//                System.out.println("Cédula Profesional: " + medico.getCedula());
+//                System.out.println("Horario de Atención: " + medico.getHorarioAtencion());
+//                System.out.println("Estado: " + medico.getEstado());
+//                System.out.println();
+//            } else {
+//                System.out.println("No se encontró un médico con el ID proporcionado.");
+//            }
+//
+//            // PRUEBA 2: Consultar agenda del médico
+//            Date fechaActual = Date.valueOf(LocalDate.now()); // Fecha actual
+//            List<Cita> citas = medicoDAO.consultarAgendaMedico(idMedico, fechaActual);
+//
+//            System.out.println("=== AGENDA DEL MÉDICO PARA HOY (" + fechaActual + ") ===");
+//            if (citas.isEmpty()) {
+//                System.out.println("No hay citas agendadas para hoy.");
+//            } else {
+//                for (Cita cita : citas) {
+//                    System.out.println("Hora: " + cita.getHora());
+//                    System.out.println("Tipo: " + cita.getTipo());
+//                    System.out.println("Estado: " + cita.getEstado());
+//                    System.out.println("Paciente: " + cita.getPaciente().getNombre());
+//                    System.out.println("------------------------------");
+//                }
+//            }
+//        } catch (PersistenciaException e) {
+//            System.err.println("Error en la prueba: " + e.getMessage());
+//        }
+//        
+   }
+    
 }

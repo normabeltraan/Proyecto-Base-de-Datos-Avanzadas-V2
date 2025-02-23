@@ -99,10 +99,11 @@ public class PacienteBO {
             throw new NegocioException("La colonia es obligatoria.");
         }
 
-        System.out.println(direccionDTO);
-
-        pacienteDAO.actualizarDireccionPorUsuario(mapper_direccion.toEntity(direccionDTO), idUsuario);
-
+        try {
+            pacienteDAO.actualizarDireccionPorUsuario(mapper_direccion.toEntity(direccionDTO), idUsuario);
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error: " + e.getMessage());
+        }
         return pacienteDAO.actualizarDatosPaciente(
                 idUsuario,
                 pacienteDTO.getNombre(),
@@ -143,44 +144,42 @@ public class PacienteBO {
             throw new NegocioException("Error al obtener el historial de consultas.", ex);
         }
     }
-    
-    public List<CitaDTO> obtenerCitasProgramadas(PacienteDTO pacienteDTO) throws NegocioException{
-        try{
-            
-            if(pacienteDTO == null){
+
+    public List<CitaDTO> obtenerCitasProgramadas(PacienteDTO pacienteDTO) throws NegocioException {
+        try {
+
+            if (pacienteDTO == null) {
                 throw new NegocioException("El paciente no puede ser nulo.");
             }
-            
-            if (pacienteDTO.getUsuario() == null){
+
+            if (pacienteDTO.getUsuario() == null) {
                 throw new NegocioException("El paciente no tiene usuario valido");
             }
             Paciente paciente = mapper_paciente.toEntity(pacienteDTO);
-            
+
             int idPaciente = pacienteDAO.obtenerIdPacientePorNombre(
                     paciente.getNombre(),
                     paciente.getApellido_paterno(),
                     paciente.getApellido_materno()
             );
-            
-            if (idPaciente == -1){
+
+            if (idPaciente == -1) {
                 throw new NegocioException("No se encontro el paciente.");
             }
-            if (paciente.getUsuario() == null){
+            if (paciente.getUsuario() == null) {
                 throw new NegocioException("El paciente no tiene usuario");
             }
-            
+
             paciente.getUsuario().setId_usuario(idPaciente);
             List<Cita> citas = pacienteDAO.obtenerCitasProgramadas(paciente);
             List<CitaDTO> citasDTO = mapper_cita.toDTOList(citas);
 
-        
-        return citasDTO;
-            
-        }
-        catch (PersistenciaException ex){
+            return citasDTO;
+
+        } catch (PersistenciaException ex) {
             throw new NegocioException("Error al obtener citas programadas.");
         }
-        
+
     }
 
 }

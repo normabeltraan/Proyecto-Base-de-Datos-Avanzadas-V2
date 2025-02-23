@@ -77,6 +77,7 @@ public class CitaDAO implements ICitaDAO {
 
     @Override
     public boolean cancelarCita(Cita cita) throws PersistenciaException {
+        
         String consultaSQL = "CALL CANCELAR_CITA(?)";
 
         try (Connection con = this.conexion.crearConexion(); CallableStatement cb = con.prepareCall(consultaSQL)) {

@@ -272,33 +272,14 @@ public class ActualizarDatos extends javax.swing.JFrame {
 
     private void actualizarDatos() {
         try {
-            //
-            paciente.setNombre(txtNombre.getText());
-            paciente.setApellido_paterno(txtApellidoP.getText());
-            paciente.setApellido_materno(txtApellidoM.getText());
-            String fechaNacimiento = txtFechaNacimiento.getText();
-            LocalDate fecha;
-            try {
-                fecha = LocalDate.parse(fechaNacimiento);
-            } catch (DateTimeParseException e) {
-                JOptionPane.showMessageDialog(this, "Por favor, ingrese la fecha en formato correcto (yyyy-mm-dd).", "Error de fecha", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            paciente.setFecha_nacimiento(fecha);
-
-            paciente.getDireccion().setColonia(txtColonia.getText());
-            paciente.getDireccion().setCiudad(txtCiudad.getText());
-            paciente.getDireccion().setCalle(txtCalle.getText());
-
-            paciente.setTelefono(txtTelefono.getText());
-            paciente.setCorreo_electronico(txtCorreo.getText());
-            //
-
             PacienteDTO pacienteDTO = new PacienteDTO();
             pacienteDTO.setNombre(txtNombre.getText());
             pacienteDTO.setApellido_paterno(txtApellidoP.getText());
             pacienteDTO.setApellido_materno(txtApellidoM.getText());
             pacienteDTO.setTelefono(txtTelefono.getText());
+
+            String fechaNacimiento = txtFechaNacimiento.getText();
+            LocalDate fecha;
             try {
                 fecha = LocalDate.parse(fechaNacimiento);
             } catch (DateTimeParseException e) {
@@ -314,18 +295,32 @@ public class ActualizarDatos extends javax.swing.JFrame {
             direccionDTO.setCalle(txtCalle.getText());
 
             UsuarioDTO usuarioDTO = paciente.getUsuario();
-            try {
-                if (pacienteBO.actualizarDatosPaciente(usuarioDTO, pacienteDTO, direccionDTO)) {
-                    JOptionPane.showMessageDialog(this, "Datos actualizados correctamente.");
-                    cargarDatosPaciente();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Hubo un error al actualizar los datos.");
-                }
-            } catch (NegocioException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error de validación", JOptionPane.ERROR_MESSAGE);
+
+            if (pacienteBO.actualizarDatosPaciente(usuarioDTO, pacienteDTO, direccionDTO)) {
+                JOptionPane.showMessageDialog(this, "Datos actualizados correctamente.");
+
+                paciente.setNombre(pacienteDTO.getNombre());
+                paciente.setApellido_paterno(pacienteDTO.getApellido_paterno());
+                paciente.setApellido_materno(pacienteDTO.getApellido_materno());
+                paciente.setTelefono(pacienteDTO.getTelefono());
+                paciente.setFecha_nacimiento(pacienteDTO.getFecha_nacimiento());
+                paciente.setCorreo_electronico(pacienteDTO.getCorreo_electronico());
+
+                paciente.getDireccion().setColonia(direccionDTO.getColonia());
+                paciente.getDireccion().setCiudad(direccionDTO.getCiudad());
+                paciente.getDireccion().setCalle(direccionDTO.getCalle());
+
+                cargarDatosPaciente();
+            } else {
+                JOptionPane.showMessageDialog(this, "Hubo un error al actualizar los datos.");
+                cargarDatosPaciente();
             }
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error de validación", JOptionPane.ERROR_MESSAGE);
+            cargarDatosPaciente();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+            cargarDatosPaciente();
         }
     }
 

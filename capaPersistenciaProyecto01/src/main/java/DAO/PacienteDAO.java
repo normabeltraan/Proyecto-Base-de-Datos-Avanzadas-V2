@@ -153,13 +153,13 @@ public class PacienteDAO implements IPacienteDAO {
         List<Cita> citasProgramadas = new ArrayList<>();
 
         String consultaSQL
-                = "SELECT CI.FECHA_HORA, MED.ESPECIALIDAD, "
-                + "CONCAT(MED.NOMBRE, ' ', MED.APELLIDO_PATERNO, ' ', IFNULL(MED.APELLIDO_MATERNO, '')) AS NOMBRE_COMPLETO_MEDICO "
-                + "FROM CITAS CI "
-                + "JOIN MEDICOS MED ON CI.ID_USUARIO_MEDICO = MED.ID_USUARIO "
-                + "WHERE CI.ID_USUARIO_PACIENTE = ? "
-                + "AND CI.ESTADO = 'ACTIVA' "
-                + "ORDER BY CI.FECHA_HORA ASC";
+                = "SELECT ci.id_cita, ci.fecha_hora, ci.estado, me.especialidad, "
+                + "CONCAT(me.nombre, ' ', me.apellido_paterno, ' ', IFNULL(me.apellido_materno, '')) as nombre_completo_medico "
+                + "FROM CITAS ci "
+                + "JOIN MEDICOS me on ci.id_usuario_medico = me.id_usuario "
+                + "WHERE ci.id_usuario_paciente = ? "
+                + "AND ci.estado = 'ACTIVA' "
+                + "ORDER BY ci.fecha_hora asc";
 
         try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
 
@@ -168,17 +168,18 @@ public class PacienteDAO implements IPacienteDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Medico medico = new Medico();
-                    medico.setNombre(rs.getString("NOMBRE_COMPLETO_MEDICO"));
-                    medico.setEspecialidad(rs.getString("ESPECIALIDAD"));
+                    medico.setNombre(rs.getString("nombre_completo_medico"));
+                    medico.setEspecialidad(rs.getString("especialidad"));
 
                     Cita cita = new Cita();
-                    cita.setFecha_hora(rs.getTimestamp("FECHA_HORA"));
+                    cita.setId_cita(rs.getInt("id_cita"));
+                    cita.setFecha_hora(rs.getTimestamp("fecha_hora"));
+                    cita.setEstado(rs.getString("estado"));
                     cita.setMedico(medico);
                     cita.setPaciente(paciente);
 
                     citasProgramadas.add(cita);
                 }
-
             }
 
         } catch (SQLException ex) {
@@ -218,6 +219,20 @@ public class PacienteDAO implements IPacienteDAO {
 
     @Override
     public boolean actualizarDireccionPorUsuario(Direccion direccion, Integer idUsuario) throws PersistenciaException {
+        String consultacitasSQL = "SELECT COUNT(*) FROM CITAS WHERE id_usuario_paciente = ? AND estado = 'Activa'";
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement psCitas = con.prepareStatement(consultacitasSQL)) {
+
+            psCitas.setInt(1, idUsuario);
+            ResultSet rs = psCitas.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                throw new PersistenciaException("El paciente tiene citas activas y no puede actualizar sus datos.");
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error al verificar citas activas", e);
+            throw new PersistenciaException("Error al verificar citas activas", e);
+        }
+
         Integer idDireccion = obtenerIdDireccionPorUsuario(idUsuario);
         if (idDireccion == null) {
             throw new PersistenciaException("No se encontró dirección asociada al usuario.");
@@ -226,7 +241,6 @@ public class PacienteDAO implements IPacienteDAO {
         String consultaSQL = "UPDATE direcciones SET colonia = ?, ciudad = ?, calle = ? WHERE id_direccion = ?";
 
         try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
-
             ps.setString(1, direccion.getColonia());
             ps.setString(2, direccion.getCiudad());
             ps.setString(3, direccion.getCalle());

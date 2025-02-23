@@ -3,6 +3,7 @@ GUI\ActualizarDatos$4.class
 GUI\GenerarCitaEmergencia$2.class
 GUI\PerfilMedico$4.class
 GUI\AtenderConsulta$1.class
+GUI\VerCancelarCitasProgramadas$2.class
 GUI\AgendarCita$3.class
 GUI\HistorialConsultas$2.class
 GUI\Inicio.class
