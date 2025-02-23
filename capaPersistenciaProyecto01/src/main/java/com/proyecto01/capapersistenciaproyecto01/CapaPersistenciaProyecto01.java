@@ -70,7 +70,8 @@ public class CapaPersistenciaProyecto01 {
         **/
         
         
-        // PROBANDO METODO OBTENER HISTORIAL DE CONSULTAS DE UN PACIENTE POR SU ID
+        /**
+        // PROBANDO METODO OBTENER HISTORIAL DE CONSULTAS DE UN PACIENTE
         try {
             IConexionBD conexion = new ConexionBD(); 
             PacienteDAO pacienteDAO = new PacienteDAO(conexion);
@@ -93,12 +94,34 @@ public class CapaPersistenciaProyecto01 {
                 System.out.println("-----------------------------------");
                
             }
-            //* **/
+            
         } catch (PersistenciaException e) {
             System.err.println("Error al obtener el historial: " + e.getMessage());
         }
+        **/
         
-        
+        // MÉTODO PARA CITAS PROGRAMADAS
+        try {
+            IConexionBD conexion = new ConexionBD(); 
+            PacienteDAO pacienteDAO = new PacienteDAO(conexion);
+            
+            Usuario usuarioPac = new Usuario();
+            usuarioPac.setId_usuario(1);
+            
+            Paciente paciente = new Paciente();
+            paciente.setUsuario(usuarioPac);
+            
+            List<Cita> proximas = pacienteDAO.obtenerCitasProgramadas(paciente);
+            
+            for (Cita cita : proximas) {
+                System.out.println("Fecha y hora: " + cita.getFecha_hora());
+                System.out.println("Especialidad: " + cita.getMedico().getEspecialidad());
+                System.out.println("Médico: " + cita.getMedico().getNombre());
+                System.out.println("-----------------------------------");
+            }
+        } catch(PersistenciaException ex){
+            System.err.println("Error al obtener citas proximas: " + ex.getMessage());
+        }
     
     }
         
