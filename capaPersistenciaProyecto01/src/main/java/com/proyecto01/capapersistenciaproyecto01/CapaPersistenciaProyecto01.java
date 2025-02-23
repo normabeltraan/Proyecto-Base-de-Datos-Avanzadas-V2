@@ -242,6 +242,47 @@ public class CapaPersistenciaProyecto01 {
 //            System.err.println("Error en la prueba: " + e.getMessage());
 //        }
         
-    }
 
+            //        MedicoDAO medicoDAO = new MedicoDAO(conexionBD);
+//
+//        // 1. Probar obtener perfil médico
+//        try {
+//            int idMedico = 1; // Asegúrate de tener un id válido
+//            Medico medico = medicoDAO.obtenerPerfilMedico(idMedico);
+//
+//            if (medico != null) {
+//                System.out.println("Perfil médico:");
+//                System.out.println("Nombre: " + medico.getNombre() + " " + medico.getApellido_paterno() + " " + medico.getApellido_materno());
+//                System.out.println("Especialidad: " + medico.getEspecialidad());
+//                System.out.println("Cédula: " + medico.getCedula());
+//                System.out.println("Estado: " + medico.getEstado());
+//            } else {
+//                System.out.println("No se encontró el perfil del médico con el ID proporcionado.");
+//            }
+//        } catch (PersistenciaException e) {
+//            System.err.println("Error al obtener el perfil médico: " + e.getMessage());
+//        }
+
+
+        // Probar consultar agenda del médico
+        try {
+            // ID del médico y la fecha para la consulta
+            int idMedico = 1;  // Cambia esto con un ID de médico válido
+            Date fechaConsulta = Date.valueOf("2025-02-22");  // Fecha en formato YYYY-MM-DD
+
+            Horario horario = medicoDAO.consultarAgendaMedico(idMedico, fechaConsulta);
+
+            if (horario != null) {
+                System.out.println("Horario de atención del médico:");
+                System.out.println("Entrada: " + horario.getHora_entrada());
+                System.out.println("Salida: " + horario.getHora_salida());
+            } else {
+                System.out.println("No se encontró el horario de atención del médico.");
+            }
+
+        } catch (PersistenciaException e) {
+            System.out.println("Error al consultar la agenda del médico: " + e.getMessage());
+        }         
+    }
 }
+
