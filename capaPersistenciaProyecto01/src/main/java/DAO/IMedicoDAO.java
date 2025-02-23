@@ -32,5 +32,5 @@ public interface IMedicoDAO {
     public boolean medicoCitasActivas(int idMedico) throws SQLException, PersistenciaException;
 
     public boolean actualizarEstadoMedico(int idMedico, String nuevoEstado) throws SQLException, PersistenciaException;
-    
+
 }

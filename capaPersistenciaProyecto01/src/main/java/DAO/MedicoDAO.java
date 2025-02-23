@@ -4,21 +4,19 @@
  */
 package DAO;
 
-import static com.mysql.cj.conf.PropertyKey.logger;
 import conexion.IConexionBD;
-import conexion.ConexionBD;
 import entidades.Medico;
+import entidades.Paciente;
 import entidades.Cita;
 import entidades.Usuario;
 import excepciones.PersistenciaException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -185,6 +183,7 @@ public class MedicoDAO implements IMedicoDAO {
         return null;
     }
 
+
     @Override
     public List<Cita> consultarAgendaMedico(int idMedico) throws PersistenciaException {
 //        List<Cita> citas = new ArrayList<>();
@@ -234,6 +233,7 @@ public class MedicoDAO implements IMedicoDAO {
 //        return citas; 
         return null;
     }
+
 
     @Override
     public Medico obtenerMedicoPorNombreUsuario(String nombreUsuario) throws PersistenciaException {
