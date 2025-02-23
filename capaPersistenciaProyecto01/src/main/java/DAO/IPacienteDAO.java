@@ -39,5 +39,7 @@ public interface IPacienteDAO {
      public int obtenerIdUsuarioPorCorreo(String correoElectronico) throws PersistenciaException;    
 
     public List<Cita> obtenerCitasProgramadas(Paciente paciente) throws PersistenciaException;
+    
+    public int obtenerIdPacientePorNombre(String nombre, String apellidoPaterno, String apellidoMaterno) throws PersistenciaException;
 
 }
