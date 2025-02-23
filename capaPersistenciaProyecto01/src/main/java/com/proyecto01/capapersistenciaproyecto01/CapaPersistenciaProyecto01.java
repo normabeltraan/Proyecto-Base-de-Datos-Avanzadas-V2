@@ -4,28 +4,20 @@
 package com.proyecto01.capapersistenciaproyecto01;
 
 import DAO.CitaDAO;
-import DAO.CitaSinCitaDAO;
+import DAO.ICitaDAO;
 import DAO.MedicoDAO;
-import DAO.PacienteDAO;
 import DAO.IMedicoDAO;
 import conexion.ConexionBD;
 import conexion.IConexionBD;
 import entidades.Cita;
-import entidades.CitaSinCita;
-import entidades.Consulta;
-import entidades.Direccion;
+import entidades.Horario;
 import entidades.Medico;
-import entidades.Paciente;
-import entidades.Usuario;
 import excepciones.PersistenciaException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -146,11 +138,12 @@ public class CapaPersistenciaProyecto01 {
 
                     
             IMedicoDAO medicoDAO = new MedicoDAO(conexionBD);
+            ICitaDAO citaDAO = new CitaDAO(conexionBD);
 
             try {
             // PRUEBA 1: Obtener perfil del médico
-            int idMedico = 1; // Cambia este ID por un ID válido en tu base de datos
-            Medico medico = medicoDAO.obtenerMedicoPorId(idMedico);
+            int idMedico = 1; // Cambia este ID por uno válido en tu BD
+            Medico medico = medicoDAO.obtenerPerfilMedico(idMedico);
 
             if (medico != null) {
                 System.out.println("=== PERFIL DEL MÉDICO ===");
@@ -159,15 +152,25 @@ public class CapaPersistenciaProyecto01 {
                 System.out.println("Apellido Materno: " + (medico.getApellido_materno() != null ? medico.getApellido_materno() : "No tiene"));
                 System.out.println("Especialidad: " + medico.getEspecialidad());
                 System.out.println("Cédula Profesional: " + medico.getCedula());
-                System.out.println("Horario de Atención: " + medico.getHorarioAtencion());
                 System.out.println("Estado: " + medico.getEstado());
+
+                // Obtener horario de atención desde HORARIOS
+                Date fecha = Date.valueOf(LocalDate.now());
+                Medico medico = medicoDAO.consultarAgendaMedico(idMedico, fecha);
+
+                if (horario != null) {
+                    String horarioAtencion = horario.getHora_entrada() + " - " + horario.getHora_salida();
+                    System.out.println("Horario de Atención: " + horarioAtencion);
+                } else {
+                    System.out.println("Horario de Atención: No disponible");
+                }
                 System.out.println();
             } else {
                 System.out.println("No se encontró un médico con el ID proporcionado.");
             }
 
             // PRUEBA 2: Consultar agenda del médico
-            Date fechaActual = Date.valueOf(LocalDate.now()); // Fecha actual
+            Date fechaActual = Date.valueOf(LocalDate.now());
             List<Cita> citas = medicoDAO.consultarAgendaMedico(idMedico, fechaActual);
 
             System.out.println("=== AGENDA DEL MÉDICO PARA HOY (" + fechaActual + ") ===");
@@ -175,7 +178,7 @@ public class CapaPersistenciaProyecto01 {
                 System.out.println("No hay citas agendadas para hoy.");
             } else {
                 for (Cita cita : citas) {
-                    System.out.println("Hora: " + cita.getHora());
+                    System.out.println("Hora: " + cita.getFecha_hora());
                     System.out.println("Tipo: " + cita.getTipo());
                     System.out.println("Estado: " + cita.getEstado());
                     System.out.println("Paciente: " + cita.getPaciente().getNombre());
