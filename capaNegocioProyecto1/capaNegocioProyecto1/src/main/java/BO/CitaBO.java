@@ -30,6 +30,7 @@ import java.util.logging.Logger;
  * @author Maximiliano
  */
 public class CitaBO {
+    //aaaaaaaa
 
     private static final Logger logger = Logger.getLogger(CitaBO.class.getName());
     private final ICitaDAO citaDAO;
