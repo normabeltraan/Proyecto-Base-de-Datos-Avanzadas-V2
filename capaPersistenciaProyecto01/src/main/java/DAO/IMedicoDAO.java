@@ -34,8 +34,8 @@ public interface IMedicoDAO {
 
     public boolean actualizarEstadoMedico(int idMedico, String nuevoEstado) throws SQLException, PersistenciaException;
     
-    //public List<Cita> consultarAgendaMedico(int idMedico) throws PersistenciaException;
+    public List<Cita> consultarAgendaMedico(int idMedico) throws PersistenciaException;
     
-    public Horario consultarAgendaMedico(int id_medico, Date fecha) throws PersistenciaException;
+    //public Horario consultarAgendaMedico(int id_medico) throws PersistenciaException;
 
 }

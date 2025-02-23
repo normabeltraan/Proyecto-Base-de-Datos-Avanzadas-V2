@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import entidades.Horario;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.logging.Level;
 
 /**
  *
@@ -299,69 +302,39 @@ public class MedicoDAO implements IMedicoDAO {
     //}
     
     @Override
-    public Horario consultarAgendaMedico(int id_medico, Date fecha) throws PersistenciaException {
-    // Consulta SQL para obtener el horario de atención del médico
-    String consultaHorario = "SELECT hora_entrada, hora_salida FROM HORARIOS WHERE id_usuario_medico = ? AND dia = DAYOFWEEK(?)";
-
-    // Consulta SQL para obtener las citas del médico en la fecha actual
-    String consultaCitas = """
-        SELECT c.id_cita, TIME(c.fecha_hora) AS hora, c.tipo, c.estado, 
-               CONCAT(p.nombre, ' ', p.apellido_paterno, IFNULL(CONCAT(' ', p.apellido_materno), '')) AS nombre_completo
-        FROM CITAS c
-        JOIN PACIENTES p ON c.id_usuario_paciente = p.id_usuario
-        WHERE c.id_usuario_medico = ? AND DATE(c.fecha_hora) = ?
-        ORDER BY c.fecha_hora;
-    """;
-
-    Horario horario = null;
-    List<String> citas = new ArrayList<>();  // Lista de citas representadas como String para evitar agregar Cita a Horario
-
-    try (Connection con = this.conexion.crearConexion()) {
-        // Obtener el horario de atención del médico
-        try (PreparedStatement psHorario = con.prepareStatement(consultaHorario)) {
-            psHorario.setInt(1, id_medico);
-            psHorario.setDate(2, fecha);
-            ResultSet rsHorario = psHorario.executeQuery();
-
-            if (rsHorario.next()) {
-                horario = new Horario();
-                horario.setHora_entrada(rsHorario.getTime("hora_entrada"));
-                horario.setHora_salida(rsHorario.getTime("hora_salida"));
+    public List <Cita> consultarAgendaMedico(int id_medico) throws PersistenciaException {
+        List<Cita> citasDia = new ArrayList<>();
+        String consultaSQL = "SELECT DATE_FORMAT(c.fecha_hora, '%H:%i') AS hora,  "
+            + "CONCAT(p.nombre, ' ', p.apellido_paterno, IFNULL(CONCAT(' ', p.apellido_materno),'')) AS paciente " 
+            + "FROM CITAS c JOIN PACIENTES p ON c.id_usuario_paciente = p.id_usuario " 
+            + "WHERE c.id_usuario_medico = ? AND DATE(c.fecha_hora) = CURDATE() " 
+            + "ORDER BY c.fecha_hora";
+        
+        try(Connection con = this.conexion.crearConexion();
+                PreparedStatement ps = con.prepareStatement(consultaSQL)){
+            
+            ps.setInt(1, id_medico);
+            
+            try(ResultSet rs = ps.executeQuery()){
+                while (rs.next()){
+                    Cita cita = new Cita();
+                    String horaStr = rs.getString("hora");
+                    Timestamp horaTimestamp = Timestamp.valueOf("1970-01-01 " + horaStr + ":00");
+                    
+                    cita.setFecha_hora(horaTimestamp);
+                    Paciente paciente = new Paciente();
+                    paciente.setNombre(rs.getString("paciente"));
+                    cita.setPaciente(paciente);
+                    
+                    citasDia.add(cita);
+                }
             }
+        } catch (SQLException ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Error al consultar la agenda del médico", ex);
+            throw new PersistenciaException("Error al consultar la agenda del médico.", ex);
         }
-
-        // Obtener las citas del médico en la fecha especificada
-        try (PreparedStatement psCitas = con.prepareStatement(consultaCitas)) {
-            psCitas.setInt(1, id_medico);
-            psCitas.setDate(2, fecha);
-            ResultSet rsCitas = psCitas.executeQuery();
-
-            while (rsCitas.next()) {
-                // Crear la representación de la cita como String para no agregar Cita al horario
-                String cita = "Cita ID: " + rsCitas.getInt("id_cita") +
-                              ", Hora: " + rsCitas.getTime("hora") +
-                              ", Tipo: " + rsCitas.getString("tipo") +
-                              ", Estado: " + rsCitas.getString("estado") +
-                              ", Paciente: " + rsCitas.getString("nombre_completo");
-                citas.add(cita);
-            }
-        }
-    } catch (SQLException e) {
-        logger.severe("Error al consultar la agenda del médico: " + e.getMessage());
-        throw new PersistenciaException("Error al consultar la agenda del médico", e);
+        return citasDia;
     }
-
-    // Aquí no estamos asignando citas al Horario, sino que solo devolvemos las citas como lista
-    if (horario != null) {
-        System.out.println("Horario de atención: " + horario.getHora_entrada() + " - " + horario.getHora_salida());
-        System.out.println("Citas programadas:");
-        for (String cita : citas) {
-            System.out.println(cita);
-        }
-    }
-
-    return horario;  // Solo retornamos el horario, no las citas
-}
 
 //    @Override
 //    public List<Cita> consultarAgendaMedico(int idMedico) throws PersistenciaException {

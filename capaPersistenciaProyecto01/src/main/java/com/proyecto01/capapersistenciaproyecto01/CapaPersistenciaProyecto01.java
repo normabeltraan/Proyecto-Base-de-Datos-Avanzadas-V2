@@ -16,6 +16,7 @@ import excepciones.PersistenciaException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -265,24 +266,18 @@ public class CapaPersistenciaProyecto01 {
 
 
         // Probar consultar agenda del médico
-        try {
-            // ID del médico y la fecha para la consulta
-            int idMedico = 1;  // Cambia esto con un ID de médico válido
-            Date fechaConsulta = Date.valueOf("2025-02-22");  // Fecha en formato YYYY-MM-DD
-
-            Horario horario = medicoDAO.consultarAgendaMedico(idMedico, fechaConsulta);
-
-            if (horario != null) {
-                System.out.println("Horario de atención del médico:");
-                System.out.println("Entrada: " + horario.getHora_entrada());
-                System.out.println("Salida: " + horario.getHora_salida());
-            } else {
-                System.out.println("No se encontró el horario de atención del médico.");
+        try{
+            int idMedico = 3;
+            List<Cita> citas = medicoDAO.consultarAgendaMedico(idMedico);
+            System.out.println("Citas de hoy: ");
+            for (Cita cita : citas){
+                SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
+                String horaFormateada = formatoHora.format(cita.getFecha_hora());
+                System.out.println("Hora: " + horaFormateada + ", Paciente: " + cita.getPaciente().getNombre());
             }
-
-        } catch (PersistenciaException e) {
-            System.out.println("Error al consultar la agenda del médico: " + e.getMessage());
-        }         
+        }    catch(PersistenciaException e)     {
+            System.err.println("Error al consultar la agenda: " + e.getMessage());
+        }
     }
 }
 
