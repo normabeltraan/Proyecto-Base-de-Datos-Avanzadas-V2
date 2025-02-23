@@ -89,4 +89,75 @@ public class ConsultaDAO implements IConsultaDAO {
 
         return consultas;
     }
+    
+         @Override
+    public boolean atenderCitaProgramada(int idCita, int idUsuarioMedico) throws PersistenciaException {
+        String query = "SELECT estado, id_usuario_medico FROM CITAS WHERE id_cita = ?";
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setInt(1, idCita);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String estado = rs.getString("estado");
+                int medicoId = rs.getInt("id_usuario_medico");
+
+                // Validar que la cita esté activa y que el médico sea el correcto
+                if (!estado.equals("Activa")) {
+                    throw new PersistenciaException("La cita no está activa o ya ha sido atendida.");
+                }
+                if (medicoId != idUsuarioMedico) {
+                    throw new PersistenciaException("El médico asignado no es el que está intentando atender la cita.");
+                }
+
+                // Actualizar el estado de la cita a 'Atendida'
+                String updateQuery = "UPDATE CITAS SET estado = 'Atendida' WHERE id_cita = ?";
+                try (Connection conNuevo = this.conexion.crearConexion(); PreparedStatement updatePS = conNuevo.prepareStatement(updateQuery)) {
+                    updatePS.setInt(1, idCita);
+                    int rowsAffected = updatePS.executeUpdate();
+                    return rowsAffected > 0;
+                }
+            } else {
+                throw new PersistenciaException("Cita no encontrada.");
+            }
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al atender la cita programada.", e);
+        }
+    }
+
+    @Override
+    public boolean atenderCitaEmergencia(int idCita, int idUsuarioMedico, String folioEmergencia) throws PersistenciaException {
+        String query = "SELECT estado, id_usuario_medico FROM CITAS c " +
+                       "JOIN CITAS_SINCITA cs ON c.id_cita = cs.id_cita " +
+                       "WHERE c.id_cita = ? AND cs.folio_emergencia = ?";
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setInt(1, idCita);
+            ps.setString(2, folioEmergencia);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String estado = rs.getString("estado");
+                int medicoId = rs.getInt("id_usuario_medico");
+
+                // Validar que la cita de emergencia esté activa y que el médico sea el correcto
+                if (!estado.equals("Activa")) {
+                    throw new PersistenciaException("La cita de emergencia no está activa o ya ha sido atendida.");
+                }
+                if (medicoId != idUsuarioMedico) {
+                    throw new PersistenciaException("El médico asignado no es el que está intentando atender la cita de emergencia.");
+                }
+
+                // Actualizar el estado de la cita a 'Atendida'
+                String updateQuery = "UPDATE CITAS SET estado = 'Atendida' WHERE id_cita = ?";
+                try (Connection conNuevo = this.conexion.crearConexion(); PreparedStatement updatePS = conNuevo.prepareStatement(updateQuery)) {
+                    updatePS.setInt(1, idCita);
+                    int rowsAffected = updatePS.executeUpdate();
+                    return rowsAffected > 0;
+                }
+            } else {
+                throw new PersistenciaException("Cita de emergencia no encontrada o el folio es incorrecto.");
+            }
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al atender la cita de emergencia.", e);
+        }
+    }
 }
