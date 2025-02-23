@@ -193,9 +193,6 @@ public class IniciarSesion extends javax.swing.JFrame {
 
                     new PerfilPaciente(pacienteDTO).setVisible(true);
                     
-                    System.out.println(pacienteDTO.getDireccion().getCalle());
-                    System.out.println(pacienteDTO.getDireccion().getId_direccion());
-                    
                     this.dispose();
                 } else if ("medico".equals(tipoUsuario)) {
                     JOptionPane.showMessageDialog(this, "Bienvenido, " + usuarioDTO.getNombre_usuario(),

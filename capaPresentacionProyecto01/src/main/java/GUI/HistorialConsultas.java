@@ -4,25 +4,33 @@
  */
 package GUI;
 
-import BO.PacienteBO;
+import BO.ConsultaBO;
+import BO.MedicoBO;
 import Configuracion.DependencyInjector;
+import DTO.ConsultaDTO;
 import DTO.PacienteDTO;
+import excepciones.PersistenciaException;
+import java.util.Date;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author norma
  */
 public class HistorialConsultas extends javax.swing.JFrame {
-    
+
     private PacienteDTO paciente;
-    private PacienteBO pacienteBO = DependencyInjector.crearPacienteBO();
-     
+    private ConsultaBO consultaBO = DependencyInjector.crearConsultaBO();
+    private MedicoBO medicoBO = DependencyInjector.crearMedicoBO();
+
     /**
      * Creates new form HistorialConsultas
      */
     public HistorialConsultas(PacienteDTO pacienteDTO) {
         this.paciente = pacienteDTO;
         initComponents();
+        cargarEspecialidades();
     }
 
     /**
@@ -46,6 +54,7 @@ public class HistorialConsultas extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         btnCancelar = new javax.swing.JButton();
+        btnBuscar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -65,13 +74,13 @@ public class HistorialConsultas extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Fecha y hora", "Especialidad", "Médico", "Diagnóstico", "Tratamiento"
+                "Fecha y hora", ",Médico", "Diagnóstico", "Tratamiento"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -83,28 +92,40 @@ public class HistorialConsultas extends javax.swing.JFrame {
             }
         });
 
+        btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(39, 39, 39)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtEspecialidad, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(39, 39, 39)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtEspecialidad, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtFechaInicio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtFechaFin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtFechaInicio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtFechaFin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(90, 90, 90)
+                        .addComponent(btnBuscar)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30))
@@ -136,7 +157,9 @@ public class HistorialConsultas extends javax.swing.JFrame {
                         .addGap(28, 28, 28)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel6)
-                            .addComponent(txtFechaFin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(txtFechaFin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(27, 27, 27)
+                        .addComponent(btnBuscar))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(12, 12, 12)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -153,8 +176,13 @@ public class HistorialConsultas extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_btnCancelarActionPerformed
 
- 
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        cargarHistorialConsultas();
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -168,4 +196,45 @@ public class HistorialConsultas extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser txtFechaFin;
     private com.toedter.calendar.JDateChooser txtFechaInicio;
     // End of variables declaration//GEN-END:variables
+
+    private void cargarEspecialidades() {
+        List<String> especialidades = medicoBO.obtenerEspecialidades();
+        if (especialidades != null) {
+            txtEspecialidad.removeAllItems();
+            for (String especialidad : especialidades) {
+                txtEspecialidad.addItem(especialidad);
+            }
+        }
+    }
+    
+    private void cargarHistorialConsultas() {
+        try {
+            String nombrePaciente = paciente.getNombre() + " " + paciente.getApellido_paterno() + " " + paciente.getApellido_materno();
+            String especialidad = (String) txtEspecialidad.getSelectedItem();
+            Date fechaInicio = txtFechaInicio.getDate();
+            Date fechaFin = txtFechaFin.getDate();
+            java.sql.Date sqlFechaInicio = new java.sql.Date(fechaInicio.getTime());
+            java.sql.Date sqlFechaFin = new java.sql.Date(fechaFin.getTime());
+
+            List<ConsultaDTO> consultas = consultaBO.obtenerHistorialConsultas(nombrePaciente, especialidad, sqlFechaInicio, sqlFechaFin);
+            actualizarTabla(consultas);
+
+        } catch (PersistenciaException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void actualizarTabla(List<ConsultaDTO> consultas) {
+        DefaultTableModel tabla = (DefaultTableModel) jTable1.getModel();
+        tabla.setRowCount(0);
+
+        for (ConsultaDTO consulta : consultas) {
+            tabla.addRow(new Object[]{
+                consulta.getCita().getFecha_hora(),
+                consulta.getCita().getMedico().getNombre(),
+                consulta.getDiagnostico(),
+                consulta.getTratamiento()
+            });
+        }
+    }
 }

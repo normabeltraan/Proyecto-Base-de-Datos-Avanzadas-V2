@@ -160,8 +160,8 @@ public class PerfilPaciente extends javax.swing.JFrame {
     }//GEN-LAST:event_btnGenerarCitaEmergenciaActionPerformed
 
     private void btnHistorialConsultasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistorialConsultasActionPerformed
-//        new HistorialConsultas().setVisible(true);
-//        this.setVisible(false);
+        new HistorialConsultas(paciente).setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btnHistorialConsultasActionPerformed
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed

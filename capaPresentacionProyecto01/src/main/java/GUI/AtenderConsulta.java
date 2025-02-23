@@ -4,16 +4,21 @@
  */
 package GUI;
 
+import DTO.MedicoDTO;
+
 /**
  *
  * @author norma
  */
 public class AtenderConsulta extends javax.swing.JFrame {
-
+    
+    private MedicoDTO medico;
+    
     /**
      * Creates new form AtenderConsulta
      */
-    public AtenderConsulta() {
+    public AtenderConsulta(MedicoDTO medicoDTO) {
+        this.medico = medicoDTO;
         initComponents();
     }
 
@@ -122,7 +127,7 @@ public class AtenderConsulta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        new ConsultarAgenda().setVisible(true);
+        new ConsultarAgenda(medico).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnCancelarActionPerformed
 

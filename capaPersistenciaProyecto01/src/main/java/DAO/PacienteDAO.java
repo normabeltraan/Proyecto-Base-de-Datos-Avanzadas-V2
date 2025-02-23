@@ -19,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,31 +83,33 @@ public class PacienteDAO implements IPacienteDAO {
     }
 
     @Override
-    public List<Consulta> obtenerHistorialConsultasDelPaciente(String nombrePaciente) throws PersistenciaException {
+    public List<Consulta> obtenerHistorialConsultasDelPacientePorMedico(String nombrePaciente, String nombreMedico) throws PersistenciaException {
 
         List<Consulta> consultasP = new ArrayList<>();
 
         String consultaSQL
-                = "SELECT " +
-                "CONCAT(P.NOMBRE, ' ', P.APELLIDO_PATERNO, ' ', IFNULL(P.APELLIDO_MATERNO, '')) AS nombre_completo_paciente, " +
-                "MED.ESPECIALIDAD, " +
-                "MED.NOMBRE AS nombre_medico, " +
-                "MED.APELLIDO_PATERNO AS apellido_paterno_medico, " +
-                "IFNULL(MED.APELLIDO_MATERNO, '') AS apellido_materno_medico, " +
-                "CI.FECHA_HORA, " +
-                "CONS.DIAGNOSTICO, " +
-                "CONS.TRATAMIENTO, " +
-                "CI.ESTADO, " +
-                "CI.TIPO " +
-                "FROM CONSULTAS CONS " +
-                "JOIN CITAS CI ON CI.ID_CITA = CONS.ID_CITA " +
-                "JOIN PACIENTES P ON CI.ID_USUARIO_PACIENTE = P.ID_USUARIO " +
-                "JOIN MEDICOS MED ON CI.ID_USUARIO_MEDICO = MED.ID_USUARIO " +
-                "WHERE CONCAT(P.NOMBRE, ' ', P.APELLIDO_PATERNO, ' ', IFNULL(P.APELLIDO_MATERNO, '')) = ?";
-        
+                = "SELECT "
+                + "CONCAT(P.NOMBRE, ' ', P.APELLIDO_PATERNO, ' ', IFNULL(P.APELLIDO_MATERNO, '')) AS nombre_completo_paciente, "
+                + "MED.ESPECIALIDAD, "
+                + "MED.NOMBRE AS nombre_medico, "
+                + "MED.APELLIDO_PATERNO AS apellido_paterno_medico, "
+                + "IFNULL(MED.APELLIDO_MATERNO, '') AS apellido_materno_medico, "
+                + "CI.FECHA_HORA, "
+                + "CONS.DIAGNOSTICO, "
+                + "CONS.TRATAMIENTO, "
+                + "CI.ESTADO, "
+                + "CI.TIPO "
+                + "FROM CONSULTAS CONS "
+                + "JOIN CITAS CI ON CI.ID_CITA = CONS.ID_CITA "
+                + "JOIN PACIENTES P ON CI.ID_USUARIO_PACIENTE = P.ID_USUARIO "
+                + "JOIN MEDICOS MED ON CI.ID_USUARIO_MEDICO = MED.ID_USUARIO "
+                + "WHERE CONCAT(P.NOMBRE, ' ', P.APELLIDO_PATERNO, ' ', IFNULL(P.APELLIDO_MATERNO, '')) = ? "
+                + "AND CONCAT(MED.NOMBRE, ' ', MED.APELLIDO_PATERNO, ' ', IFNULL(MED.APELLIDO_MATERNO, '')) = ?";
+
         try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
 
             ps.setString(1, nombrePaciente);
+            ps.setString(2, nombreMedico);
 
             try (ResultSet rs = ps.executeQuery()) {
 
@@ -132,7 +135,7 @@ public class PacienteDAO implements IPacienteDAO {
                     consulta.setCita(cita);
                     consulta.setDiagnostico(rs.getString("diagnostico"));
                     consulta.setTratamiento(rs.getString("tratamiento"));
-                    
+
                     consultasP.add(consulta);
                 }
 
@@ -144,24 +147,20 @@ public class PacienteDAO implements IPacienteDAO {
         }
         return consultasP;
     }
-    
-    
-    /**
-    @Override
-    public List<Cita> obtenerCitasProgramadas(int idUsuario) throws PersistenciaException {
-        List<Cita> citasProgramadas = new ArrayList<>();
-        
-        String consultaSQL = "SELECT CI.FECHA_HORA, MED.ESPECIALIDAD, MED.NOMBRE AS NOMBRE_MEDICO, "
-                + "MED.APELLIDO_PATERNO AS APELLIDO_MEDICO "
-                + "FROM CITAS CI "
-                + "JOIN MEDICOS MED ON CI.ID_USUARIO_MEDICO = MED.ID_USUARIO "
-                + "WHERE CI.ID_USUARIO_PACIENTE = ? "
-                + "AND CI.ESTADO = 'ACTIVA'";
-        
-    }
-    
-    **/
 
+    /**
+     * @Override public List<Cita> obtenerCitasProgramadas(int idUsuario) throws
+     * PersistenciaException { List<Cita> citasProgramadas = new ArrayList<>();
+     *
+     * String consultaSQL = "SELECT CI.FECHA_HORA, MED.ESPECIALIDAD, MED.NOMBRE
+     * AS NOMBRE_MEDICO, " + "MED.APELLIDO_PATERNO AS APELLIDO_MEDICO " + "FROM
+     * CITAS CI " + "JOIN MEDICOS MED ON CI.ID_USUARIO_MEDICO = MED.ID_USUARIO "
+     * + "WHERE CI.ID_USUARIO_PACIENTE = ? " + "AND CI.ESTADO = 'ACTIVA'";
+     *
+     * }
+     *
+     *
+     */
     @Override
     public int insertarDireccion(Direccion direccion) throws PersistenciaException {
         String consultaSQL = "INSERT INTO direcciones (colonia, ciudad, calle) VALUES (?, ?, ?)";
@@ -199,7 +198,7 @@ public class PacienteDAO implements IPacienteDAO {
         String consultaSQL = "UPDATE direcciones SET colonia = ?, ciudad = ?, calle = ? WHERE id_direccion = ?";
 
         try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
-            
+
             ps.setString(1, direccion.getColonia());
             ps.setString(2, direccion.getCiudad());
             ps.setString(3, direccion.getCalle());
@@ -279,16 +278,14 @@ public class PacienteDAO implements IPacienteDAO {
             throw new PersistenciaException("Error al obtener el paciente: " + e.getMessage(), e);
         }
     }
-    
+
     @Override
     public boolean existePaciente(String nombrePaciente) throws PersistenciaException {
         String consultaSQL = "SELECT * FROM PACIENTES WHERE "
                 + "CONCAT(NOMBRE, ' ', APELLIDO_PATERNO, ' ', APELLIDO_MATERNO) = ?";
-        
-        
-        try (Connection con = this.conexion.crearConexion();
-                PreparedStatement ps = con.prepareStatement(consultaSQL)) {
-            
+
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+
             ps.setString(1, nombrePaciente);
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -296,10 +293,10 @@ public class PacienteDAO implements IPacienteDAO {
                     return rs.getInt(1) > 0;
                 }
             }
-        }  catch (SQLException ex) {
+        } catch (SQLException ex) {
             throw new PersistenciaException("Error al verificar la existencia del paciente.", ex);
         }
-        
+
         return false;
     }
 
@@ -353,6 +350,6 @@ public class PacienteDAO implements IPacienteDAO {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-
+    
 
 }

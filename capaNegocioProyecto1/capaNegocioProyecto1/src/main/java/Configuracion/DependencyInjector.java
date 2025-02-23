@@ -3,6 +3,7 @@ package Configuracion;
 
 import BO.CitaBO;
 import BO.CitaSinCitaBO;
+import BO.ConsultaBO;
 import BO.MedicoBO;
 import BO.PacienteBO;
 import BO.UsuarioBO;
@@ -71,17 +72,17 @@ public class DependencyInjector {
         return citaSinCitaBO;
     }
     
-//    /**
-//     * 
-//     * @return 
-//     */
-//    public static ConsultaBO crearConsultaBO() {
-//        IConexionBD conexion = new ConexionBD();
-//        ConsultaBO consultaBO = new ConsultaBO(conexion);
-//
-//        return consultaBO;
-//    }
-//    
+    /**
+     * 
+     * @return 
+     */
+    public static ConsultaBO crearConsultaBO() {
+        IConexionBD conexion = new ConexionBD();
+        ConsultaBO consultaBO = new ConsultaBO(conexion);
+
+        return consultaBO;
+    }
+    
 //    /**
 //     * 
 //     * @return 

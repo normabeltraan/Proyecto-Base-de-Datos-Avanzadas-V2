@@ -13,6 +13,12 @@
     </properties>
     <name>capaNegocioProyecto1</name>
     <dependencies>
+        
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
+        </dependency>
         <dependency>
             <groupId>com.proyecto01</groupId>
             <artifactId>capaPersistenciaProyecto01</artifactId>

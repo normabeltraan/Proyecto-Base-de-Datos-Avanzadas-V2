@@ -17,6 +17,9 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+//Encripar contraseñas
+import org.mindrot.jbcrypt.BCrypt;
+
 /**
  *
  * @author norma
@@ -32,6 +35,10 @@ public class UsuarioDAO implements IUsuarioDAO {
 
     @Override
     public boolean registrarUsuarioPaciente(Usuario usuario, Paciente paciente) throws PersistenciaException {
+
+        String contraseniaEncriptada = BCrypt.hashpw(usuario.getContrasenia(), BCrypt.gensalt());
+        usuario.setContrasenia(contraseniaEncriptada);
+
         String consultaSQL = "{CALL REGISTRAR_USUARIO_PACIENTE(?, ?, ?, ?, ?, ?, ?, ?, ?)}";
 
         try (Connection con = conexion.crearConexion(); CallableStatement cb = con.prepareCall(consultaSQL)) {
@@ -58,18 +65,20 @@ public class UsuarioDAO implements IUsuarioDAO {
 
     @Override
     public boolean iniciarSesion(Usuario usuario) throws PersistenciaException {
-        String consultaSQL = "SELECT COUNT(*) FROM USUARIOS WHERE nombre_usuario = ? AND contrasenia = ?";
+        String consultaSQL = "SELECT contrasenia FROM USUARIOS WHERE nombre_usuario = ?";
 
         try (Connection con = conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
 
             ps.setString(1, usuario.getNombre_usuario());
-            ps.setString(2, usuario.getContrasenia());
 
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                int count = rs.getInt(1);
-                return count > 0;
+                String contraseniaEncriptada = rs.getString("contrasenia");
+
+                if (BCrypt.checkpw(usuario.getContrasenia(), contraseniaEncriptada)) {
+                    return true;
+                }
             }
 
             return false;
@@ -114,7 +123,7 @@ public class UsuarioDAO implements IUsuarioDAO {
 
     @Override
     public String obtenerTipoUsuario(String nombreUsuario) throws PersistenciaException {
-        String tipoUsuario = ""; 
+        String tipoUsuario = "";
 
         String consultaSQL = "SELECT "
                 + "CASE "

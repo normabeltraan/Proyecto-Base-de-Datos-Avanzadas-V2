@@ -1,7 +1,6 @@
 DTO\UsuarioDTO.class
 Mapper\UsuarioMapper.class
 com\mycompany\mavenproject1\capaNegocioPrueba.class
-com\mycompany\mavenproject1\kkk.class
 BO\CitaSinCitaBO.class
 BO\ConsultaBO.class
 BO\PacienteBO.class

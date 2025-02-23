@@ -4,16 +4,24 @@
  */
 package GUI;
 
+import BO.MedicoBO;
+import Configuracion.DependencyInjector;
+import DTO.MedicoDTO;
+
 /**
  *
  * @author norma
  */
 public class VerPerfilMedico extends javax.swing.JFrame {
-
+    
+    private MedicoDTO medico;
+    private MedicoBO medicoBO = DependencyInjector.crearMedicoBO();
+    
     /**
      * Creates new form VerPerfilMedico
      */
-    public VerPerfilMedico() {
+    public VerPerfilMedico(MedicoDTO medicoDTO) {
+        this.medico = medicoDTO;
         initComponents();
     }
 
@@ -153,8 +161,8 @@ public class VerPerfilMedico extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-//        new PerfilMedico().setVisible(true);
-//        this.setVisible(false);
+        new PerfilMedico(medico).setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btnCancelarActionPerformed
 
    

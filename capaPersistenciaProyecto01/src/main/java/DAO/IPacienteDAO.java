@@ -10,6 +10,7 @@ import entidades.Direccion;
 import entidades.Paciente;
 import entidades.Usuario;
 import excepciones.PersistenciaException;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public interface IPacienteDAO {
 
     public Paciente obtenerPacientePorIdUsuario(int idUsuario) throws PersistenciaException;
 
-    public List<Consulta> obtenerHistorialConsultasDelPaciente(String nombrePaciente) throws PersistenciaException;
+    public List<Consulta> obtenerHistorialConsultasDelPacientePorMedico(String nombrePaciente, String nombreMedico) throws PersistenciaException;
     
     public int insertarDireccion(Direccion direccion) throws PersistenciaException;
     
@@ -39,5 +40,7 @@ public interface IPacienteDAO {
      public int obtenerIdUsuarioPorCorreo(String correoElectronico) throws PersistenciaException;
      
      public List<Cita> obtenerCitasProgramadas(int idUsuario) throws PersistenciaException;
+     
+     
     
 }

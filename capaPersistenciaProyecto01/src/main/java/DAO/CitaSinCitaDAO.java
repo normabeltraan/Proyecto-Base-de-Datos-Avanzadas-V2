@@ -31,7 +31,7 @@ public class CitaSinCitaDAO implements ICitaSinCitaDAO {
     @Override
     public CitaSinCita agendarCitaEmergencia(String especialidad, int id_paciente) throws PersistenciaException {
         CitaSinCita citaSinCita = null;
-        String consultaSQL = "{CALL AGREGAR_CITA_EMERGENCIA(?, ?)}";
+        String consultaSQL = "{CALL AGENDAR_CITA_EMERGENCIA(?, ?)}";
 
         try (Connection con = this.conexion.crearConexion(); CallableStatement cb = con.prepareCall(consultaSQL)) {
 
