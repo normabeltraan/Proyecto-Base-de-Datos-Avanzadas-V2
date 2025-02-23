@@ -149,17 +149,17 @@ public class PerfilMedico extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnConsultarAgendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultarAgendaActionPerformed
-        new ConsultarAgenda().setVisible(true);
+        new ConsultarAgenda(medico).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnConsultarAgendaActionPerformed
 
     private void btnHistorialConsultasPacientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistorialConsultasPacientesActionPerformed
-        new HistorialConsultasPacientes().setVisible(true);
+        new HistorialConsultasPacientesPorMedico(medico).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnHistorialConsultasPacientesActionPerformed
 
     private void btnVerPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerPerfilActionPerformed
-        new VerPerfilMedico().setVisible(true);
+        new VerPerfilMedico(medico).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnVerPerfilActionPerformed
 

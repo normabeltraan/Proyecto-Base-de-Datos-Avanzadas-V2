@@ -52,7 +52,7 @@ public class CitaDAO implements ICitaDAO {
      */
     @Override
     public boolean agendarCita(Cita cita) throws PersistenciaException {
-        String consultaSQL = "CALL AGREGAR_CITA(?, ?, ?)";
+        String consultaSQL = "CALL AGENDAR_CITA(?, ?, ?)";
         try (Connection con = this.conexion.crearConexion(); CallableStatement cb = con.prepareCall(consultaSQL)) {
 
             cb.setTimestamp(1, cita.getFecha_hora());

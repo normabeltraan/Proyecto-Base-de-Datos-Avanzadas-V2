@@ -25,11 +25,12 @@ public interface IMedicoDAO {
     
     public Medico obtenerPerfilMedico(int idMedico) throws PersistenciaException;
     
-    public List<Cita> consultarAgendaMedico(int idMedico, Date fecha) throws PersistenciaException;
-
+    public List<Cita> consultarAgendaMedico(int idMedico) throws PersistenciaException ;
+    
     public Medico obtenerMedicoPorNombreUsuario(String nombreUsuario) throws PersistenciaException;
 
     public boolean medicoCitasActivas(int idMedico) throws SQLException, PersistenciaException;
 
     public boolean actualizarEstadoMedico(int idMedico, String nuevoEstado) throws SQLException, PersistenciaException;
+
 }

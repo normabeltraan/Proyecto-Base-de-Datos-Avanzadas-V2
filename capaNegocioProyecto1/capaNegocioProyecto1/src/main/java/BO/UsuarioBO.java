@@ -60,8 +60,9 @@ public class UsuarioBO {
         if (paciente.getApellido_paterno() == null || paciente.getApellido_paterno().isEmpty()) {
             throw new NegocioException("El apellido paterno es obligatorio.");
         }
-        if (paciente.getTelefono() == null || paciente.getTelefono().length() > 10) {
-            throw new NegocioException("El teléfono debe tener máximo 10 dígitos.");
+        String telefono = pacienteDTO.getTelefono();
+        if (telefono == null || !telefono.matches("\\d{1,10}")) {
+            throw new NegocioException("El teléfono debe contener solo números y tener entre 1 y 10 dígitos.");
         }
         if (paciente.getFecha_nacimiento() == null) {
             throw new NegocioException("La fecha de nacimiento es obligatoria.");

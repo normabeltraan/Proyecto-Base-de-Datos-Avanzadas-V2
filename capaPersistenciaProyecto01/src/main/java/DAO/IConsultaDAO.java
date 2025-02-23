@@ -4,10 +4,17 @@
  */
 package DAO;
 
+import entidades.Consulta;
+import excepciones.PersistenciaException;
+import java.sql.Date;
+import java.util.List;
+
 /**
  *
  * @author norma
  */
 public interface IConsultaDAO {
-    
+
+    public List<Consulta> obtenerHistorialConsultasDelPaciente(String nombrePaciente, String especialidad, Date fechaInicio, Date fechaFin) throws PersistenciaException;
+
 }

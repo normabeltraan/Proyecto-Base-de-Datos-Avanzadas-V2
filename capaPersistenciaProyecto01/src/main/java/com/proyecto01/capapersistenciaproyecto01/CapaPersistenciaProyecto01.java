@@ -41,6 +41,60 @@ public class CapaPersistenciaProyecto01 {
             e.printStackTrace();
         }
         /**
+<<<<<<< HEAD
+         * Direccion direccionPaciente = new Direccion("Centro", "Obregon",
+         * "Pitagoras"); Usuario usuarioPaciente = new Usuario(1,"karlacota",
+         * "karlita12"); Paciente paciente = new Paciente(usuarioPaciente,
+         * "Karla", "Cota", "Hernandez", "7715289543", LocalDate.of(1990, 12,
+         * 12), "karlacotaher@example.com", direccionPaciente, new
+         * ArrayList<>()); Usuario usuarioMedico = new Usuario(3,"jose",
+         * "josesan78"); Medico medico = new Medico(usuarioMedico, "José",
+         * "Sanchez", "Martinez", "Activo", "Cardiología", "6723984", new
+         * ArrayList<>(), new ArrayList<>()); Cita cita = new
+         * Cita(Timestamp.valueOf("2025-02-24 10:00:00"), "Agendada", "Cita
+         * Agendada", paciente, medico);
+         *
+         * CitaDAO citaDAO = new CitaDAO(conexionBD);
+         *
+         * try { boolean result = citaDAO.agendarCita(cita); if (result) {
+         * System.out.println("La cita fue agendada con éxito."); } else {
+         * System.out.println("Problema al agendar la cita."); } } catch
+         * (PersistenciaException e) { System.out.println("Error al agendar la
+         * cita: " + e.getMessage()); }
+        *
+         */
+
+//        // PROBANDO METODO OBTENER HISTORIAL DE CONSULTAS DE UN PACIENTE POR SU ID
+//        try {
+//            IConexionBD conexion = new ConexionBD(); 
+//            PacienteDAO pacienteDAO = new PacienteDAO(conexion);
+//            String nombrePaciente = "Karla Cota Hernandez"; 
+//            List<Consulta> historial = pacienteDAO.obtenerHistorialConsultasDelPaciente(nombrePaciente);
+//            //historial.forEach(System.out::println);
+//            //**
+//            for (Consulta consulta : historial) {
+//                //System.out.println("Consulta ID: " + consulta.getId_consulta());
+//                //System.out.println("Especialidad: " + consulta.getCita().getMedico().getEspecialidad());
+//                //System.out.println("Medico: " + consulta.getCita().getMedico().getNombre() + " " + consulta.getCita().getMedico().getApellido_paterno());
+//                //System.out.println("Médico: " + consulta.getCita().getMedico().getUsuario().getNombre_usuario());
+//                System.out.println("Fecha y hora de la cita: " + consulta.getCita().getFecha_hora());
+//                System.out.println("Tipo: " + consulta.getCita().getTipo());
+//                System.out.println("Estado: " + consulta.getCita().getEstado());
+//                System.out.println("Diagnóstico: " + consulta.getDiagnostico());
+//                //System.out.println("Observaciones: " + consulta.getObservaciones());
+//                System.out.println("Tratamiento: " + consulta.getTratamiento());
+//                //System.out.println("Paciente: " + consulta.getCita().getPaciente().getUsuario().getNombre_usuario());
+//                System.out.println("-----------------------------------");
+//               
+//            }
+//            //* **/
+//        } catch (PersistenciaException e) {
+//            System.err.println("Error al obtener el historial: " + e.getMessage());
+//        }
+//        
+//        
+//    
+
         Direccion direccionPaciente = new Direccion("Centro", "Obregon", "Pitagoras");
         Usuario usuarioPaciente = new Usuario(1,"karlacota", "karlita12");
         Paciente paciente = new Paciente(usuarioPaciente, "Karla", "Cota", "Hernandez", "7715289543", LocalDate.of(1990, 12, 12), "karlacotaher@example.com", direccionPaciente, new ArrayList<>());
@@ -60,7 +114,6 @@ public class CapaPersistenciaProyecto01 {
         } catch (PersistenciaException e) {
             System.out.println("Error al agendar la cita: " + e.getMessage());
         }
-        **/
         
         
         /**
@@ -190,5 +243,5 @@ public class CapaPersistenciaProyecto01 {
         }
         
     }
-        
+
 }

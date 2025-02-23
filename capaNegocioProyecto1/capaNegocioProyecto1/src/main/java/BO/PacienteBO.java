@@ -24,6 +24,7 @@ import entidades.Cita;
 import entidades.Consulta;
 import entidades.Paciente;
 import excepciones.PersistenciaException;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -113,21 +114,26 @@ public class PacienteBO {
         );
     }
 
-    public List<ConsultaDTO> obtenerHistorialConsultasDelPaciente(String nombrePaciente) throws NegocioException {
+    public List<ConsultaDTO> obtenerHistorialConsultasDelPacientePorMedico(String nombrePaciente, String nombreMedico) throws NegocioException {
         if (nombrePaciente == null || nombrePaciente.trim().isEmpty()) {
             throw new NegocioException("El nombre del paciente no puede ser nulo.");
         }
 
-        try {
+        if (nombreMedico == null || nombreMedico.trim().isEmpty()) {
+            throw new NegocioException("El nombre del médico no puede ser nulo.");
+        }
 
+        try {
             if (!pacienteDAO.existePaciente(nombrePaciente)) {
                 throw new NegocioException("El paciente no existe.");
             }
-            List<Consulta> consultasP = pacienteDAO.obtenerHistorialConsultasDelPaciente(nombrePaciente);
+
+            List<Consulta> consultasP = pacienteDAO.obtenerHistorialConsultasDelPacientePorMedico(nombrePaciente, nombreMedico);
 
             if (consultasP.isEmpty()) {
-                throw new NegocioException("El paciente no tiene consultas registradas.");
+                throw new NegocioException("El paciente no tiene consultas con ese médico registradas.");
             }
+
             return consultasP.stream()
                     .map(mapper_consulta::toDTO)
                     .collect(Collectors.toList());
