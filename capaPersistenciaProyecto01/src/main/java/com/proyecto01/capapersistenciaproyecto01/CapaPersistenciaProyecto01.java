@@ -100,29 +100,49 @@ public class CapaPersistenciaProyecto01 {
         }
         **/
         
-        // MÉTODO PARA CITAS PROGRAMADAS
-        try {
-            IConexionBD conexion = new ConexionBD(); 
-            PacienteDAO pacienteDAO = new PacienteDAO(conexion);
-            
-            Usuario usuarioPac = new Usuario();
-            usuarioPac.setId_usuario(1);
-            
-            Paciente paciente = new Paciente();
-            paciente.setUsuario(usuarioPac);
-            
-            List<Cita> proximas = pacienteDAO.obtenerCitasProgramadas(paciente);
-            
-            for (Cita cita : proximas) {
-                System.out.println("Fecha y hora: " + cita.getFecha_hora());
-                System.out.println("Especialidad: " + cita.getMedico().getEspecialidad());
-                System.out.println("Médico: " + cita.getMedico().getNombre());
-                System.out.println("-----------------------------------");
-            }
-        } catch(PersistenciaException ex){
-            System.err.println("Error al obtener citas proximas: " + ex.getMessage());
-        }
-    
+        // PROBANDO MÉTODO PARA CITAS PROGRAMADAS
+//        try {
+//            IConexionBD conexion = new ConexionBD(); 
+//            PacienteDAO pacienteDAO = new PacienteDAO(conexion);
+//            
+//            Usuario usuarioPac = new Usuario();
+//            usuarioPac.setId_usuario(1);
+//            
+//            Paciente paciente = new Paciente();
+//            paciente.setUsuario(usuarioPac);
+//            
+//            List<Cita> proximas = pacienteDAO.obtenerCitasProgramadas(paciente);
+//            
+//            for (Cita cita : proximas) {
+//                System.out.println("Fecha y hora: " + cita.getFecha_hora());
+//                System.out.println("Especialidad: " + cita.getMedico().getEspecialidad());
+//                System.out.println("Médico: " + cita.getMedico().getNombre());
+//                System.out.println("-----------------------------------");
+//            }
+//        } catch(PersistenciaException ex){
+//            System.err.println("Error al obtener citas proximas: " + ex.getMessage());
+//        }
+
+                try {
+                    IConexionBD conexion = new ConexionBD();
+
+                    PacienteDAO pacienteDAO = new PacienteDAO(conexion);
+
+                    String nombre = "Karla";
+                    String apellidoPaterno = "Cota";
+                    String apellidoMaterno = "Hernandez";
+
+                    int idPaciente = pacienteDAO.obtenerIdPacientePorNombre(nombre, apellidoPaterno, apellidoMaterno);
+
+                    if (idPaciente != -1) {
+                        System.out.println("El ID del paciente es: " + idPaciente);
+                    } else {
+                        System.out.println("Paciente no encontrado.");
+                    }
+                } catch (PersistenciaException ex) {
+                    System.err.println("Error: " + ex.getMessage());
+                }
+        
     }
         
 }

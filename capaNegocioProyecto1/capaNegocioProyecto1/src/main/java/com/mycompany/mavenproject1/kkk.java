@@ -23,15 +23,11 @@ public class kkk {
      */
     public static void main(String[] args) throws NegocioException {
         
+        /**
         IConexionBD conexionBD = new ConexionBD();
-        
-        
         PacienteBO pacienteBO = new PacienteBO(conexionBD);
         String nombrePaciente = "Karla Cota Hernandez";
-        
-        
         List<ConsultaDTO> historial = pacienteBO.obtenerHistorialConsultasDelPaciente(nombrePaciente);
-        
         System.out.println("Historial consultas paciente");
         for (ConsultaDTO consulta : historial) {
             System.out.println("Fecha y hora de la cita: " + consulta.getCita().getFecha_hora());
@@ -45,8 +41,9 @@ public class kkk {
         for (ConsultaDTO consulta : historial){
             System.out.println(consulta);
         }
-        **/
+        
         }
+        **/
     }
         
     

@@ -8,6 +8,7 @@ import DAO.IPacienteDAO;
 import DAO.IUsuarioDAO;
 import DAO.PacienteDAO;
 import DAO.UsuarioDAO;
+import DTO.CitaDTO;
 import DTO.UsuarioDTO;
 import DTO.DireccionDTO;
 import DTO.PacienteDTO;
@@ -18,6 +19,7 @@ import Mapper.ConsultaMapper;
 import Mapper.PacienteMapper;
 import Mapper.UsuarioMapper;
 import conexion.IConexionBD;
+import entidades.Cita;
 import entidades.Consulta;
 import entidades.Paciente;
 import excepciones.PersistenciaException;
@@ -131,6 +133,47 @@ public class PacienteBO {
             logger.log(Level.SEVERE, "Error al obtener el historial de consultas.", ex);
             throw new NegocioException("Error al obtener el historial de consultas.", ex);
         }
+    }
+    
+    public List<CitaDTO> obtenerCitasProgramadas(PacienteDTO pacienteDTO) throws NegocioException{
+        try{
+            int idPaciente = pacienteDAO.obtenerIdPacientePorNombre(
+            pacienteDTO.getNombre(), 
+            pacienteDTO.getApellido_paterno(), 
+            pacienteDTO.getApellido_materno()
+        );
+
+        if (idPaciente == -1) {
+            throw new NegocioException("Paciente no encontrado en la base de datos.");
+        }
+
+        // Crear objeto Paciente con su ID
+        Usuario usuarioPaciente = new Usuario();
+        usuarioPaciente.setId_usuario(idPaciente);
+
+        Paciente paciente = new Paciente();
+        paciente.setUsuario(usuarioPaciente);
+
+        // Obtener citas programadas desde la capa de persistencia
+        List<Cita> citas = pacienteDAO.obtenerCitasProgramadas(paciente);
+        
+        // Convertir a DTO
+        List<CitaDTO> citasDTO = new ArrayList<>();
+        for (Cita cita : citas) {
+            CitaDTO citaDTO = new CitaDTO();
+            citaDTO.setFecha_hora(cita.getFecha_hora());
+            citaDTO.setEspecialidad(cita.getMedico().getEspecialidad());
+            citaDTO.setNombreMedico(cita.getMedico().getNombre() + " " + cita.getMedico().getApellido_paterno());
+            citasDTO.add(citaDTO);
+        }
+        
+        return citasDTO;
+            
+        }
+        catch (PersistenciaException ex){
+            throw new NegocioException("Error al obtener citas programadas.");
+        }
+        
     }
 
 }

@@ -147,6 +147,7 @@ public class PacienteDAO implements IPacienteDAO {
     
     
     
+    @Override
     public List<Cita> obtenerCitasProgramadas(Paciente paciente) throws PersistenciaException {
         List<Cita> citasProgramadas = new ArrayList<>();
         
@@ -374,6 +375,29 @@ public class PacienteDAO implements IPacienteDAO {
             throw new PersistenciaException("Error al ejecutar el procedimiento almacenado.", e);
         }
     }
+    
+    public int obtenerIdPacientePorNombre(String nombre, String apellidoPaterno, String apellidoMaterno) throws PersistenciaException {
+        String consultaSQL = "SELECT ID_USUARIO FROM PACIENTES WHERE NOMBRE = ? AND APELLIDO_PATERNO = ? AND APELLIDO_MATERNO = ?";
+
+        try (Connection con = this.conexion.crearConexion();
+             PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+
+            ps.setString(1, nombre);
+            ps.setString(2, apellidoPaterno);
+            ps.setString(3, apellidoMaterno);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("ID_USUARIO"); 
+                } else {
+                    return -1; 
+                }
+            }
+        } catch (SQLException ex) {
+            throw new PersistenciaException("Error al obtener el ID del paciente", ex);
+    }
+}
+
 
     
 }
