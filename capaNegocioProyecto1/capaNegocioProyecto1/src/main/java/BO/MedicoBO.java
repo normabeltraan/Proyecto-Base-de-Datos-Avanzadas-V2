@@ -112,6 +112,7 @@ public class MedicoBO {
     }
   }
 
+
     public List<CitaDTO> obtenerAgendaMedico(int idMedico)throws NegocioException{
         if (idMedico <= 0){
             throw new NegocioException("El ID debe ser mayor a 0.");
