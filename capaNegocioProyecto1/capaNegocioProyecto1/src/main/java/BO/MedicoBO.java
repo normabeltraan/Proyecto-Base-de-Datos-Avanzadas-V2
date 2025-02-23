@@ -6,13 +6,17 @@ package BO;
 
 import DAO.IMedicoDAO;
 import DAO.MedicoDAO;
+import DTO.CitaDTO;
 import DTO.MedicoDTO;
 import Exception.NegocioException;
+import Mapper.CitaMapper;
 import Mapper.MedicoMapper;
 import conexion.IConexionBD;
+import entidades.Cita;
 import entidades.Medico;
 import excepciones.PersistenciaException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -25,6 +29,7 @@ public class MedicoBO {
     private static final Logger logger = Logger.getLogger(MedicoBO.class.getName());
     private final IMedicoDAO medicoDAO;
     private final MedicoMapper mapper = new MedicoMapper();
+    private final CitaMapper citamapper = new CitaMapper();
 
     public MedicoBO(IConexionBD conexion) {
         this.medicoDAO = new MedicoDAO(conexion);
@@ -106,4 +111,23 @@ public class MedicoBO {
         throw new NegocioException("Ocurrió un error inesperado al obtener el perfil del médico", e);
     }
   }
+
+    public List<CitaDTO> obtenerAgendaMedico(int idMedico)throws NegocioException{
+        if (idMedico <= 0){
+            throw new NegocioException("El ID debe ser mayor a 0.");
+        }
+        
+        try{
+            MedicoDTO medico = obtenerMedicoPorId(idMedico);
+            if (medico==null){
+                throw new NegocioException("No se encontro un medico con ese id.");
+            }
+            
+            List<Cita> citas = medicoDAO.consultarAgendaMedico(idMedico);
+            return citamapper.toDTOList(citas);
+            
+        } catch(PersistenciaException e){
+            throw new NegocioException("No se pudo obtener la agenda del medico.");
+        }
+    }
 }
