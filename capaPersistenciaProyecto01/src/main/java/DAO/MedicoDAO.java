@@ -4,21 +4,19 @@
  */
 package DAO;
 
-import static com.mysql.cj.conf.PropertyKey.logger;
 import conexion.IConexionBD;
-import conexion.ConexionBD;
 import entidades.Medico;
+import entidades.Paciente;
 import entidades.Cita;
 import entidades.Usuario;
 import excepciones.PersistenciaException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -190,57 +188,44 @@ public class MedicoDAO implements IMedicoDAO {
   }
   
 @Override
-public List<Cita> consultarAgendaMedico(int idMedico) throws PersistenciaException {
+public List<Cita> consultarAgendaMedico(int idMedico, Date fecha) throws PersistenciaException {
     List<Cita> citas = new ArrayList<>();
-    
-    // Obtenemos la fecha actual en formato yyyy-MM-dd
-    java.sql.Date fechaActual = new java.sql.Date(System.currentTimeMillis());
 
-    // Consulta para obtener las citas programadas y las de emergencia para el médico en la fecha actual
-    String consultaSQL = "SELECT c.id_cita, c.fecha_cita, c.hora_cita, c.tipo_cita, c.estado, "
-                       + "p.nombre, p.apellido_paterno, p.apellido_materno "
-                       + "FROM CITAS c "
-                       + "JOIN PACIENTES p ON c.id_paciente = p.id_paciente "
-                       + "WHERE c.id_medico = ? AND c.fecha_cita = ?";
+    String consultaSQL = "SELECT c.id_cita, DATE(c.fecha_hora) as fecha, TIME(c.fecha_hora) as hora, "
+            + "c.tipo, c.estado, "
+            + "CONCAT(p.nombre, ' ', p.apellido_paterno, IFNULL(CONCAT(' ', p.apellido_materno), '')) AS nombre_completo "
+            + "FROM CITAS c "
+            + "JOIN PACIENTES p ON c.id_usuario_paciente = p.id_usuario "
+            + "WHERE c.id_usuario_medico = ? AND DATE(c.fecha_hora) = ?";
 
-    try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
-        
-        // Establecemos los parámetros de la consulta
+    try (Connection con = this.conexion.crearConexion();
+         PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+
         ps.setInt(1, idMedico);
-        ps.setDate(2, fechaActual);  // Fecha actual para las citas del día
-        
-        try (ResultSet rs = ps.executeQuery()) {
+        ps.setDate(2, fecha);
 
+        try (ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                // Crear el objeto Cita para cada resultado encontrado
                 Cita cita = new Cita();
                 cita.setId_cita(rs.getInt("id_cita"));
-                cita.setFecha_cita(rs.getDate("fecha_cita"));
-                cita.setHora_cita(rs.getTime("hora_cita"));
-                cita.setTipo_cita(rs.getString("tipo_cita"));
+                cita.setFecha_hora(rs.getTimestamp("fecha"));
+                cita.setFecha_hora(rs.getTimestamp("hora"));
+                cita.setTipo(rs.getString("tipo"));
                 cita.setEstado(rs.getString("estado"));
-                
-                // Crear el paciente relacionado con la cita
+
                 Paciente paciente = new Paciente();
-                paciente.setNombre(rs.getString("nombre"));
-                paciente.setApellido_paterno(rs.getString("apellido_paterno"));
-                paciente.setApellido_materno(rs.getString("apellido_materno"));
+                paciente.setNombre(rs.getString("nombre_completo"));
 
-                cita.setPaciente(paciente); // Asignamos el paciente a la cita
-                
-                citas.add(cita); // Añadimos la cita a la lista
+                cita.setPaciente(paciente);
+                citas.add(cita);
             }
-        } catch (SQLException e) {
-            logger.severe("Error al consultar la agenda del médico: " + e.getMessage());
-            throw new PersistenciaException("Error al consultar la agenda del médico", e);
         }
-
     } catch (SQLException e) {
         logger.severe("Error al consultar la agenda del médico: " + e.getMessage());
         throw new PersistenciaException("Error al consultar la agenda del médico", e);
     }
-    
-    return citas; // Retorna la lista de citas del día
+
+    return citas;
 }
 
     @Override
