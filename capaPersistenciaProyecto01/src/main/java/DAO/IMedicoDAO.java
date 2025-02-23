@@ -26,7 +26,7 @@ public interface IMedicoDAO {
     
     public Medico obtenerPerfilMedico(int idMedico) throws PersistenciaException;
     
-    public List<Cita> consultarAgendaMedico(int idMedico) throws PersistenciaException ;
+    //public List<Cita> consultarAgendaMedico(int idMedico) throws PersistenciaException ;
     
     public Medico obtenerMedicoPorNombreUsuario(String nombreUsuario) throws PersistenciaException;
 
