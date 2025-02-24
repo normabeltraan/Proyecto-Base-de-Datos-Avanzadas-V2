@@ -15,7 +15,8 @@ import java.time.format.DateTimeParseException;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Clase que para actualizar los datos de un paciente.
+ * Utiliza interfaz gráfica para modificar y guardar los cambios.
  * @author norma
  */
 public class ActualizarDatos extends javax.swing.JFrame {
@@ -23,8 +24,10 @@ public class ActualizarDatos extends javax.swing.JFrame {
     private PacienteDTO paciente;
     private PacienteBO pacienteBO = DependencyInjector.crearPacienteBO();
 
+    
     /**
-     * Creates new form ActualizarDatos
+     * Constructor de la clase, recibe el objeto a modificar (PacienteDTO)
+     * @param pacienteDTO objeto donde están todos los datos del paciente.
      */
     public ActualizarDatos(PacienteDTO pacienteDTO) {
         this.paciente = pacienteDTO;
@@ -231,10 +234,21 @@ public class ActualizarDatos extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCalleActionPerformed
 
+    /**
+     * Acción del botón "Confirmar Cambios".
+     * Hace un llamado al método actualizarDatos() para guardar los cambios.
+     * @param evt evento de acción del botón
+     */
     private void btnConfirmarCambiosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarCambiosActionPerformed
         actualizarDatos();
     }//GEN-LAST:event_btnConfirmarCambiosActionPerformed
 
+    /**
+     * Acción del botón "Cancelar",
+     * Cierra la ventana en la que te encuentras, y te regresa a la del
+     * perfil del paciente.
+     * @param evt evento de accion del botón.
+     */
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         new PerfilPaciente(paciente).setVisible(true);
         this.setVisible(false);
@@ -270,6 +284,13 @@ public class ActualizarDatos extends javax.swing.JFrame {
     private javax.swing.JTextField txtTelefono;
     // End of variables declaration//GEN-END:variables
 
+    /** 
+     * Método que actualiza los datos del paciente con la información que se
+     * ingresó en los textfield.
+     * Se valida la fecha de nacimiento y llama al método de negocio para que se 
+     * actualice en la base de datos.
+     * Muestra mensaje de éxito o fracaso en la actualización.
+     */
     private void actualizarDatos() {
         try {
             PacienteDTO pacienteDTO = new PacienteDTO();
@@ -324,6 +345,9 @@ public class ActualizarDatos extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que carga los datos actuales del paciente en la interfaz.
+     */
     private void cargarDatosPaciente() {
         txtNombre.setText(paciente.getNombre());
         txtApellidoP.setText(paciente.getApellido_paterno());
