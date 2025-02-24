@@ -23,4 +23,6 @@ public interface IUsuarioDAO {
     public boolean comprobarExistenciaCorreoElectronico(String correoElectronico) throws PersistenciaException;
     
     public String obtenerTipoUsuario(String nombreUsuario) throws PersistenciaException;
+    
+    
 }

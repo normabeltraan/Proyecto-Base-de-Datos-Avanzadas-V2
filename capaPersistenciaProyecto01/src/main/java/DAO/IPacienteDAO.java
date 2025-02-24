@@ -26,21 +26,22 @@ public interface IPacienteDAO {
     public Paciente obtenerPacientePorIdUsuario(int idUsuario) throws PersistenciaException;
 
     public List<Consulta> obtenerHistorialConsultasDelPacientePorMedico(String nombrePaciente, String nombreMedico) throws PersistenciaException;
-    
+
     public int insertarDireccion(Direccion direccion) throws PersistenciaException;
-    
+
     public boolean actualizarDireccionPorUsuario(Direccion direccion, Integer idUsuario) throws PersistenciaException;
-    
+
     public Integer obtenerIdDireccionPorUsuario(Integer idUsuario) throws PersistenciaException;
-    
-     public Paciente obtenerPacientePorNombreUsuario(String nombreUsuario) throws PersistenciaException;
-     
-     public boolean existePaciente(String nombrePaciente) throws PersistenciaException;
-     
-     public int obtenerIdUsuarioPorCorreo(String correoElectronico) throws PersistenciaException;
-     
-     public List<Cita> obtenerCitasProgramadas(Paciente paciente) throws PersistenciaException;
-    
+
+    public Paciente obtenerPacientePorNombreUsuario(String nombreUsuario) throws PersistenciaException;
+
+    public boolean existePaciente(String nombrePaciente) throws PersistenciaException;
+
+    public int obtenerIdUsuarioPorCorreo(String correoElectronico) throws PersistenciaException;
+
+    public List<Cita> obtenerCitasProgramadas(Paciente paciente) throws PersistenciaException;
+
     public int obtenerIdPacientePorNombre(String nombre, String apellidoPaterno, String apellidoMaterno) throws PersistenciaException;
+
 
 }

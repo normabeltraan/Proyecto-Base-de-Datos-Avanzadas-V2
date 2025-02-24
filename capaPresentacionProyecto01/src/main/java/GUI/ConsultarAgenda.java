@@ -6,23 +6,39 @@ package GUI;
 
 import BO.MedicoBO;
 import Configuracion.DependencyInjector;
+import DTO.CitaDTO;
 import DTO.MedicoDTO;
+import DTO.UsuarioDTO;
+import Exception.NegocioException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author norma
  */
 public class ConsultarAgenda extends javax.swing.JFrame {
-    
+
     private MedicoDTO medico;
     private MedicoBO medicoBO = DependencyInjector.crearMedicoBO();
-    
+
     /**
      * Creates new form ConsultarAgenda
      */
     public ConsultarAgenda(MedicoDTO medicoDTO) {
         this.medico = medicoDTO;
         initComponents();
+        fechaActual();
+        try {
+            agendaMedico();
+        } catch (NegocioException ex) {
+            Logger.getLogger(ConsultarAgenda.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -38,7 +54,7 @@ public class ConsultarAgenda extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         txtFechaActual = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tablacitas = new javax.swing.JTable();
         btnCancelar = new javax.swing.JButton();
         btnAtenderCita = new javax.swing.JButton();
 
@@ -48,18 +64,18 @@ public class ConsultarAgenda extends javax.swing.JFrame {
 
         jLabel2.setText("Fecha");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tablacitas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Fecha y hora", "Paciente"
+                "Fecha y hora", "Tipo", "Paciente"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tablacitas);
 
         btnCancelar.setText("Cancelar");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
@@ -121,8 +137,11 @@ public class ConsultarAgenda extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnAtenderCitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtenderCitaActionPerformed
-        new AtenderConsulta(medico).setVisible(true);
-        this.setVisible(false);
+        try {
+            pantallaSegunTipoDeConsulta();
+        } catch (NegocioException ex) {
+            Logger.getLogger(ConsultarAgenda.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnAtenderCitaActionPerformed
 
 
@@ -132,7 +151,58 @@ public class ConsultarAgenda extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tablacitas;
     private javax.swing.JTextField txtFechaActual;
     // End of variables declaration//GEN-END:variables
+
+    private void agendaMedico() throws NegocioException {
+        UsuarioDTO usuarioDTO = medico.getUsuario();
+        List<CitaDTO> citas = medicoBO.obtenerAgendaMedico(usuarioDTO);
+
+        DefaultTableModel model = (DefaultTableModel) tablacitas.getModel();
+        model.setRowCount(0);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+
+        for (CitaDTO cita : citas) {
+            String hora = sdf.format(cita.getFecha_hora());
+
+            model.addRow(new Object[]{
+                hora,
+                cita.getTipo(),
+                cita.getPaciente().getNombre()
+            });
+        }
+
+    }
+
+    private void fechaActual() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+        String fechaActual = sdf.format(new Date());
+
+        txtFechaActual.setText(fechaActual);
+        txtFechaActual.setEditable(false);
+    }
+
+    private void pantallaSegunTipoDeConsulta() throws NegocioException {
+        int filaSeleccionada = tablacitas.getSelectedRow();
+        if (filaSeleccionada != -1) {
+
+            List<CitaDTO> citas = medicoBO.obtenerAgendaMedico(medico.getUsuario());
+
+            CitaDTO cita = citas.get(filaSeleccionada);
+
+            String tipoCita = (String) tablacitas.getValueAt(filaSeleccionada, 1);
+
+            if ("Cita Agendada".equals(tipoCita)) {
+                new AtenderConsulta(medico, cita).setVisible(true);
+            } else if ("Cita Emergencia".equals(tipoCita)) {
+                new AtenderConsultaEmergencia(medico, cita).setVisible(true);
+            }
+            this.setVisible(false);
+        } else {
+            JOptionPane.showMessageDialog(this, "Por favor, selecciona una cita.");
+        }
+    }
 }

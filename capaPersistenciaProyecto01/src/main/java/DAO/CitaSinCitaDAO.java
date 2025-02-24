@@ -11,6 +11,7 @@ import entidades.Medico;
 import excepciones.PersistenciaException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -64,6 +65,23 @@ public class CitaSinCitaDAO implements ICitaSinCitaDAO {
         }
 
         return citaSinCita;
+    }
+
+    public String obtenerFolioEmergencia(int id_cita) throws PersistenciaException {
+
+        String consultaSQL = "SELECT folio_emergencia FROM CITAS_SINCITA WHERE id_cita = ?";
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+
+            ps.setInt(1, id_cita);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("folio_emergencia");
+            }
+            return null; // Si no hay folio, retorna null
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al obtener el folio de emergencia.", e);
+        }
     }
 
 }

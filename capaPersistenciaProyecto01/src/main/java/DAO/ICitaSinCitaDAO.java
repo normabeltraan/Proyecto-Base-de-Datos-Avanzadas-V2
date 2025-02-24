@@ -14,4 +14,6 @@ import excepciones.PersistenciaException;
 public interface ICitaSinCitaDAO {
 
     public CitaSinCita agendarCitaEmergencia(String especialidad, int idPaciente) throws PersistenciaException;
+    
+    public String obtenerFolioEmergencia(int id_cita) throws PersistenciaException;
 }

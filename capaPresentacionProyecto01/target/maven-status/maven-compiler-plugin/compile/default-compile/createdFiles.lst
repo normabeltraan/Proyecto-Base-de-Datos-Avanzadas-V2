@@ -48,6 +48,7 @@ GUI\Registrarse$1.class
 GUI\AtenderConsulta.class
 GUI\PerfilMedico$3.class
 GUI\AgendarCita.class
+GUI\AtenderConsultaEmergencia$4.class
 GUI\PerfilPaciente$4.class
 GUI\ConsultarAgenda$1.class
 GUI\IniciarSesion$4.class

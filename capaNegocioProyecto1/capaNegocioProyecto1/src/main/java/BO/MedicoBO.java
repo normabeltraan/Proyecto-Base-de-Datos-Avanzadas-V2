@@ -8,6 +8,7 @@ import DAO.IMedicoDAO;
 import DAO.MedicoDAO;
 import DTO.CitaDTO;
 import DTO.MedicoDTO;
+import DTO.UsuarioDTO;
 import Exception.NegocioException;
 import Mapper.CitaMapper;
 import Mapper.MedicoMapper;
@@ -89,45 +90,53 @@ public class MedicoBO {
             throw new NegocioException("Error al cambiar el estado del medico", e);
         }
     }
-    
-    public MedicoDTO perfilMedico(int id_medico) throws NegocioException {
-    if (id_medico <= 0) {
-        throw new NegocioException("El ID del médico debe ser mayor que cero.");
-    }
 
-    try {
-        Medico medico = medicoDAO.obtenerPerfilMedico(id_medico);
-
-        if (medico == null) {
-            throw new NegocioException("No se encontró un médico con el ID proporcionado.");
+    public MedicoDTO perfilMedico(UsuarioDTO usuarioDTO) throws NegocioException {
+        if (usuarioDTO == null) {
+            throw new NegocioException("El usuario no puede ser nulo.");
         }
 
-        return mapper.toDTO(medico);
-    } catch (PersistenciaException e) {
-        logger.severe("Error en la capa de persistencia al obtener el perfil del médico: " + e.getMessage());
-        throw new NegocioException("Error al obtener el perfil del médico", e);
-    } catch (Exception e) {
-        logger.severe("Error inesperado al obtener el perfil del médico: " + e.getMessage());
-        throw new NegocioException("Ocurrió un error inesperado al obtener el perfil del médico", e);
-    }
-  }
-
-
-    public List<CitaDTO> obtenerAgendaMedico(int idMedico)throws NegocioException{
-        if (idMedico <= 0){
-            throw new NegocioException("El ID debe ser mayor a 0.");
+        Integer idMedico = usuarioDTO.getId_usuario();
+        if (idMedico == null || idMedico <= 0) {
+            throw new NegocioException("El ID del médico debe ser mayor que cero.");
         }
-        
-        try{
+
+        try {
+            Medico medico = medicoDAO.obtenerPerfilMedico(idMedico);
+
+            if (medico == null) {
+                throw new NegocioException("No se encontró un médico con el ID proporcionado.");
+            }
+
+            return mapper.toDTO(medico);
+        } catch (PersistenciaException e) {
+            logger.severe("Error en la capa de persistencia al obtener el perfil del médico: " + e.getMessage());
+            throw new NegocioException("Error al obtener el perfil del médico", e);
+        } catch (Exception e) {
+            logger.severe("Error inesperado al obtener el perfil del médico: " + e.getMessage());
+            throw new NegocioException("Ocurrió un error inesperado al obtener el perfil del médico", e);
+        }
+    }
+
+    public List<CitaDTO> obtenerAgendaMedico(UsuarioDTO usuarioDTO) throws NegocioException {
+        if (usuarioDTO == null) {
+            throw new NegocioException("El usuario no puede ser nulo.");
+        }
+        Integer idMedico = usuarioDTO.getId_usuario();
+        if (idMedico == null || idMedico <= 0) {
+            throw new NegocioException("El ID del médico debe ser mayor que cero.");
+        }
+
+        try {
             MedicoDTO medico = obtenerMedicoPorId(idMedico);
-            if (medico==null){
+            if (medico == null) {
                 throw new NegocioException("No se encontro un medico con ese id.");
             }
-            
+
             List<Cita> citas = medicoDAO.consultarAgendaMedico(idMedico);
             return citamapper.toDTOList(citas);
-            
-        } catch(PersistenciaException e){
+
+        } catch (PersistenciaException e) {
             throw new NegocioException("No se pudo obtener la agenda del medico.");
         }
     }

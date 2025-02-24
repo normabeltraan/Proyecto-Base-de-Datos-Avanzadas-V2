@@ -68,16 +68,17 @@ public class UsuarioDAO implements IUsuarioDAO {
         String consultaSQL = "SELECT contrasenia FROM USUARIOS WHERE nombre_usuario = ?";
 
         try (Connection con = conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
-
             ps.setString(1, usuario.getNombre_usuario());
 
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                String contraseniaEncriptada = rs.getString("contrasenia");
+                String contraseniaAlmacenada = rs.getString("contrasenia");
 
-                if (BCrypt.checkpw(usuario.getContrasenia(), contraseniaEncriptada)) {
-                    return true;
+                if (contraseniaAlmacenada.startsWith("$2a$")) {
+                    return BCrypt.checkpw(usuario.getContrasenia(), contraseniaAlmacenada);
+                } else {
+                    return contraseniaAlmacenada.equals(usuario.getContrasenia());
                 }
             }
 

@@ -17,13 +17,18 @@ import DTO.MedicoDTO;
 import DAO.MedicoDAO;
 import DAO.IMedicoDAO;
 import Exception.NegocioException;
+import Mapper.CitaMapper;
+import Mapper.CitaSinCitaMapper;
 import Mapper.ConsultaMapper;
+import Mapper.MedicoMapper;
 import conexion.IConexionBD;
 import entidades.Cita;
 import entidades.Consulta;
+import entidades.Medico;
 import excepciones.PersistenciaException;
 import java.sql.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -34,74 +39,79 @@ public class ConsultaBO {
 
     private static final Logger logger = Logger.getLogger(ConsultaBO.class.getName());
     private final IConsultaDAO consultaDAO;
+    private final ICitaSinCitaDAO citaSinCitaDAO;
     private final ConsultaMapper mapper = new ConsultaMapper();
+    private final CitaMapper mapper_cita = new CitaMapper();
+    private final CitaSinCitaMapper mapper_citaSinCita = new CitaSinCitaMapper();
+    private final MedicoMapper mapper_medico = new MedicoMapper();
 
     public ConsultaBO(IConexionBD conexion) {
         this.consultaDAO = new ConsultaDAO(conexion);
+        this.citaSinCitaDAO = new CitaSinCitaDAO(conexion);
     }
 
     public List<ConsultaDTO> obtenerHistorialConsultas(String nombrePaciente, String especialidad, Date fechaInicio, Date fechaFin) throws PersistenciaException {
         if (nombrePaciente == null || fechaInicio == null || fechaFin == null) {
             throw new IllegalArgumentException("El nombre del paciente y las fechas de inicio y fin son obligatorios.");
         }
-        
+
         List<Consulta> consultas = consultaDAO.obtenerHistorialConsultasDelPaciente(nombrePaciente, especialidad, fechaInicio, fechaFin);
         return mapper.toDTOList(consultas);
     }
-    
-    public boolean atenderCitaProgramada(ConsultaDTO consultaDTO) throws NegocioException {
-    if (consultaDTO == null || consultaDTO.getCita() == null) {
-        throw new NegocioException("La consulta o la cita asociada no pueden ser nulas.");
-    }
 
-    try {
-        // Convertimos la entidad Cita a DTO
-        CitaDTO citaDTO = mapper.toDTO(consultaDTO.getCita());
-
-        // Obtenemos el médico desde la cita
-        MedicoDTO medicoDTO = citaDTO.getMedico();
-        if (medicoDTO == null || medicoDTO.getUsuario() == null) {
-            throw new NegocioException("No se pudo determinar el médico.");
+    public boolean atenderCitaProgramada(ConsultaDTO consultaDTO, MedicoDTO medicoDTO) throws NegocioException {
+        if (consultaDTO == null || consultaDTO.getCita() == null) {
+            throw new NegocioException("La consulta o la cita asociada no pueden ser nulas.");
         }
 
-        // Llamamos al DAO con los datos extraídos desde los DTOs
-        boolean resultado = consultaDAO.atenderCitaProgramada(
-            citaDTO.getId_cita(),
-            medicoDTO.getUsuario().getId_usuario()
-        );
+        try {
+            CitaDTO citaDTO = mapper_cita.toDTO(consultaDTO.getCita());
 
-        return resultado;
-    } catch (PersistenciaException e) {
-        throw new NegocioException("Error al atender cita programada.", e);
+            Consulta consulta = mapper.toEntity(consultaDTO);
+
+            // Llamamos al DAO para atender la cita y registrar la consulta
+            boolean resultado = consultaDAO.atenderCitaProgramada(
+                    citaDTO.getId_cita(),
+                    medicoDTO.getUsuario().getId_usuario(),
+                    consulta
+            );
+
+            return resultado;
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error al atender cita programada.", e);
+        }
     }
-}
 
-
-     public boolean atenderCitaEmergencia(ConsultaDTO consultaDTO) throws NegocioException {
-    if (consultaDTO == null || consultaDTO.getCita() == null) {
-        throw new NegocioException("La consulta o la cita asociada no pueden ser nulas.");
-    }
-
-    try {
-        // Obtener los datos desde los DTOs sin usar IDs directamente
-        CitaDTO citaDTO = mapper.toDTO(consultaDTO.getCita()); // Convertir la entidad Cita a DTO
-        MedicoDTO medicoDTO = citaDTO.getMedico(); // Suponiendo que CitaDTO tiene un MedicoDTO
-        
-        if (medicoDTO == null || medicoDTO.getUsuario() == null) {
-            throw new NegocioException("No se pudo determinar el médico.");
+    public boolean atenderCitaEmergencia(ConsultaDTO consultaDTO, MedicoDTO medicoDTO) throws NegocioException {
+        if (consultaDTO == null || consultaDTO.getCita() == null) {
+            throw new NegocioException("La consulta o la cita asociada no pueden ser nulas.");
         }
 
-        // Extraer datos necesarios
-        String folioEmergencia = citaDTO.getFolioEmergencia(); // Si existe este dato
-        boolean resultado = consultaDAO.atenderCitaEmergencia(
-            citaDTO.getId_cita(), 
-            medicoDTO.getUsuario().getId_usuario(), 
-            folioEmergencia
-        );
+        try {
 
-        return resultado;
-    } catch (PersistenciaException e) {
-        throw new NegocioException("Error al atender cita de emergencia.", e);
+            CitaDTO citaDTO = mapper_cita.toDTO(consultaDTO.getCita());
+
+            Consulta consulta = mapper.toEntity(consultaDTO);
+
+            String folioEmergencia = citaSinCitaDAO.obtenerFolioEmergencia(citaDTO.getId_cita());
+            boolean resultado = consultaDAO.atenderCitaEmergencia(
+                    citaDTO.getId_cita(),
+                    medicoDTO.getUsuario().getId_usuario(),
+                    folioEmergencia, consulta
+            );
+
+            return resultado;
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error al atender cita de emergencia.", e);
+        }
     }
-}
+
+    public boolean validarFolio(String folio_emergencia, CitaDTO citaDTO) throws NegocioException {
+        try {
+            return consultaDAO.validarFolio(citaDTO.getId_cita(), folio_emergencia);
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("Folio de emergencia no válido");
+        }
+    }
+
 }

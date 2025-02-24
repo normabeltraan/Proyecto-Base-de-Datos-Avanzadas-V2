@@ -176,11 +176,12 @@ public class GenerarCitaEmergencia extends javax.swing.JFrame {
             return;
         }
 
-        int idPaciente = paciente.getUsuario().getId_usuario(); 
+        int idPaciente = paciente.getUsuario().getId_usuario();
 
         try {
             CitaSinCitaDTO cita = citaBO.agendarCitaEmergencia(especialidadSeleccionada, idPaciente);
             actualizarTabla(cita);
+            JOptionPane.showMessageDialog(this, "La cita de emergencia ha sido agendada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         } catch (NegocioException | PersistenciaException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error al generar la cita", JOptionPane.ERROR_MESSAGE);
         }

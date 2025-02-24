@@ -7,6 +7,9 @@ package GUI;
 import BO.MedicoBO;
 import Configuracion.DependencyInjector;
 import DTO.MedicoDTO;
+import Exception.NegocioException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -159,7 +162,11 @@ public class PerfilMedico extends javax.swing.JFrame {
     }//GEN-LAST:event_btnHistorialConsultasPacientesActionPerformed
 
     private void btnVerPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerPerfilActionPerformed
-        new VerPerfilMedico(medico).setVisible(true);
+        try {
+            new VerPerfilMedico(medico).setVisible(true);
+        } catch (NegocioException ex) {
+            Logger.getLogger(PerfilMedico.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.setVisible(false);
     }//GEN-LAST:event_btnVerPerfilActionPerformed
 

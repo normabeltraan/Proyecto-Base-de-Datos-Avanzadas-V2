@@ -145,12 +145,11 @@ public class MedicoDAO implements IMedicoDAO {
 
     @Override
     public Medico obtenerPerfilMedico(int idMedico) throws PersistenciaException {
-        // Consulta para obtener los datos del médico y su usuario relacionado
         String consultaSQL = "SELECT m.id_usuario, m.nombre, m.apellido_paterno, m.apellido_materno, "
                 + "m.estado, m.especialidad, m.cedula, u.nombre_usuario, u.contrasenia "
                 + "FROM MEDICOS m "
                 + "JOIN USUARIOS u ON m.id_usuario = u.id_usuario "
-                + "WHERE m.id_medico = ?";
+                + "WHERE m.id_usuario = ?";
 
         try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
 
@@ -186,7 +185,6 @@ public class MedicoDAO implements IMedicoDAO {
 
         return null;
     }
-
 
     @Override
     public Medico obtenerMedicoPorNombreUsuario(String nombreUsuario) throws PersistenciaException {
@@ -250,7 +248,6 @@ public class MedicoDAO implements IMedicoDAO {
         }
     }
 
-
     //@Override
     //public List<Cita> consultarAgendaMedico(int idMedico) throws PersistenciaException {
 //        List<Cita> citas = new ArrayList<>();
@@ -298,34 +295,41 @@ public class MedicoDAO implements IMedicoDAO {
 //        }
 //
 //        return citas; 
-        //return null;
+    //return null;
     //}
-    
     @Override
-    public List <Cita> consultarAgendaMedico(int id_medico) throws PersistenciaException {
+    public List<Cita> consultarAgendaMedico(int id_medico) throws PersistenciaException {
         List<Cita> citasDia = new ArrayList<>();
-        String consultaSQL = "SELECT DATE_FORMAT(c.fecha_hora, '%H:%i') AS hora,  "
-            + "CONCAT(p.nombre, ' ', p.apellido_paterno, IFNULL(CONCAT(' ', p.apellido_materno),'')) AS paciente " 
-            + "FROM CITAS c JOIN PACIENTES p ON c.id_usuario_paciente = p.id_usuario " 
-            + "WHERE c.id_usuario_medico = ? AND DATE(c.fecha_hora) = CURDATE() " 
-            + "ORDER BY c.fecha_hora";
-        
-        try(Connection con = this.conexion.crearConexion();
-                PreparedStatement ps = con.prepareStatement(consultaSQL)){
-            
+        String consultaSQL = "SELECT c.id_cita, DATE_FORMAT(c.fecha_hora, '%H:%i') AS hora,  "
+                + "CONCAT(p.nombre, ' ', p.apellido_paterno, IFNULL(CONCAT(' ', p.apellido_materno),'')) AS paciente, "
+                + "c.tipo "
+                + "FROM CITAS c JOIN PACIENTES p ON c.id_usuario_paciente = p.id_usuario "
+                + "WHERE c.id_usuario_medico = ? AND DATE(c.fecha_hora) = CURDATE() "
+                + "AND c.estado = 'Activa' " 
+                + "ORDER BY c.fecha_hora";
+
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+
             ps.setInt(1, id_medico);
-            
-            try(ResultSet rs = ps.executeQuery()){
-                while (rs.next()){
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
                     Cita cita = new Cita();
+
+                    cita.setId_cita(rs.getInt("id_cita"));
+
                     String horaStr = rs.getString("hora");
-                    Timestamp horaTimestamp = Timestamp.valueOf("1970-01-01 " + horaStr + ":00");
-                    
+                    Timestamp horaTimestamp = Timestamp.valueOf("2025-02-23 " + horaStr + ":00");
+
                     cita.setFecha_hora(horaTimestamp);
+
                     Paciente paciente = new Paciente();
                     paciente.setNombre(rs.getString("paciente"));
                     cita.setPaciente(paciente);
-                    
+
+                    String tipoCita = rs.getString("tipo");
+                    cita.setTipo(tipoCita);
+
                     citasDia.add(cita);
                 }
             }

@@ -30,9 +30,9 @@ public class ConsultaDAO implements IConsultaDAO {
     public ConsultaDAO(IConexionBD conexion) {
         this.conexion = conexion;
     }
-    
+
     private static final Logger logger = Logger.getLogger(ConsultaDAO.class.getName());
-    
+
     @Override
     public List<Consulta> obtenerHistorialConsultasDelPaciente(String nombrePaciente, String especialidad, Date fechaInicio, Date fechaFin) throws PersistenciaException {
 
@@ -89,11 +89,11 @@ public class ConsultaDAO implements IConsultaDAO {
 
         return consultas;
     }
-    
-         @Override
-    public boolean atenderCitaProgramada(int idCita, int idUsuarioMedico) throws PersistenciaException {
-        String query = "SELECT estado, id_usuario_medico FROM CITAS WHERE id_cita = ?";
-        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(query)) {
+
+    @Override
+    public boolean atenderCitaProgramada(int idCita, int idUsuarioMedico, Consulta consulta) throws PersistenciaException {
+        String consultaSQL = "SELECT estado, id_usuario_medico FROM CITAS WHERE id_cita = ?";
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
             ps.setInt(1, idCita);
             ResultSet rs = ps.executeQuery();
 
@@ -113,8 +113,19 @@ public class ConsultaDAO implements IConsultaDAO {
                 String updateQuery = "UPDATE CITAS SET estado = 'Atendida' WHERE id_cita = ?";
                 try (Connection conNuevo = this.conexion.crearConexion(); PreparedStatement updatePS = conNuevo.prepareStatement(updateQuery)) {
                     updatePS.setInt(1, idCita);
-                    int rowsAffected = updatePS.executeUpdate();
-                    return rowsAffected > 0;
+                    int filasAfectadas = updatePS.executeUpdate();
+
+                    if (filasAfectadas > 0) {
+                        String consultaSQL2 = "INSERT INTO CONSULTAS (diagnostico, tratamiento, observaciones, id_cita) VALUES (?, ?, ?, ?)";
+                        try (PreparedStatement insertPS = conNuevo.prepareStatement(consultaSQL2)) {
+                            insertPS.setString(1, consulta.getDiagnostico());
+                            insertPS.setString(2, consulta.getTratamiento());
+                            insertPS.setString(3, consulta.getObservaciones());
+                            insertPS.setInt(4, idCita);
+                            insertPS.executeUpdate();
+                        }
+                        return true;
+                    }
                 }
             } else {
                 throw new PersistenciaException("Cita no encontrada.");
@@ -122,14 +133,15 @@ public class ConsultaDAO implements IConsultaDAO {
         } catch (SQLException e) {
             throw new PersistenciaException("Error al atender la cita programada.", e);
         }
+        return false;
     }
 
     @Override
-    public boolean atenderCitaEmergencia(int idCita, int idUsuarioMedico, String folioEmergencia) throws PersistenciaException {
-        String query = "SELECT estado, id_usuario_medico FROM CITAS c " +
-                       "JOIN CITAS_SINCITA cs ON c.id_cita = cs.id_cita " +
-                       "WHERE c.id_cita = ? AND cs.folio_emergencia = ?";
-        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(query)) {
+    public boolean atenderCitaEmergencia(int idCita, int idUsuarioMedico, String folioEmergencia, Consulta consulta) throws PersistenciaException {
+        String consultaSQL = "SELECT estado, id_usuario_medico FROM CITAS c "
+                + "JOIN CITAS_SINCITA cs ON c.id_cita = cs.id_cita "
+                + "WHERE c.id_cita = ? AND cs.folio_emergencia = ?";
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
             ps.setInt(1, idCita);
             ps.setString(2, folioEmergencia);
             ResultSet rs = ps.executeQuery();
@@ -138,7 +150,6 @@ public class ConsultaDAO implements IConsultaDAO {
                 String estado = rs.getString("estado");
                 int medicoId = rs.getInt("id_usuario_medico");
 
-                // Validar que la cita de emergencia esté activa y que el médico sea el correcto
                 if (!estado.equals("Activa")) {
                     throw new PersistenciaException("La cita de emergencia no está activa o ya ha sido atendida.");
                 }
@@ -146,12 +157,31 @@ public class ConsultaDAO implements IConsultaDAO {
                     throw new PersistenciaException("El médico asignado no es el que está intentando atender la cita de emergencia.");
                 }
 
-                // Actualizar el estado de la cita a 'Atendida'
                 String updateQuery = "UPDATE CITAS SET estado = 'Atendida' WHERE id_cita = ?";
-                try (Connection conNuevo = this.conexion.crearConexion(); PreparedStatement updatePS = conNuevo.prepareStatement(updateQuery)) {
+                try (PreparedStatement updatePS = con.prepareStatement(updateQuery)) {
                     updatePS.setInt(1, idCita);
-                    int rowsAffected = updatePS.executeUpdate();
-                    return rowsAffected > 0;
+                    int filasAfectadas = updatePS.executeUpdate();
+
+                    if (filasAfectadas > 0) {
+  
+                        String consultaSQL2 = "INSERT INTO CONSULTAS (diagnostico, tratamiento, observaciones, id_cita) "
+                                + "VALUES (?, ?, ?, ?)";
+                        try (PreparedStatement insertPS = con.prepareStatement(consultaSQL2)) {
+                            insertPS.setString(1, consulta.getDiagnostico());
+                            insertPS.setString(2, consulta.getTratamiento());
+                            insertPS.setString(3, consulta.getObservaciones());
+                            insertPS.setInt(4, idCita);
+
+                            int insertRows = insertPS.executeUpdate();
+                            if (insertRows > 0) {
+                                return true;
+                            } else {
+                                throw new PersistenciaException("No se pudo registrar la consulta para la cita de emergencia.");
+                            }
+                        }
+                    } else {
+                        throw new PersistenciaException("No se pudo actualizar el estado de la cita de emergencia.");
+                    }
                 }
             } else {
                 throw new PersistenciaException("Cita de emergencia no encontrada o el folio es incorrecto.");
@@ -160,4 +190,22 @@ public class ConsultaDAO implements IConsultaDAO {
             throw new PersistenciaException("Error al atender la cita de emergencia.", e);
         }
     }
+
+    @Override
+    public boolean validarFolio(int idCita, String folio) throws PersistenciaException {
+        String consultaSQL = "SELECT folio_emergencia FROM CITAS_SINCITA WHERE id_cita = ? AND folio_emergencia = ?";
+        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
+
+            ps.setInt(1, idCita);
+            ps.setString(2, folio);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

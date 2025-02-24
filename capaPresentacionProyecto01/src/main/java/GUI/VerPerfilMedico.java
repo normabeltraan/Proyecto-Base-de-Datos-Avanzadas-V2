@@ -7,22 +7,24 @@ package GUI;
 import BO.MedicoBO;
 import Configuracion.DependencyInjector;
 import DTO.MedicoDTO;
+import Exception.NegocioException;
 
 /**
  *
  * @author norma
  */
 public class VerPerfilMedico extends javax.swing.JFrame {
-    
+
     private MedicoDTO medico;
     private MedicoBO medicoBO = DependencyInjector.crearMedicoBO();
-    
+
     /**
      * Creates new form VerPerfilMedico
      */
-    public VerPerfilMedico(MedicoDTO medicoDTO) {
+    public VerPerfilMedico(MedicoDTO medicoDTO) throws NegocioException {
         this.medico = medicoDTO;
         initComponents();
+        cargarPerfilMedico();
     }
 
     /**
@@ -40,7 +42,6 @@ public class VerPerfilMedico extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         btnCancelar = new javax.swing.JButton();
         ttxNombre = new javax.swing.JTextField();
@@ -48,7 +49,6 @@ public class VerPerfilMedico extends javax.swing.JFrame {
         txtApellidoM = new javax.swing.JTextField();
         txtEspecialidad = new javax.swing.JTextField();
         txtCedula = new javax.swing.JTextField();
-        txtHorarioAtencion = new javax.swing.JTextField();
         txtEstado = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -64,8 +64,6 @@ public class VerPerfilMedico extends javax.swing.JFrame {
         jLabel5.setText("Especialidad");
 
         jLabel6.setText("Cédula Profesional");
-
-        jLabel7.setText("Horario de atención");
 
         jLabel8.setText("Estado");
 
@@ -84,11 +82,7 @@ public class VerPerfilMedico extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(44, 44, 44)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(27, 27, 27)
-                                .addComponent(txtEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -103,21 +97,21 @@ public class VerPerfilMedico extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(txtEspecialidad, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtCedula))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtHorarioAtencion))
+                                .addComponent(txtCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ttxNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(ttxNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(33, 33, 33)
                         .addComponent(btnCancelar)))
-                .addContainerGap(334, Short.MAX_VALUE))
+                .addContainerGap(292, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -144,15 +138,11 @@ public class VerPerfilMedico extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(txtCedula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(txtHorarioAtencion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(24, 24, 24)
+                .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(txtEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
                 .addComponent(btnCancelar)
                 .addGap(26, 26, 26))
         );
@@ -165,7 +155,6 @@ public class VerPerfilMedico extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_btnCancelarActionPerformed
 
-   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
@@ -175,7 +164,6 @@ public class VerPerfilMedico extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JTextField ttxNombre;
     private javax.swing.JTextField txtApellido;
@@ -183,6 +171,26 @@ public class VerPerfilMedico extends javax.swing.JFrame {
     private javax.swing.JTextField txtCedula;
     private javax.swing.JTextField txtEspecialidad;
     private javax.swing.JTextField txtEstado;
-    private javax.swing.JTextField txtHorarioAtencion;
     // End of variables declaration//GEN-END:variables
+
+    private void cargarPerfilMedico() throws NegocioException {
+        MedicoDTO medicoDTO = medicoBO.perfilMedico(medico.getUsuario());
+        if (medicoDTO != null) {
+            ttxNombre.setText(medicoDTO.getNombre());
+            txtApellido.setText(medicoDTO.getApellido_paterno());
+            txtApellidoM.setText(medicoDTO.getApellido_materno());
+            txtEspecialidad.setText(medicoDTO.getEspecialidad());
+            txtCedula.setText(medicoDTO.getCedula());
+            txtEstado.setText(medicoDTO.getEstado());
+            
+            // Deshabilitar la edición de los campos
+            ttxNombre.setEditable(false);
+            txtApellido.setEditable(false);
+            txtApellidoM.setEditable(false);
+            txtEspecialidad.setEditable(false);
+            txtCedula.setEditable(false);
+            txtEstado.setEditable(false);
+        }
+    }
+
 }

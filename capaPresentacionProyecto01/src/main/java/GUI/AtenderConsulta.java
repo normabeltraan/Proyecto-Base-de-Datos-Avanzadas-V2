@@ -4,22 +4,36 @@
  */
 package GUI;
 
+import BO.ConsultaBO;
+import Configuracion.DependencyInjector;
+import DTO.CitaDTO;
+import DTO.ConsultaDTO;
 import DTO.MedicoDTO;
+import Exception.NegocioException;
+import Mapper.CitaMapper;
+import Mapper.MedicoMapper;
+import entidades.Cita;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author norma
  */
 public class AtenderConsulta extends javax.swing.JFrame {
-    
+
     private MedicoDTO medico;
-    
+    private CitaDTO citaDTO;
+    private ConsultaBO consultaBO = DependencyInjector.crearConsultaBO();
+
     /**
      * Creates new form AtenderConsulta
      */
-    public AtenderConsulta(MedicoDTO medicoDTO) {
+    public AtenderConsulta(MedicoDTO medicoDTO, CitaDTO citaDTO) {
         this.medico = medicoDTO;
+        this.citaDTO = citaDTO;
         initComponents();
+        txtNombrePaciente.setText(citaDTO.getPaciente().getNombre());
+        txtNombrePaciente.setEditable(false);
     }
 
     /**
@@ -132,7 +146,7 @@ public class AtenderConsulta extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-        // TODO add your handling code here:
+        atenderConsultaCitaPrevia();
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
 
@@ -149,4 +163,38 @@ public class AtenderConsulta extends javax.swing.JFrame {
     private javax.swing.JTextField txtObservaciones;
     private javax.swing.JTextField txtTratamiento;
     // End of variables declaration//GEN-END:variables
+
+    private void atenderConsultaCitaPrevia() {
+
+        String diagnostico = txtDiagnostico.getText();
+        String tratamiento = txtTratamiento.getText();
+        String observaciones = txtObservaciones.getText();
+
+        if (diagnostico.isEmpty() || tratamiento.isEmpty() || observaciones.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos obligatorios.");
+            return;
+        }
+
+        ConsultaDTO consultaDTO = new ConsultaDTO();
+        consultaDTO.setDiagnostico(diagnostico);
+        consultaDTO.setTratamiento(tratamiento);
+        consultaDTO.setObservaciones(observaciones);
+
+        CitaMapper mapper_cita = new CitaMapper();
+        Cita cita = mapper_cita.toEntity(citaDTO);
+        consultaDTO.setCita(cita);
+
+        try {
+            boolean resultado = consultaBO.atenderCitaProgramada(consultaDTO, medico);
+            if (resultado) {
+                JOptionPane.showMessageDialog(this, "La consulta ha sido registrada correctamente.");
+                new ConsultarAgenda(medico).setVisible(true);
+                this.setVisible(false);
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al registrar la consulta.");
+            }
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(this, "Error al atender la cita: " + e.getMessage());
+        }
+    }
 }

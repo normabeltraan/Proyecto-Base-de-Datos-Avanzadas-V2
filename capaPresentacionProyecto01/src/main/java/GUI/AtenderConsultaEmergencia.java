@@ -4,22 +4,37 @@
  */
 package GUI;
 
+import BO.ConsultaBO;
+import Configuracion.DependencyInjector;
+import DTO.CitaDTO;
+import DTO.ConsultaDTO;
 import DTO.MedicoDTO;
+import Exception.NegocioException;
+import Mapper.CitaMapper;
+import entidades.Cita;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author norma
  */
 public class AtenderConsultaEmergencia extends javax.swing.JFrame {
-    
+
     private MedicoDTO medico;
-    
+    private CitaDTO citaDTO;
+    private ConsultaBO consultaBO = DependencyInjector.crearConsultaBO();
+
     /**
      * Creates new form AtenderConsultaEmergencia
      */
-    public AtenderConsultaEmergencia(MedicoDTO medicoDTO) {
+    public AtenderConsultaEmergencia(MedicoDTO medicoDTO, CitaDTO citaDTO) {
         this.medico = medicoDTO;
+        this.citaDTO = citaDTO;
         initComponents();
+        txtNombrePaciente.setText(citaDTO.getPaciente().getNombre());
+        txtNombrePaciente.setEditable(false);
     }
 
     /**
@@ -31,6 +46,7 @@ public class AtenderConsultaEmergencia extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jYearChooser1 = new com.toedter.calendar.JYearChooser();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         txtNombrePaciente = new javax.swing.JTextField();
@@ -42,6 +58,9 @@ public class AtenderConsultaEmergencia extends javax.swing.JFrame {
         txtObservaciones = new javax.swing.JTextField();
         btnCancelar = new javax.swing.JButton();
         btnRegistrar = new javax.swing.JButton();
+        btnValidarFolio = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        txtFolio = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -75,29 +94,47 @@ public class AtenderConsultaEmergencia extends javax.swing.JFrame {
             }
         });
 
+        btnValidarFolio.setText("Validar Folio");
+        btnValidarFolio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnValidarFolioActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("Folio");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(39, 39, 39)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtDiagnostico)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtDiagnostico)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtTratamiento)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtObservaciones, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(txtNombrePaciente, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtTratamiento)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtObservaciones, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(txtNombrePaciente, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(109, 109, 109)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(txtFolio)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnValidarFolio)
+                        .addGap(26, 26, 26))))
             .addGroup(layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addComponent(btnCancelar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 371, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 468, Short.MAX_VALUE)
                 .addComponent(btnRegistrar)
                 .addGap(55, 55, 55))
         );
@@ -109,7 +146,10 @@ public class AtenderConsultaEmergencia extends javax.swing.JFrame {
                 .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(txtNombrePaciente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNombrePaciente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(btnValidarFolio)
+                    .addComponent(txtFolio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -122,7 +162,7 @@ public class AtenderConsultaEmergencia extends javax.swing.JFrame {
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txtObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCancelar)
                     .addComponent(btnRegistrar))
@@ -142,22 +182,101 @@ public class AtenderConsultaEmergencia extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-        // TODO add your handling code here:
+        try {
+            atenderConsultaCitaEmergencia();
+        } catch (NegocioException ex) {
+            Logger.getLogger(AtenderConsultaEmergencia.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
+    private void btnValidarFolioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnValidarFolioActionPerformed
+        validarFolio();
+    }//GEN-LAST:event_btnValidarFolioActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnRegistrar;
+    private javax.swing.JButton btnValidarFolio;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private com.toedter.calendar.JYearChooser jYearChooser1;
     private javax.swing.JTextField txtDiagnostico;
+    private javax.swing.JTextField txtFolio;
     private javax.swing.JTextField txtNombrePaciente;
     private javax.swing.JTextField txtObservaciones;
     private javax.swing.JTextField txtTratamiento;
     // End of variables declaration//GEN-END:variables
+
+    private void validarFolio() {
+        try {
+            String folioEmergencia = txtFolio.getText().trim();
+            if (!folioEmergencia.isEmpty()) {
+                boolean folio = consultaBO.validarFolio(folioEmergencia, citaDTO);
+                if (folio) {
+                    JOptionPane.showMessageDialog(null, "Folio válido.");
+                    btnRegistrar.setEnabled(true);
+                    btnValidarFolio.setEnabled(false);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Folio no válido. Verifique e intente nuevamente.");
+                    btnRegistrar.setEnabled(false);
+                    btnValidarFolio.setEnabled(true);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "El folio no puede estar vacío.");
+            }
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(null, "Error al validar el folio: " + ex.getMessage());
+        }
+    }
+
+    private void atenderConsultaCitaEmergencia() throws NegocioException {
+        String folioEmergencia = txtFolio.getText().trim();
+        if (folioEmergencia.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "El folio es obligatorio.");
+            return;
+        }
+
+        String diagnostico = txtDiagnostico.getText().trim();
+        String tratamiento = txtTratamiento.getText().trim();
+        String observaciones = txtObservaciones.getText().trim();
+
+        if (diagnostico.isEmpty() || tratamiento.isEmpty() || observaciones.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos obligatorios.");
+            return;
+        }
+
+        String folio = txtFolio.getText().trim();
+        boolean folioValido = consultaBO.validarFolio(folio, citaDTO);
+        if (!folioValido) {
+            JOptionPane.showMessageDialog(null, "Folio no válido. No se puede registrar la consulta.");
+            return;  
+        }
+
+        ConsultaDTO consultaDTO = new ConsultaDTO();
+        consultaDTO.setDiagnostico(diagnostico);
+        consultaDTO.setTratamiento(tratamiento);
+        consultaDTO.setObservaciones(observaciones);
+
+        CitaMapper mapper_cita = new CitaMapper();
+        Cita cita = mapper_cita.toEntity(citaDTO);
+        consultaDTO.setCita(cita);
+
+        try {
+            boolean resultado = consultaBO.atenderCitaProgramada(consultaDTO, medico);
+            if (resultado) {
+                JOptionPane.showMessageDialog(this, "La consulta ha sido registrada correctamente.");
+                new ConsultarAgenda(medico).setVisible(true);
+                this.setVisible(false);
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al registrar la consulta.");
+            }
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(this, "Error al atender la cita: " + e.getMessage());
+        }
+    }
 }
