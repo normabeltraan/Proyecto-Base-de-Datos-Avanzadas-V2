@@ -22,8 +22,20 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- *
- * @author Maximiliano
+ * Clase de la capa de negocio que gestiona la información y operaciones
+ * relacionadas con los médicos dentro del sistema de gestión de consultas
+ * médicas.
+ * 
+ * Esta clase proporciona métodos para obtener información de médicos,
+ * gestionar su disponibilidad, cambiar su estado y consultar su agenda de
+ * citas.
+ * 
+ * Se encarga de la validación de datos antes de interactuar con la capa de
+ * persistencia a través de IMedicoDAO.
+ * 
+ * @author Norma Alicia Beltrán Martín - 00000252102
+ * @author Maximiliano Reyna Aguilar - 00000244877
+ * @author Katia Ximena Návarez Espinoza - 00000252855
  */
 public class MedicoBO {
 
@@ -32,10 +44,18 @@ public class MedicoBO {
     private final MedicoMapper mapper = new MedicoMapper();
     private final CitaMapper citamapper = new CitaMapper();
 
+    /**
+     * Constructor que inicializa el DAO de médicos con una conexión a la base de datos.
+     * @param conexion El objeto de conexión a la base de datos.
+     */
     public MedicoBO(IConexionBD conexion) {
         this.medicoDAO = new MedicoDAO(conexion);
     }
 
+    /**
+     * Este método obtiene la lista de especialidades médicas disponibles en el sistema.
+     * @return Regresa la lista de especialidades médicas disponibles o null si ocurre un error.
+     */
     public List<String> obtenerEspecialidades() {
         try {
             return medicoDAO.obtenerEspecialidades();
@@ -45,6 +65,11 @@ public class MedicoBO {
         }
     }
 
+    /**
+     * Este método obtiene la lista de médicos que pertenecen a una especialidad específica.
+     * @param especialidad El nombre de la especialidad a buscar.
+     * @return Regresa la lista de objetos MedicoDTO con la información de los médicos encontrados.
+     */
     public List<MedicoDTO> obtenerMedicosPorEspecialidad(String especialidad) {
         try {
             List<Medico> medicos = medicoDAO.obtenerMedicosPorEspecialidad(especialidad);
@@ -56,6 +81,13 @@ public class MedicoBO {
         }
     }
 
+    /**
+     * Este método obtiene un médico por su identificador único.
+     * @param id_medico El identificador único del médico.
+     * @return Regresa el objeto MedicoDTO con la información del médico.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error en la capa de persistencia.
+     * @throws NegocioException Lanza una excepción si el ID es inválido.
+     */
     public MedicoDTO obtenerMedicoPorId(int id_medico) throws PersistenciaException, NegocioException {
         if (id_medico <= 0) {
             throw new NegocioException("El ID del médico debe ser mayor que cero.");
@@ -65,6 +97,13 @@ public class MedicoBO {
         return mapper.toDTO(medico);
     }
 
+    /**
+     * Este método otiene un médico a partir de su nombre de usuario.
+     * @param nombreUsuario El nombre de usuario del médico.
+     * @return Regresa el objeto MedicoDTO con la información del médico.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error en la capa de persistencia.
+     * @throws NegocioException Lanza una excepción si el nombre de usuario es inválido.
+     */
     public MedicoDTO obtenerMedicoPorNombreUsuario(String nombreUsuario) throws PersistenciaException, NegocioException {
         if (nombreUsuario == null || nombreUsuario.isEmpty()) {
             throw new NegocioException("El nombre de usuario no es válido.");
@@ -75,6 +114,15 @@ public class MedicoBO {
         return mapper.toDTO(medico);
     }
 
+    /**
+     * Este métodos cambia el estado de un médico a activo o inactivo.
+     * @param medico El objeto MedicoDTO con la información del médico.
+     * @param nuevo_estado El nuevo estado del médico.
+     * @return Regresa un mensaje indicando el resultado de la operación.
+     * @throws NegocioException Lanza una excepción si ocurre un error en la validación o actualización del estado.
+     * @throws SQLException Lanza una excepción si ocurre un error en la base de datos.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error en la capa de persistencia.
+     */
     public String cambiarEstadoMedico(MedicoDTO medico, String nuevo_estado) throws NegocioException, SQLException, PersistenciaException {
         try {
             if ("Inactivo".equals(nuevo_estado) && medicoDAO.medicoCitasActivas(medico.getUsuario().getId_usuario())) {
@@ -91,6 +139,12 @@ public class MedicoBO {
         }
     }
 
+    /**
+     * Este método obtiene el perfil de un médico basado en la información de su usuario.
+     * @param usuarioDTO El objeto UsuarioDTO con la información del usuario.
+     * @return Regresa el objeto MedicoDTO con la información del médico.
+     * @throws NegocioException Lanza una excepción si el usuario es inválido.
+     */
     public MedicoDTO perfilMedico(UsuarioDTO usuarioDTO) throws NegocioException {
         if (usuarioDTO == null) {
             throw new NegocioException("El usuario no puede ser nulo.");
@@ -118,6 +172,12 @@ public class MedicoBO {
         }
     }
 
+    /**
+     * Este método obtiene la agenda de citas de un médico.
+     * @param usuarioDTO El objeto UsuarioDTO con la información del usuario.
+     * @return Regresa la lista de objetos CitaDTO con las citas programadas.
+     * @throws NegocioException Lanza una excepción si el usuario es inválido o no se encuentra información.
+     */
     public List<CitaDTO> obtenerAgendaMedico(UsuarioDTO usuarioDTO) throws NegocioException {
         if (usuarioDTO == null) {
             throw new NegocioException("El usuario no puede ser nulo.");

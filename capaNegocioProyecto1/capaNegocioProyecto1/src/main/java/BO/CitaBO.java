@@ -26,11 +26,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author Maximiliano
+ * Clase de la capa de negocio que gestiona las operaciones relacionadas con las citas médicas.
+ * Se encarga de realizar validaciones y coordinar la interacción con la capa de persistencia para
+ * la programación y cancelación de citas, así como la consulta de horarios disponibles.
+ * 
+ * @author Norma Alicia Beltrán Martín - 00000252102
+ * @author Maximiliano Reyna Aguilar - 00000244877
+ * @author Katia Ximena Návarez Espinoza - 00000252855
  */
 public class CitaBO {
-    //aaaaaaaa
 
     private static final Logger logger = Logger.getLogger(CitaBO.class.getName());
     private final ICitaDAO citaDAO;
@@ -38,10 +42,22 @@ public class CitaBO {
     private final CitaSinCitaMapper mapper_citaSinCita = new CitaSinCitaMapper();
     private final HorarioDisponibleMapper mapper_horario = new HorarioDisponibleMapper();
 
+    /**
+     * Constructor que inicializa el acceso a datos de citas con una conexión a la base de datos.
+     * @param conexion El objeto de conexión a la base de datos.
+     */
     public CitaBO(IConexionBD conexion) {
         this.citaDAO = new CitaDAO(conexion);
     }
 
+    /**
+     * Este método agenda una nueva cita en el sistema, validando que la fecha sea válida y que el paciente
+     * no tenga una cita con el mismo médico en el mismo horario.
+     * @param citaNuevo El objeto CitaDTO con la información de la cita a agendar.
+     * @return Regresa verdadero si la cita fue agendada correctamente, falso en caso contrario.
+     * @throws NegocioException Lanza una excepción si se intenta agendar una cita en el pasado o si el paciente ya tiene una cita con el médico en ese horario.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error en la capa de persistencia.
+     */
     public boolean agendarCita(CitaDTO citaNuevo) throws NegocioException, PersistenciaException {
 
         Timestamp fechaHora = citaNuevo.getFecha_hora();
@@ -68,6 +84,13 @@ public class CitaBO {
         }
     }
 
+    /**
+     * Este método cancela una cita existente en el sistema, validando que la cita esté activa y que se cancele con al menos 24 horas de anticipación.
+     * @param citaDTO El objeto CitaDTO con la información de la cita a cancelar.
+     * @return Regresa verdadero si la cita fue cancelada correctamente, falso en caso contrario.
+     * @throws NegocioException Lanza una excepción si la cita no está activa o si la cancelación se intenta realizar con menos de 24 horas de anticipación.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error en la capa de persistencia al intentar cancelar la cita.
+     */
     public boolean cancelarCita(CitaDTO citaDTO) throws NegocioException, PersistenciaException {
         
         System.out.println(citaDTO);
@@ -96,6 +119,13 @@ public class CitaBO {
         }
     }
 
+    /**
+     * Este método obtiene los horarios disponibles para agendar una cita con un médico en una fecha específica.
+     * @param fecha La fecha en la que se desean consultar los horarios disponibles.
+     * @param id_usuario_medico El identificador del médico cuyos horarios se desean consultar.
+     * @return La lista de objetos HorarioDisponibleDTO con los horarios disponibles.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error en la capa de persistencia.
+     */
     public List<HorarioDisponibleDTO> obtenerHorariosDisponibles(Date fecha, int id_usuario_medico) throws PersistenciaException {
         List<HorarioDisponible> horarios = citaDAO.obtenerHorariosDisponibles(fecha, id_usuario_medico);
 

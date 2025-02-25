@@ -32,8 +32,15 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- *
- * @author Maximiliano
+ * La clase PacienteBO representa la capa de negocio para la gestión de pacientes.
+ * Proporciona métodos para obtener información de pacientes, actualizar datos y consultar historial médico.
+ * 
+ * Esta clase actúa como un intermediario entre la capa de presentación y la capa de persistencia.
+ * Implementa validaciones y maneja excepciones para garantizar la integridad de los datos.
+ * 
+ * @author Norma Alicia Beltrán Martín - 00000252102
+ * @author Maximiliano Reyna Aguilar - 00000244877
+ * @author Katia Ximena Návarez Espinoza - 00000252855
  */
 public class PacienteBO {
 
@@ -46,11 +53,22 @@ public class PacienteBO {
     private final DireccionMapper mapper_direccion = new DireccionMapper();
     private final CitaMapper mapper_cita = new CitaMapper();
 
+    /**
+     * Constructor de PacienteBO que inicializa los DAOs necesarios.
+     * @param conexion El objeto de conexión a la base de datos.
+     */
     public PacienteBO(IConexionBD conexion) {
         this.pacienteDAO = new PacienteDAO(conexion);
         this.usuarioDAO = new UsuarioDAO(conexion);
     }
 
+    /**
+     * Este método obtiene la información de un paciente a partir de su nombre de usuario.
+     * @param nombreUsuario El nombre de usuario asociado al paciente.
+     * @return Regresa un objeto PacienteDTO con la información del paciente.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error en la base de datos.
+     * @throws NegocioException Lanza una excepción si el nombre de usuario es inválido.
+     */
     public PacienteDTO obtenerPacientePorNombreUsuario(String nombreUsuario) throws PersistenciaException, NegocioException {
 
         if (nombreUsuario == null || nombreUsuario.isEmpty()) {
@@ -62,6 +80,15 @@ public class PacienteBO {
         return mapper_paciente.toDTO(paciente);
     }
 
+    /**
+     * Este método actualiza los datos personales de un paciente.
+     * @param usuarioDTO Los datos del usuario asociado al paciente.
+     * @param pacienteDTO Los datos del paciente a actualizar.
+     * @param direccionDTO Los datos de la dirección del paciente.
+     * @return Regresa verdadero si la actualización fue exitosa, falso en caso contrario.
+     * @throws NegocioException Lanza una excepción si algún dato es inválido.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error en la base de datos.
+     */
     public boolean actualizarDatosPaciente(UsuarioDTO usuarioDTO, PacienteDTO pacienteDTO, DireccionDTO direccionDTO) throws NegocioException, PersistenciaException {
         if (usuarioDTO == null || pacienteDTO == null) {
             throw new NegocioException("El usuario y el paciente son obligatorios.");
@@ -115,6 +142,13 @@ public class PacienteBO {
         );
     }
 
+    /**
+     * Este método obtiene el historial de consultas de un paciente con un médico específico.
+     * @param nombrePaciente El nombre del paciente.
+     * @param nombreMedico El nombre del médico.
+     * @return Regresa la lista de objetos ConsultaDTO con el historial de consultas.
+     * @throws NegocioException Lanza una excepción si los datos son inválidos o no hay registros.
+     */
     public List<ConsultaDTO> obtenerHistorialConsultasDelPacientePorMedico(String nombrePaciente, String nombreMedico) throws NegocioException {
         if (nombrePaciente == null || nombrePaciente.trim().isEmpty()) {
             throw new NegocioException("El nombre del paciente no puede ser nulo.");
@@ -145,6 +179,12 @@ public class PacienteBO {
         }
     }
 
+    /**
+     * Este método obtiene la lista de citas programadas de un paciente.
+     * @param pacienteDTO El objeto PacienteDTO con la información del paciente.
+     * @return Regresa la lista de objetos CitaDTO con las citas programadas.
+     * @throws NegocioException Lanza una excepción si los datos del paciente son inválidos.
+     */
     public List<CitaDTO> obtenerCitasProgramadas(PacienteDTO pacienteDTO) throws NegocioException {
         try {
 

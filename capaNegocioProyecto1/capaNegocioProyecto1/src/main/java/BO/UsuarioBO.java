@@ -20,8 +20,13 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 /**
- *
- * @author Maximiliano
+ * Clase de negocio para gestionar usuarios y pacientes.
+ * Proporciona métodos para registrar usuarios-pacientes, iniciar sesión
+ * y obtener el tipo de usuario.
+ * 
+ * @author Norma Alicia Beltrán Martín - 00000252102
+ * @author Maximiliano Reyna Aguilar - 00000244877
+ * @author Katia Ximena Návarez Espinoza - 00000252855
  */
 public class UsuarioBO {
 
@@ -31,11 +36,23 @@ public class UsuarioBO {
     private final UsuarioMapper mapper_usuario = new UsuarioMapper();
     private final PacienteMapper mapper_paciente = new PacienteMapper();
 
+    /**
+     * Constructor que inicializa los DAOs con la conexión a la base de datos.
+     * @param conexion El objeto de conexión a la base de datos.
+     */
     public UsuarioBO(IConexionBD conexion) {
         this.usuarioDAO = new UsuarioDAO(conexion);
         this.pacienteDAO = new PacienteDAO(conexion);
     }
 
+    /**
+     * Este método registra un usuario y un paciente en la base de datos.
+     * @param usuarioDTO El objeto DTO que contiene los datos del usuario.
+     * @param pacienteDTO El objeto DTO que contiene los datos del paciente.
+     * @return Regresa verdadero si el registro es exitoso, falso en caso contrario.
+     * @throws NegocioException Lanza una excepción si hay un error de validación.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error en la persistencia.
+     */
     public boolean registrarUsuarioPaciente(UsuarioDTO usuarioDTO, PacienteDTO pacienteDTO) throws NegocioException, PersistenciaException {
         if (usuarioDTO == null || pacienteDTO == null) {
             throw new NegocioException("El usuario y el paciente son obligatorios.");
@@ -93,6 +110,13 @@ public class UsuarioBO {
 
     }
 
+    /**
+     * Este método verifica las credenciales de un usuario para iniciar sesión.
+     * @param usuarioDTO El objeto DTO con los datos del usuario.
+     * @return Regresa verdadero si la autenticación es correcta, falso en caso contrario.
+     * @throws NegocioException Lanza una excepción si hay errores de validación.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error en la persistencia.
+     */
     public boolean iniciarSesion(UsuarioDTO usuarioDTO) throws NegocioException, PersistenciaException {
         if (usuarioDTO.getNombre_usuario() == null || usuarioDTO.getNombre_usuario().trim().isEmpty()) {
             throw new NegocioException("El nombre de usuario no puede estar vacío.");
@@ -110,6 +134,12 @@ public class UsuarioBO {
         }
     }
 
+    /**
+     * Este método obtiene el tipo de usuario según su nombre de usuario.
+     * @param nombreUsuario El nombre del usuario en el sistema.
+     * @return Regresa una cadena con el tipo de usuario.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error en la persistencia.
+     */
     public String obtenerTipoUsuario(String nombreUsuario) throws PersistenciaException {
         return usuarioDAO.obtenerTipoUsuario(nombreUsuario);
     }
