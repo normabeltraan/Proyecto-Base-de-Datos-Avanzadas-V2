@@ -8,7 +8,8 @@ import DTO.PacienteDTO;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Clase que representa la ventana principal del perfil de un paciente
+ * utilizando interfaz gráfica.
  * @author norma
  */
 public class PerfilPaciente extends javax.swing.JFrame {
@@ -16,7 +17,9 @@ public class PerfilPaciente extends javax.swing.JFrame {
     private PacienteDTO paciente;
     
     /**
-     * Creates new form PerfilPaciente
+     * Constructor de la clase que inicializa el perfil del paciente.
+     * @param pacienteDTO Objeto de tipo PacienteDTO que contiene los datos
+     * que se van a mostrar en la pantalla.
      */
     public PerfilPaciente(PacienteDTO pacienteDTO) {
         this.paciente = pacienteDTO;
@@ -139,31 +142,65 @@ public class PerfilPaciente extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Método que se ejecuta cuando el botón "Ver/Cancelar Citas programadas" es
+     * presionado.
+     * Muestra la ventana para visualizar y/o cancelar citas.
+     * @param evt Evento de acción por presionar el botón
+     */
     private void btnVerCancelarCitasProgramadasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerCancelarCitasProgramadasActionPerformed
         new VerCancelarCitasProgramadas(paciente).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnVerCancelarCitasProgramadasActionPerformed
 
+    /**
+     * Método invocado cuando se hace click al botón "Actualizar Datos".
+     * Muestra una ventana con los datos del paciente, para modificar el deseado.
+     * @param evt Evento de acción generado por el click al botón
+     */
     private void btnActualizarDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarDatosActionPerformed
         new ActualizarDatos(paciente).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnActualizarDatosActionPerformed
 
+    /**
+     * Método que se ejecuta cuando el botón "Agendar Cita" es presionado.
+     * Muestra la ventana para permitir agendar una nueva cita.
+     * @param evt Evento de acción
+     */
     private void btnAgendarCitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgendarCitaActionPerformed
         new AgendarCita(paciente).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnAgendarCitaActionPerformed
 
+    /**
+     * Método que se invoca cuando se hace click al botón de "Generar Cita de Emergencia".
+     * Muestra la ventana para generar una cita de emergencia, donde se selecciona
+     * la especialidad y se genera un folio
+     * @param evt Evento de acción por el click al botón
+     */
     private void btnGenerarCitaEmergenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarCitaEmergenciaActionPerformed
         new GenerarCitaEmergencia( paciente).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnGenerarCitaEmergenciaActionPerformed
 
+    /**
+     * Método invocado al presionar el botón "Historial de Consultas".
+     * Muestra la ventana que permite observar el historial de consultas de un paciente,
+     * incluyendo fecha y hora, diagnóstico, tratamiento y médico.
+     * @param evt Evento generado por presionar el botón.
+     */
     private void btnHistorialConsultasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistorialConsultasActionPerformed
         new HistorialConsultas(paciente).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnHistorialConsultasActionPerformed
 
+    /**
+     * Método que se ejecuta cuando el botón "Cerrar Sesión" es presionado.
+     * Se muestra un cuadro donde solicita que se confirme la acción de cerrar sesión.
+     * Si el usuario confirma, entonces se sale de su cuenta.
+     * @param evt Evento de acción generado por click al botón
+     */
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
         int opcion = JOptionPane.showConfirmDialog(this, "¿Está seguro de que quiere cerrar sesión?",
                 "Confirmar cierre de sesión", JOptionPane.YES_NO_OPTION);

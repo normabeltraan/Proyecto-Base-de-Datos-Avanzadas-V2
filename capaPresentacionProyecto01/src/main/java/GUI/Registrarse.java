@@ -18,7 +18,8 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Clase que representa la interfaz gráfica para el registro de un nuevo
+ * paciente en el sistema.
  * @author norma
  */
 public class Registrarse extends javax.swing.JFrame {
@@ -26,7 +27,7 @@ public class Registrarse extends javax.swing.JFrame {
     private UsuarioBO usuarioBO = DependencyInjector.crearUsuarioBO();
 
     /**
-     * Creates new form Registrarse
+     * Constructor de la clase que inicializa los componentes de la interfaz.
      */
     public Registrarse() {
         initComponents();
@@ -243,6 +244,12 @@ public class Registrarse extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Método ejecutado cuando el usuario presiona el botón "Registrarse"
+     * Intenta hacer el registro del usuario al sistema.
+     * Utiliza excepciones en caso de error.
+     * @param evt Evento de acción
+     */
     private void btnConfirmarRegistrarseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarRegistrarseActionPerformed
         try {
             registrarse();
@@ -253,6 +260,12 @@ public class Registrarse extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnConfirmarRegistrarseActionPerformed
 
+    /**
+     * Método invocado cuando el usuario presiona el botón "Cancelar".
+     * Cierra la ventana actual, y te muestra la pantalla de inicio de sesión
+     * nuevamente.
+     * @param evt Evento de acción al clickear el botón
+     */
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         this.setVisible(false);
         IniciarSesion iniciarSesionFrame = new IniciarSesion();
@@ -290,6 +303,14 @@ public class Registrarse extends javax.swing.JFrame {
     private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Método utilizado para registrar a un usuario nuevo en el sistema.
+     * Valida los datos ingresados, se cerciora que los campos no estén vacíos,
+     * verifica que la fecha esté en el formato correcto y
+     * realiza un llamado a UsuarioBO para realizar el registro.
+     * @throws NegocioException En caso de error en la lógica de negocio
+     * @throws PersistenciaException En caso de error en la capa de persistencia.
+     */
     public void registrarse() throws NegocioException, PersistenciaException {
         try {
             String nombre = txtNombre.getText();
