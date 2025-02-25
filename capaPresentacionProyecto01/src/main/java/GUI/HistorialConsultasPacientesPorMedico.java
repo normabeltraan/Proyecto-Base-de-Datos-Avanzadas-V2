@@ -55,13 +55,13 @@ public class HistorialConsultasPacientesPorMedico extends javax.swing.JFrame {
 
         tablaConsultas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Fecha y hora", "Especialidad", "Médico", "Diagnóstico", "Tratamiento"
+                "Fecha y hora", "Tipo", "Diagnóstico", "Tratamiento"
             }
         ));
         jScrollPane1.setViewportView(tablaConsultas);
@@ -171,9 +171,9 @@ public class HistorialConsultasPacientesPorMedico extends javax.swing.JFrame {
                 Object[] row = new Object[]{
                     consulta.getCita().getFecha_hora(),
                     consulta.getCita().getTipo(),
-                    consulta.getCita().getEstado(),
-                    consulta.getTratamiento(),
-                    consulta.getDiagnostico()
+                    consulta.getDiagnostico(),
+                    consulta.getTratamiento()
+                    
                 };
                 tabla.addRow(row);
             }
