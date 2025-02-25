@@ -15,7 +15,10 @@ import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
+ * Clase responsable de gestionar la interfaz gráfica para la 
+ * visualización del historial de consultas médicas.
+ * Permite filtrar las consultas por especialidad y por rango de fecha.
+ * Muestra los resultados en una tabla.
  * @author norma
  */
 public class HistorialConsultas extends javax.swing.JFrame {
@@ -25,7 +28,10 @@ public class HistorialConsultas extends javax.swing.JFrame {
     private MedicoBO medicoBO = DependencyInjector.crearMedicoBO();
 
     /**
-     * Creates new form HistorialConsultas
+     * Constructor de la clase. 
+     * Crea una nueva ventana de historial de consultas
+     * para el paciente dado.
+     * @param pacienteDTO Paciente cuyo historial se mostrará.
      */
     public HistorialConsultas(PacienteDTO pacienteDTO) {
         this.paciente = pacienteDTO;
@@ -171,11 +177,22 @@ public class HistorialConsultas extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Se ejecuta cuando se presiona el botón "Cancelar".
+     * Cierra la ventana actual y abre la del perfil del paciente.
+     * @param evt Evento de acción generado por el botón.
+     */
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         new PerfilPaciente(paciente).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    /**
+     * Método invocado al presionar el botón "Buscar" en la pantalla.
+     * Carga el historial de consultas basado en los filtros
+     * previamente seleccionados.
+     * @param evt Evento de acción
+     */
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         cargarHistorialConsultas();
     }//GEN-LAST:event_btnBuscarActionPerformed
@@ -197,6 +214,10 @@ public class HistorialConsultas extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser txtFechaInicio;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Método que se encarga de cargar las especialidades médicas en
+     * el combobox desde la base de datos.
+     */
     private void cargarEspecialidades() {
         List<String> especialidades = medicoBO.obtenerEspecialidades();
         if (especialidades != null) {
@@ -207,6 +228,11 @@ public class HistorialConsultas extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Método que obtiene el historial de consultas del paciente 
+     * según los filtros de especialidad y el rango de fechas
+     * seleccionado.
+     */
     private void cargarHistorialConsultas() {
         try {
             String nombrePaciente = paciente.getNombre() + " " + paciente.getApellido_paterno() + " " + paciente.getApellido_materno();
@@ -224,6 +250,11 @@ public class HistorialConsultas extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que se encarga de actualizar la tabla del historial de consultas
+     * con los datos obtenidos.
+     * @param consultas Es la lista de consultas a mostrar en la tabla.
+     */
     private void actualizarTabla(List<ConsultaDTO> consultas) {
         DefaultTableModel tabla = (DefaultTableModel) jTable1.getModel();
         tabla.setRowCount(0);

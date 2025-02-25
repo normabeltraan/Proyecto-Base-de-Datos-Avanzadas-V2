@@ -13,7 +13,8 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Clase que representa la interfaz gráfica del perfil de un médico.
+ * Muestra las opciones disponibles, ya que haya iniciado sesión.
  * @author norma
  */
 public class PerfilMedico extends javax.swing.JFrame {
@@ -22,7 +23,9 @@ public class PerfilMedico extends javax.swing.JFrame {
     private MedicoBO medicoBO = DependencyInjector.crearMedicoBO();
 
     /**
-     * Creates new form PerfilMedico
+     * Constructor de la clase que inicializa el perfil del médico
+     * con los datos proporcionados.
+     * @param medicoDTO Objeto que contiene los datos del médico.
      */
     public PerfilMedico(MedicoDTO medicoDTO) {
         this.medico = medicoDTO;
@@ -151,16 +154,33 @@ public class PerfilMedico extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Método que se ejecuta cuando el botón "Consultar Agenda" es presionado.
+     * Abre la ventana para observar la agenda del médico del día actual.
+     * @param evt Evento de acción generado por el botón.
+     */
     private void btnConsultarAgendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultarAgendaActionPerformed
         new ConsultarAgenda(medico).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnConsultarAgendaActionPerformed
 
+    /**
+     * Método invocado cuando el botón "Historial de Consultas Pacientes" es clickeado.
+     * Abre la ventana que muestra el historial de consultas de un paciente (el paciente
+     * al que se escribió su nombre completo).
+     * @param evt  Evento de acción 
+     */
     private void btnHistorialConsultasPacientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistorialConsultasPacientesActionPerformed
         new HistorialConsultasPacientesPorMedico(medico).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnHistorialConsultasPacientesActionPerformed
 
+    /**
+     * Método que se ejecuta cuando se hace click en el botón "Ver perfil".
+     * Abre la ventana que permite al médico ver su información registrada
+     * en el sistema.
+     * @param evt Evento de acción generado por el botón ver pefil
+     */
     private void btnVerPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerPerfilActionPerformed
         try {
             new VerPerfilMedico(medico).setVisible(true);
@@ -170,14 +190,30 @@ public class PerfilMedico extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_btnVerPerfilActionPerformed
 
+    /**
+     * Método invocado cuando el botón "Activar cuenta" es presionado.
+     * Cambia el estado de la cuenta del médico de "Inactivo" a "Activo".
+     * @param evt Evento de acción generado por el botón.
+     */
     private void btnActivarCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActivarCuentaActionPerformed
         activarCuenta();
     }//GEN-LAST:event_btnActivarCuentaActionPerformed
 
+    /**
+     * Método que se invoca cuando el botón "Dar de baja temporal" es presionado.
+     * Cambia el estado de la cuenta del médico de "Activo" a "Inactivo".
+     * @param evt Evento de acción
+     */
     private void btnDarDeBajaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDarDeBajaActionPerformed
         darDeBaja();
     }//GEN-LAST:event_btnDarDeBajaActionPerformed
 
+    /**
+     * Método que se ejecuta cuando el botón "Cerrar sesión" es presionado.
+     * Solicita una confirmación para saber si realmente se quiere cerrar
+     * la sesión del médico.
+     * @param evt Evento de acción
+     */
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
         int opcion = JOptionPane.showConfirmDialog(this, "¿Está seguro de que quiere cerrar sesión?",
                 "Confirmar cierre de sesión", JOptionPane.YES_NO_OPTION);
@@ -200,6 +236,9 @@ public class PerfilMedico extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Cambia el estado de la cuenta del médico a "Activo".
+     */
     private void activarCuenta() {
         try {
             String resultado = medicoBO.cambiarEstadoMedico(medico, "Activo");
@@ -209,6 +248,10 @@ public class PerfilMedico extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Cambia el estado de la cuenta del médico a "Inactivo".
+     * Solo es una baja temporal, no definitiva.
+     */
     private void darDeBaja() {
         try {
             String resultado = medicoBO.cambiarEstadoMedico(medico, "Inactivo");

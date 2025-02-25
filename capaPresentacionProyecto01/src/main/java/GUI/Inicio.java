@@ -5,13 +5,16 @@
 package GUI;
 
 /**
- *
+ * Es la clase principal, para comenzar a mostrar todo.
+ * Se crea una instancia de la clase IniciarSesion y se hace visible la
+ * ventana de inicio de sesión, para que el usuario ingrese sus datos.
  * @author norma
  */
 public class Inicio {
 
     /**
-     * @param args the command line arguments
+     * Método para ejecutar el sistema.
+     * @param args 
      */
     public static void main(String[] args) {
         IniciarSesion pantallaIniciarSesion = new IniciarSesion();

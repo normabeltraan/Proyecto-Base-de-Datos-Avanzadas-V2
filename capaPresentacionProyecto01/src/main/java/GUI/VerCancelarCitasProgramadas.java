@@ -14,12 +14,9 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 /**
- *
+ * Clase utilizada para permitir que el paciente observe y/o cancele si lo desea
+ * las citas que previamente agendó.
  * @author norma
  */
 public class VerCancelarCitasProgramadas extends javax.swing.JFrame {
@@ -31,7 +28,10 @@ public class VerCancelarCitasProgramadas extends javax.swing.JFrame {
     List<CitaDTO> citas;
 
     /**
-     * Creates new form VerCancelarCitasProgramadas
+     * Constructor de la clase.
+     * Inicializa la ventana con los datos del paciente y carga sus citas.
+     * @param pacienteDTO Objeto de tipo PacienteDTO que representa al paciente
+     * que verá sus citas.
      */
     public VerCancelarCitasProgramadas(PacienteDTO pacienteDTO) {
         this.paciente = pacienteDTO;
@@ -131,11 +131,23 @@ public class VerCancelarCitasProgramadas extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Método que se invoca cuando el usuario hace click en "Cancelar".
+     * Cierra la ventana en la que se encuentra, y lo regresa a la ventana
+     * del perfil del paciente donde están las opciones.
+     * @param evt Evento de acción generado al presionar el botón
+     */
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         new PerfilPaciente(paciente).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    /**
+     * Método ejecutado cuando se presiona el botón "Cancelar Cita".
+     * Intenta cancelar la cita que seleccionó el usuario, y maneja
+     * excepciones para los casos de error.
+     * @param evt Evento de acción por presionar el botón
+     */
     private void btnCancelarCitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarCitaActionPerformed
         try {
             cancelarCita();
@@ -154,6 +166,12 @@ public class VerCancelarCitasProgramadas extends javax.swing.JFrame {
     private javax.swing.JTable tablaCitas;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Método que se encarga de obtener y mostrar las citas que el paciente tiene
+     * programadas.
+     * Hace un llamado a PacienteBO para conseguir la lista de citas y mostrarlas
+     * en una tabla.
+     */
     private void citas() {
         try {
             citas = pacienteBO.obtenerCitasProgramadas(paciente);
@@ -171,6 +189,12 @@ public class VerCancelarCitasProgramadas extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método utilizado para cancelar la cita previamente seleccionada.
+     * Verifica si sí se seleccionó la cita, la elimina usando CitaBO y posteriormente
+     * actualiza la tabla
+     * @throws PersistenciaException Por si ocurre un error en la capa de persistencia.
+     */
     private void cancelarCita() throws PersistenciaException {
         int filaSeleccionada = tablaCitas.getSelectedRow();
         if (filaSeleccionada == -1) {
