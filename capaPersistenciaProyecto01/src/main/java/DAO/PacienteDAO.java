@@ -27,19 +27,36 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author norma
+ * Esta clase implementa la interfaz IPacienteDAO se encarga de gestionar a los pacientes y otras operaciones.
+ * que involucren a la dirección.
+ * 
+ * @author Norma Alicia Beltrán Martín - 00000252102
+ * @author Maximiliano Reyna Aguilar - 00000244877
+ * @author Katia Ximena Návarez Espinoza - 00000252855
  */
 public class PacienteDAO implements IPacienteDAO {
 
     IConexionBD conexion;
 
+    /**
+     * Constructor que recibe la conexión con la base de datos.
+     * @param conexion La conexión de la base de datos.
+     */
     public PacienteDAO(IConexionBD conexion) {
         this.conexion = conexion;
     }
 
     private static final Logger logger = Logger.getLogger(PacienteDAO.class.getName());
 
+    /**
+     * Este método bbtiene un paciente asociado a un usuario a partir del ID de usuario proporcionado.
+     * Realiza una consulta SQL a la base de datos para recuperar la información del paciente y su usuario correspondiente. 
+     * Si se encuentra al paciente, se retorna como un objeto Paciente, con todos los datos de usuario y dirección. 
+     * Si no se encuentra o ocurre algún error en la consulta, se maneja la excepción y se devuelve null.
+     * @param idUsuario El identificador único del usuario asociado al paciente que se quiere obtener.
+     * @return Regresa un objeto Paciente con todos los detalles del paciente, o null si no se encuentra.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error durante la operación.
+     */
     @Override
     public Paciente obtenerPacientePorIdUsuario(int idUsuario) throws PersistenciaException {
         String consultaSQL = "SELECT P.*, U.nombre_usuario "
@@ -82,6 +99,16 @@ public class PacienteDAO implements IPacienteDAO {
         return null;
     }
 
+    /**
+     * Este método obtiene el historial de consultas médicas de un paciente con un médico específico.
+     * Realiza una consulta a la base de datos para recuperar todas las consultas realizadas entre un paciente y un médico en particular. 
+     * La información obtenida incluye los detalles del paciente, médico, cita y la consulta médica, como diagnóstico y tratamiento.
+     * @param nombrePaciente El nombre completo del paciente (nombre, apellido paterno y apellido materno opcional).
+     * @param nombreMedico El nombre completo del médico (nombre, apellido paterno y apellido materno opcional).
+     * @return Regresa una lista de consultas del historial de consultas del paciente con el médico.
+     * Si no hay consultas registradas, la lista se devuelve vacía.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error al realizar la consulta a la base de datos.
+     */
     @Override
     public List<Consulta> obtenerHistorialConsultasDelPacientePorMedico(String nombrePaciente, String nombreMedico) throws PersistenciaException {
 
@@ -148,6 +175,15 @@ public class PacienteDAO implements IPacienteDAO {
         return consultasP;
     }
 
+    /**
+     * Este método obtiene la lista de citas programadas para un paciente específico.
+     * Consulta la base de datos para recuperar todas las citas activas asociadas a un paciente, 
+     * junto con la información del médico correspondiente.
+     * Las citas se ordenan en orden ascendente según la fecha y hora de la cita.
+     * @param paciente El objeto que representa al paciente del cual se desean obtener las citas programadas.
+     * @return Regresa una lista de las citas activas del paciente. Si el paciente no tiene citas activas, la lista se devuelve vacía.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error al acceder a la base de datos.
+     */
     @Override
     public List<Cita> obtenerCitasProgramadas(Paciente paciente) throws PersistenciaException {
         List<Cita> citasProgramadas = new ArrayList<>();
@@ -190,6 +226,12 @@ public class PacienteDAO implements IPacienteDAO {
         return citasProgramadas;
     }
 
+    /**
+     * Este método inserta una nueva dirección en la base de datos y devuelve el ID generado.
+     * @param direccion El objeto que contiene la información de la dirección a insertar.
+     * @return Regresa el identificador único de la dirección insertada si la operación fue exitosa, o -1 si no se generó el identificador.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error al acceder a la base de datos.
+     */
     @Override
     public int insertarDireccion(Direccion direccion) throws PersistenciaException {
         String consultaSQL = "INSERT INTO direcciones (colonia, ciudad, calle) VALUES (?, ?, ?)";
@@ -217,6 +259,13 @@ public class PacienteDAO implements IPacienteDAO {
         }
     }
 
+    /**
+     * Este método actualiza la dirección de un usuario en la base de datos, siempre que no tenga citas activas.
+     * @param direccion El objeto con los nuevos datos de la dirección.
+     * @param idUsuario El identificador único del usuario cuya dirección se actualizará.
+     * @return Regresa verdadero si la dirección se actualizó correctamente, falso en caso contrario.
+     * @throws PersistenciaException Lanza una excepción si el usuario tiene citas activas, no se encuentra su dirección, o ocurre un error de base de datos.
+     */
     @Override
     public boolean actualizarDireccionPorUsuario(Direccion direccion, Integer idUsuario) throws PersistenciaException {
         String consultacitasSQL = "SELECT COUNT(*) FROM CITAS WHERE id_usuario_paciente = ? AND estado = 'Activa'";
@@ -255,6 +304,13 @@ public class PacienteDAO implements IPacienteDAO {
         }
     }
 
+    /**
+     * Este método obtiene el ID de la dirección asociada a un usuario en la base de datos.
+     * Consulta la tabla pacientes para recuperar el identificador de la dirección.
+     * @param idUsuario El identificador único del usuario cuya dirección se desea obtener.
+     * @return Regresa el identificador único de la dirección asociada al usuario o null si no se encuentra.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error al acceder a la base de datos.
+     */
     @Override
     public Integer obtenerIdDireccionPorUsuario(Integer idUsuario) throws PersistenciaException {
         String consultaSQL = "SELECT id_direccion FROM pacientes WHERE id_usuario = ?";
@@ -276,6 +332,12 @@ public class PacienteDAO implements IPacienteDAO {
         }
     }
 
+    /**
+     * Este método obtiene un paciente a partir del nombre de usuario.
+     * @param nombreUsuario El nombre de usuario del paciente a buscar.
+     * @return El objeto con la información del paciente recuperada.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error en la consulta o si no se encuentra el paciente.
+     */
     @Override
     public Paciente obtenerPacientePorNombreUsuario(String nombreUsuario) throws PersistenciaException {
         String consultaSQL = "SELECT p.id_usuario, p.nombre, p.apellido_paterno, p.apellido_materno, p.telefono, "
@@ -321,6 +383,13 @@ public class PacienteDAO implements IPacienteDAO {
         }
     }
 
+    /**
+     * Este método verifica si existe un paciente en la base de datos a partir de su nombre completo.
+     * Realiza una consulta en la tabla pacientes para determinar si hay un paciente registrado con el nombre completo proporcionado.
+     * @param nombrePaciente El nombre completo del paciente en formato "Nombre ApellidoPaterno ApellidoMaterno".
+     * @return Regresa verdadero si el paciente existe en la base de datos, falso en caso contrario.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error en la consulta a la base de datos.
+     */
     @Override
     public boolean existePaciente(String nombrePaciente) throws PersistenciaException {
         String consultaSQL = "SELECT * FROM PACIENTES WHERE "
@@ -342,6 +411,14 @@ public class PacienteDAO implements IPacienteDAO {
         return false;
     }
 
+    /**
+     * Este método obtiene el identificador único de un usuario a partir de su correo electrónico.
+     * Consulta la tabla usuario para recuperar el identificador único del usuario.
+     * correspondiente al correo electrónico proporcionado.
+     * @param correoElectronico El correo electrónico del usuario a buscar.
+     * @return Regresa el identificador del usuario si existe en la base de datos, y -1 si no se encuentra.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error en la consulta a la base de datos.
+     */
     @Override
     public int obtenerIdUsuarioPorCorreo(String correoElectronico) throws PersistenciaException {
         String consultaSQL = "SELECT id_usuario FROM Usuario WHERE correo_electronico = ?";
@@ -360,6 +437,20 @@ public class PacienteDAO implements IPacienteDAO {
         return -1;
     }
 
+    /**
+     * Este método actualiza los datos personales de un paciente en la base de datos.
+     * Invoca el procedimiento almacenado {@code ACTUALIZAR_DATOS_PACIENTE}
+     * para modificar la información de un paciente en la base de datos.
+     * @param idUsuario El identificador único del usuario a actualizar.
+     * @param nombre El nuevo nombre del paciente.
+     * @param apellidoPaterno El nuevo apellido paterno del paciente.
+     * @param apellidoMaterno El nuevo apellido materno del paciente.
+     * @param telefono El nuevo número de teléfono del paciente.
+     * @param fechaNacimiento La nueva fecha de nacimiento del paciente.
+     * @param correoElectronico El nuevo correo electrónico del paciente.
+     * @return Regresa verdadero si la actualización se realizó con éxito.
+     * @throws PersistenciaException Lanza una excepción si el paciente tiene citas activas o si ocurre un error en la base de datos.
+     */
     @Override
     public boolean actualizarDatosPaciente(int idUsuario, String nombre, String apellidoPaterno, String apellidoMaterno, String telefono,
             LocalDate fechaNacimiento, String correoElectronico) throws PersistenciaException {
@@ -387,6 +478,16 @@ public class PacienteDAO implements IPacienteDAO {
         }
     }
 
+    /**
+     * Este método obtiene el identificador único de un paciente en la base de datos a partir de su nombre, apellido paterno y apellido materno.
+     * Busca en la tabla pacientes el identificador del usuario cuyo nombre y apellidos coincidan con los proporcionados.
+     * @param nombre El nombre del paciente a buscar.
+     * @param apellidoPaterno El apellido paterno del paciente.
+     * @param apellidoMaterno El apellido materno del paciente.
+     * @return Regresa el identificador único del usuario si se encuentra un paciente con los datos proporcionados, 
+     * @throws PersistenciaException Lanza una excepción si ocurre un error al ejecutar la consulta SQL.
+     */
+    @Override
     public int obtenerIdPacientePorNombre(String nombre, String apellidoPaterno, String apellidoMaterno) throws PersistenciaException {
         String consultaSQL = "SELECT ID_USUARIO FROM PACIENTES WHERE NOMBRE = ? AND APELLIDO_PATERNO = ? AND APELLIDO_MATERNO = ?";
 

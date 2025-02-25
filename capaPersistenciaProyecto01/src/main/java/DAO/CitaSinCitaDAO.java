@@ -18,17 +18,31 @@ import java.sql.Timestamp;
 import java.util.logging.Level;
 
 /**
- *
- * @author norma
+ * Esta clase implementa las operaciones relacionadas a las citas de emergencia.
+ * 
+ * @author Norma Alicia Beltrán Martín - 00000252102
+ * @author Maximiliano Reyna Aguilar - 00000244877
+ * @author Katia Ximena Návarez Espinoza - 00000252855
  */
 public class CitaSinCitaDAO implements ICitaSinCitaDAO {
 
     IConexionBD conexion;
 
+    /**
+     * Constructor que recibe la conexión con la base de datos.
+     * @param conexion El objeto que gestiona la conexión.
+     */
     public CitaSinCitaDAO(IConexionBD conexion) {
         this.conexion = conexion;
     }
 
+    /**
+     * En este método se agenda una cita de emergencia para un paciente según la especialidad al igual que su folio.
+     * @param especialidad La especialidad del médico.
+     * @param id_paciente El identificador único del paciente.
+     * @return Regresa un objeto con la información de una cita de emergencia.
+     * @throws PersistenciaException Lanzará una excepción si ocurre un error durante la operación.
+     */
     @Override
     public CitaSinCita agendarCitaEmergencia(String especialidad, int id_paciente) throws PersistenciaException {
         CitaSinCita citaSinCita = null;
@@ -67,6 +81,12 @@ public class CitaSinCitaDAO implements ICitaSinCitaDAO {
         return citaSinCita;
     }
 
+    /**
+     * Este método se encarga de obtener el folio de emergencia de las citas sin cita previa.
+     * @param id_cita El identificador único de la cita.
+     * @return Regresa el folio de emergencia asociado a la cita, o null si no existe.
+     * @throws PersistenciaException Lanzará una excepción si ocurre un error durante la operación.
+     */
     public String obtenerFolioEmergencia(int id_cita) throws PersistenciaException {
 
         String consultaSQL = "SELECT folio_emergencia FROM CITAS_SINCITA WHERE id_cita = ?";

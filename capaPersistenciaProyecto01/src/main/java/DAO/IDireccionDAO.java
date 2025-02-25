@@ -5,8 +5,11 @@
 package DAO;
 
 /**
- *
- * @author norma
+ * Esta interfaz define las operaciones que se realizan en las direcciones de los pacientes.
+ * 
+ * @author Norma Alicia Beltrán Martín - 00000252102
+ * @author Maximiliano Reyna Aguilar - 00000244877
+ * @author Katia Ximena Návarez Espinoza - 00000252855
  */
 public interface IDireccionDAO {
     

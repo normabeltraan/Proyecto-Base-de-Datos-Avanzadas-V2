@@ -20,19 +20,36 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- *
- * @author norma
+ * Esta clase implementa consultas, de tal manera que se realizane las consultas médicas de ambos casos de cita.
+ * De emergencia y agendadas.
+ * 
+ * @author Norma Alicia Beltrán Martín - 00000252102
+ * @author Maximiliano Reyna Aguilar - 00000244877
+ * @author Katia Ximena Návarez Espinoza - 00000252855
  */
 public class ConsultaDAO implements IConsultaDAO {
 
     IConexionBD conexion;
 
+    /**
+     * Constructor que recibe la conexión con la base de datos.
+     * @param conexion El objeto que gestiona la conexión con la base de datos.
+     */
     public ConsultaDAO(IConexionBD conexion) {
         this.conexion = conexion;
     }
 
     private static final Logger logger = Logger.getLogger(ConsultaDAO.class.getName());
 
+    /**
+     * Este método obtiene el historial de consultas de los pacientes filtrados por especialidad y un rango de fechas.
+     * @param nombrePaciente El nombre completo del paciente.
+     * @param especialidad La especialidad del médico.
+     * @param fechaInicio La fecha de inicio de la consulta.
+     * @param fechaFin La fecha de fin de la consulta.
+     * @return Regresa la lista de consultas del paciente.
+     * @throws PersistenciaException Lanzará una excepción si ocurre un error durante la operación.
+     */
     @Override
     public List<Consulta> obtenerHistorialConsultasDelPaciente(String nombrePaciente, String especialidad, Date fechaInicio, Date fechaFin) throws PersistenciaException {
 
@@ -90,6 +107,14 @@ public class ConsultaDAO implements IConsultaDAO {
         return consultas;
     }
 
+    /**
+     * Este método se encarga de que las citas programadas sean atendidas por los médicos para que lleven a cabo su consulta.
+     * @param idCita El identificador único de la cita programada.
+     * @param idUsuarioMedico El identificador único del usuario del médico.
+     * @param consulta El objeto que almacena toda la información de la consulta realizada.
+     * @return Se regresa verdadero si la cita fue atendida exitosamente, y falso en caso contrario.
+     * @throws PersistenciaException Lanzará una excepción si ocurre un error durante la operación.
+     */
     @Override
     public boolean atenderCitaProgramada(int idCita, int idUsuarioMedico, Consulta consulta) throws PersistenciaException {
         String consultaSQL = "SELECT estado, id_usuario_medico FROM CITAS WHERE id_cita = ?";
@@ -136,6 +161,15 @@ public class ConsultaDAO implements IConsultaDAO {
         return false;
     }
 
+    /**
+     * En este método se encarga de que las citas de emergencia sean atendidos por los médicos que llevan a cabo la consulta.
+     * @param idCita El identificador único de la cita.
+     * @param idUsuarioMedico El identificador único del usuario médico.
+     * @param folioEmergencia El folio de emergencia necesario para poder atender la cita.
+     * @param consulta El objeto que guarda toda la información de la consulta realizada.
+     * @return Regresa verdadero si la cita fue atendida exitosamente, y falso si es el caso contrario.
+     * @throws PersistenciaException Lanzará una excepción si ocurre un error en la operación.
+     */
     @Override
     public boolean atenderCitaEmergencia(int idCita, int idUsuarioMedico, String folioEmergencia, Consulta consulta) throws PersistenciaException {
         String consultaSQL = "SELECT estado, id_usuario_medico FROM CITAS c "
@@ -191,6 +225,13 @@ public class ConsultaDAO implements IConsultaDAO {
         }
     }
 
+    /**
+     * En este método se encarga de validar el folio de emergencia de la cita de emergencia.
+     * @param idCita El identificador único de la cita.
+     * @param folio El folio de la cita de emergencia.
+     * @return Regresa el verdadero si fue validado con éxito y sea el correcto, y falso si es lo contrario.
+     * @throws PersistenciaException Lanzará una excepción si ocurre un error durante la operación.
+     */
     @Override
     public boolean validarFolio(int idCita, String folio) throws PersistenciaException {
         String consultaSQL = "SELECT folio_emergencia FROM CITAS_SINCITA WHERE id_cita = ? AND folio_emergencia = ?";
