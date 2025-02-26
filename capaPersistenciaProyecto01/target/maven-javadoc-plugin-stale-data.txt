@@ -1,0 +1,58 @@
+-J-Duser.language=
+-J-Duser.country=
+@options
+@packages
+-classpath
+'C:/Users/norma/.m2/repository/com/mysql/mysql-connector-j/9.2.0/mysql-connector-j-9.2.0.jar;C:/Users/norma/.m2/repository/com/google/protobuf/protobuf-java/4.29.0/protobuf-java-4.29.0.jar;C:/Users/norma/.m2/repository/org/mindrot/jbcrypt/0.4/jbcrypt-0.4.jar'
+-encoding
+'UTF-8'
+-protected
+-source
+'21'
+-sourcepath
+'C:/Users/norma/OneDrive/Documentos/proyecto base de datos avanzadas v2/capaPersistenciaProyecto01/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2025. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'C:/Users/norma/OneDrive/Documentos/proyecto base de datos avanzadas v2/capaPersistenciaProyecto01/target/reports/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'capaPersistenciaProyecto01 1.0-SNAPSHOT API'
+-use
+-version
+-windowtitle
+'capaPersistenciaProyecto01 1.0-SNAPSHOT API'
+com.proyecto01.capapersistenciaproyecto01
+conexion
+DAO
+entidades
+excepciones
+C:\Users\norma\.m2\repository\com\mysql\mysql-connector-j\9.2.0\mysql-connector-j-9.2.0.jar = 1739071808876
+C:\Users\norma\.m2\repository\com\google\protobuf\protobuf-java\4.29.0\protobuf-java-4.29.0.jar = 1739071809003
+C:\Users\norma\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar = 1740277302298
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\src\main\java = 1740091276953
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\allclasses-index.html = 1740536267862
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\allpackages-index.html = 1740536267867
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\copy.svg = 1740536268022
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\element-list = 1740536267134
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\help-doc.html = 1740536268006
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\index-all.html = 1740536267975
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\index.html = 1740536267769
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\link.svg = 1740536268026
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\member-search-index.js = 1740536267883
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\module-search-index.js = 1740536267871
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\overview-summary.html = 1740536267988
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\overview-tree.html = 1740536267761
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\package-search-index.js = 1740536267875
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\script.js = 1740536268017
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\search-page.js = 1740536268038
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\search.html = 1740536267982
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\search.js = 1740536268034
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\serialized-form.html = 1740536267291
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\stylesheet.css = 1740536268012
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\tag-search-index.js = 1740536267890
+C:\Users\norma\OneDrive\Documentos\proyecto base de datos avanzadas v2\capaPersistenciaProyecto01\target\reports\apidocs\type-search-index.js = 1740536267878

@@ -24,14 +24,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author norma
+ * La clase cita DAO implementa la interfaz ICitaDAO, se encarga de gestionar todas las operaciones relacionadas,
+ * a las citas en general más enfocada a las citas agendadas.
+ * 
+ * @author Norma Alicia Beltrán Martín - 00000252102
+ * @author Maximiliano Reyna Aguilar - 00000244877
+ * @author Katia Ximena Návarez Espinoza - 00000252855
  */
 public class CitaDAO implements ICitaDAO {
-    //aaaaaaaaaa
 
     IConexionBD conexion;
 
+    /**
+     * Constructor que recibe la conexión con la base de datos.
+     * @param conexion La conexión de la base de datos.
+     */
     public CitaDAO(IConexionBD conexion) {
         this.conexion = conexion;
     }
@@ -39,17 +46,10 @@ public class CitaDAO implements ICitaDAO {
     private static final Logger logger = Logger.getLogger(CitaDAO.class.getName());
 
     /**
-     * private Timestamp convertirFechaHora(Date fecha, Time hora) { return
-     * Timestamp.valueOf(fecha.toString() + " " + hora.toString()); }
-     *
-     */
-    /**
-     * private Timestamp convertirFechaHora(Date fecha, Time hora) { try {
-     * String fechaHoraStr = fecha.toString() + " " + hora.toString(); return
-     * Timestamp.valueOf(fechaHoraStr); } catch (IllegalArgumentException e) {
-     * logger.log(Level.SEVERE, "Error en la conversión de fecha y hora", e);
-     * return null; } }
-     *
+     * Este método se usa para agendar una nueva cita en la base de datos.
+     * @param cita El objeto que contiene toda la información de la cita.
+     * @return Regresa verdadero si la cita se agendó correctamente, falso en el caso contrario.
+     * @throws PersistenciaException Lanzará una excepción si ocurre un error durante la operación.
      */
     @Override
     public boolean agendarCita(Cita cita) throws PersistenciaException {
@@ -76,6 +76,12 @@ public class CitaDAO implements ICitaDAO {
         }
     }
 
+    /**
+     * Este método se usa para cancelar una cita ya existente en la base de datos.
+     * @param cita Un objeto que almacena toda la información de la cita.
+     * @return Regresa verdadero si la cita se canceló correctamente, falso en el caso contrario.
+     * @throws PersistenciaException Lanzará una excepción si ocurre un error durante la operación.
+     */
     @Override
     public boolean cancelarCita(Cita cita) throws PersistenciaException {
         
@@ -96,6 +102,13 @@ public class CitaDAO implements ICitaDAO {
         }
     }
 
+    /**
+     * Este método se usa para obtener los horarios disponibles de un médico en una fecha en específico.
+     * @param fecha Fecha para la cual se quiere obtener los horarios disponibles.
+     * @param id_usuario_medico El identificador único del usuario del médico.
+     * @return Regresa la lista con los horarios disponibles de los médicos.
+     * @throws PersistenciaException Lanzará una excepción si ocurre un error durante la operación.
+     */
     @Override
     public List<HorarioDisponible> obtenerHorariosDisponibles(Date fecha, int id_usuario_medico) throws PersistenciaException {
         String consultaSQL = "SELECT fecha, hora_disponible "
@@ -120,12 +133,6 @@ public class CitaDAO implements ICitaDAO {
                 Date dia = rs.getDate("fecha");
                 Time hora_disponible = rs.getTime("hora_disponible");
 
-                /**
-                 * Timestamp fechaHoraCita = convertirFechaHora(dia,
-                 * hora_disponible); if (fechaHoraCita == null) {
-                 * logger.warning("No se convirtio fecha y hora,"); continue; }
-                 *
-                 */
                 HorarioDisponible horario = new HorarioDisponible(dia, hora_disponible);
                 horarios.add(horario);
             }

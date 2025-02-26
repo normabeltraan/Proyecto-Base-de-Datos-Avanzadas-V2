@@ -12,20 +12,26 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author norma
+ * La clase ConexionBD es la encargada de gestionar la conexión a la base de datos de mysql,
+ * en este caso de nuestro proyecto. Esta clase maneja las credenciales de acceso que son el usuario que tienes en tu base de datos,
+ * tu contraseña y finalmente se cuenta con la url mejor dicho la cadena de conexión con nuestra base de datos.
+ * 
+ * @author Norma Alicia Beltrán Martín - 00000252102
+ * @author Maximiliano Reyna Aguilar - 00000244877
+ * @author Katia Ximena Návarez Espinoza - 00000252855
  */
 public class ConexionBD implements IConexionBD {
 
     final String USUARIO = "root";
-    final String PASS = "17062Bel";
+    final String PASS = "itson";
     final String CADENA_CONEXION = "jdbc:mysql://localhost:3306/sistemaconsultas";
 
     /**
-     * Crea la conexión con la base de datos
-     *
-     * @return la conexión
-     * @throws PersistenciaException excepción que lanzará si existe un error
+     * En este método se crea la conexión con la base de datos, 
+     * utilizando el drive manager para obtener una conexion con los parámetros establecidos y la url de la conexión.
+     * 
+     * @return La conexión de la base de datos.
+     * @throws PersistenciaException excepción que lanzará si existe un error al intentar establecer la conexión.
      */
     @Override
     public Connection crearConexion() throws PersistenciaException {

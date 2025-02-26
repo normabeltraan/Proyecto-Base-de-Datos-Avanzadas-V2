@@ -21,7 +21,6 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +28,9 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
+ * Clase que utiliza interfaz gráfica para agendar citas médicas.
+ * Permite que los pacientes elijan la especialidad, mmédico,
+ * fecha y hora de la cita
  * @author norma
  */
 public class AgendarCita extends javax.swing.JFrame {
@@ -40,7 +41,9 @@ public class AgendarCita extends javax.swing.JFrame {
     private DefaultTableModel modeloTabla;
 
     /**
-     * Creates new form AgendarCita
+     * Constructor de la clase 
+     * @param pacienteDTO Es el objeto que representa al paciente
+     * que agenda la cita.
      */
     public AgendarCita(PacienteDTO pacienteDTO) {
         this.paciente = pacienteDTO;
@@ -185,19 +188,40 @@ public class AgendarCita extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Método invocado al presionar el botón de "Confirmar cita".
+     * Agenda la cita con los datos proporcionados.
+     * @param evt Evento de acción
+     */
     private void btnConfirmarCitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarCitaActionPerformed
         agendarCita();
     }//GEN-LAST:event_btnConfirmarCitaActionPerformed
 
+    /**
+     * Método que regresa a la pantalla del perfil del paciente.
+     * Se invoca cuando se presiona el botón "Cancelar".
+     * @param evt evento de acción
+     */
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         new PerfilPaciente(paciente).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    /**
+     * Método que aparece al seleccionar una especialidad.
+     * Carga los médicos que estén disponibles para la especialidad que s
+     * se seleccionó.
+     * @param evt Evento de acción.
+     */
     private void txtEspecialidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEspecialidadActionPerformed
         cargarMedicosPorEspecialidad();
     }//GEN-LAST:event_txtEspecialidadActionPerformed
 
+    /**
+     * Método invocado al cambiar la fecha seleccionada
+     * Carga los horarios disponibles para la fecha y médico elegidos.
+     * @param evt Evento de cambio de propiedad
+     */
     private void txtFechaPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_txtFechaPropertyChange
         try {
             cargarHorariosDisponibles();
@@ -206,6 +230,12 @@ public class AgendarCita extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtFechaPropertyChange
 
+    /**
+     * Método que se invoca al seleccionar el médico.
+     * Carga los horarios disponibles que tenga el médico en cuestión
+     * y la fecha elegida.
+     * @param evt Evento de acción.
+     */
     private void txtMedicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMedicoActionPerformed
         try {
             cargarHorariosDisponibles();
@@ -229,6 +259,10 @@ public class AgendarCita extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> txtMedico;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Método para mostrar las especialidades médicas que estén
+     * disponibles en el combobox
+     */
     private void cargarEspecialidades() {
         List<String> especialidades = medicoBO.obtenerEspecialidades();
         if (especialidades != null) {
@@ -239,6 +273,10 @@ public class AgendarCita extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método para mostrar los médicos que estén disponibles 
+     * según la especialidad que se haya seleccionado.
+     */
     private void cargarMedicosPorEspecialidad() {
         String especialidad = (String) txtEspecialidad.getSelectedItem();
         List<MedicoDTO> medicos = medicoBO.obtenerMedicosPorEspecialidad(especialidad);
@@ -250,6 +288,10 @@ public class AgendarCita extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Obtiene el id del médico que se seleccionó
+     * @return El ID del médico, o -1 si no se encontró
+     */
     private int obtenerIdMedico() {
         String nombreMedico = (String) txtMedico.getSelectedItem();
         List<MedicoDTO> medicos = medicoBO.obtenerMedicosPorEspecialidad((String) txtEspecialidad.getSelectedItem());
@@ -261,6 +303,11 @@ public class AgendarCita extends javax.swing.JFrame {
         return -1;
     }
 
+    /**
+     * Método que carga los horarios disponibles del médico 
+     * seleccionado para la fecha indicada.
+     * @throws PersistenciaException En caso de error al obtener los horarios
+     */
     private void cargarHorariosDisponibles() throws PersistenciaException {
         java.util.Date fecha = txtFecha.getDate();
         if (fecha != null && txtMedico.getSelectedIndex() != -1) {
@@ -278,6 +325,10 @@ public class AgendarCita extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que sirve para agendar la cita médica con la información
+     * que se seleccionó.
+     */
     private void agendarCita() {
         try {
             java.util.Date fecha = txtFecha.getDate();
@@ -331,6 +382,12 @@ public class AgendarCita extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que convierte un objeto Time a 
+     * texto HH:mm (hora, minutos).
+     * @param hora La hora en formato Time
+     * @return La hora en formato de texto HH:mm
+     */
     private String convertirHoraATexto(java.sql.Time hora) {
         if (hora != null) {
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");

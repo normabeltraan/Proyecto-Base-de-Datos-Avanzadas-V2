@@ -17,7 +17,8 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Clase que permite registrar una consulta médica en citas que no fueron
+ * agendadas con anticipaci´n, sino de Emergencia.
  * @author norma
  */
 public class AtenderConsultaEmergencia extends javax.swing.JFrame {
@@ -27,7 +28,10 @@ public class AtenderConsultaEmergencia extends javax.swing.JFrame {
     private ConsultaBO consultaBO = DependencyInjector.crearConsultaBO();
 
     /**
-     * Creates new form AtenderConsultaEmergencia
+     * Constructor de la clase que inicializa la ventana con los datos
+     * del médico, cita y paciente
+     * @param medicoDTO Datos del medico que atiende la consulta.
+     * @param citaDTO Datos de la cita del paciente.
      */
     public AtenderConsultaEmergencia(MedicoDTO medicoDTO, CitaDTO citaDTO) {
         this.medico = medicoDTO;
@@ -176,11 +180,21 @@ public class AtenderConsultaEmergencia extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtDiagnosticoActionPerformed
 
+    /**
+     * Acción al hacer click en "Cancelar".
+     * Te regresa a la ventana de la agenda.
+     * @param evt evento de acción generado al hacer click en el boton de cancelar
+     */
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         new ConsultarAgenda(medico).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    /**
+     * Acción al clickear en el botón "Registrar"
+     * Procesa y registra la consulta.
+     * @param evt Evento de acción generado al hacer click en Registrar
+     */
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
         try {
             atenderConsultaCitaEmergencia();
@@ -189,6 +203,11 @@ public class AtenderConsultaEmergencia extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
+    /**
+     * Acción al hacer clic en el botón "Validar Folio"
+     * Revisa si el folio de emergencia es correcto.
+     * @param evt 
+     */
     private void btnValidarFolioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnValidarFolioActionPerformed
         validarFolio();
     }//GEN-LAST:event_btnValidarFolioActionPerformed
@@ -212,6 +231,10 @@ public class AtenderConsultaEmergencia extends javax.swing.JFrame {
     private javax.swing.JTextField txtTratamiento;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Valida si el folio de emergencia introducido en el textField es correcto.
+     * Si sí es válido, habilita el botón de registro.
+     */
     private void validarFolio() {
         try {
             String folioEmergencia = txtFolio.getText().trim();
@@ -234,6 +257,14 @@ public class AtenderConsultaEmergencia extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que procesa los datos de la consulta de emergencia y 
+     * la registra en el sistema.
+     * Hace validaciones, y arroja mensajes en caso de que un campo esté
+     * vacío o sea inválido
+     * @throws NegocioException En caso de que ocurra un error al registrar 
+     * la consulta
+     */
     private void atenderConsultaCitaEmergencia() throws NegocioException {
         String folioEmergencia = txtFolio.getText().trim();
         if (folioEmergencia.isEmpty()) {

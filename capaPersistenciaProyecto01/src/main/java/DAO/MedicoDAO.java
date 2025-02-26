@@ -11,32 +11,48 @@ import entidades.Cita;
 import entidades.Usuario;
 import excepciones.PersistenciaException;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import entidades.Horario;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.logging.Level;
 
 /**
+ * Esta clase implementa la interfaz IMedicoDAO se encarga de gestionar a los
+ * médicos y/o otras operaciones relacionados al médico
  *
- * @author norma
+ * @author Norma Alicia Beltrán Martín - 00000252102
+ * @author Maximiliano Reyna Aguilar - 00000244877
+ * @author Katia Ximena Návarez Espinoza - 00000252855
  */
 public class MedicoDAO implements IMedicoDAO {
 
     IConexionBD conexion;
 
+    /**
+     * Constructor que recibe la conexión de la base de datos
+     *
+     * @param conexion La conexión con la base de datos.
+     */
     public MedicoDAO(IConexionBD conexion) {
         this.conexion = conexion;
     }
 
     private static final Logger logger = Logger.getLogger(MedicoDAO.class.getName());
 
+    /**
+     * Este método se encarga de obtener la lista de especialidades del médico
+     * disponibles en la base de datos.
+     *
+     * @return Regresa la lista de especialidades médicas activas.
+     * @throws SQLException Lanzará una excepción si ocurre un error durante la
+     * consulta de sql.
+     * @throws PersistenciaException Lanzará una excepción si ocurre un error
+     * durante la operación.
+     */
     @Override
     public List<String> obtenerEspecialidades() throws SQLException, PersistenciaException {
         List<String> especialidades = new ArrayList<>();
@@ -54,6 +70,15 @@ public class MedicoDAO implements IMedicoDAO {
         return especialidades;
     }
 
+    /**
+     * Este método obtiene la lista de médicos según sus especialidades médicas
+     * disponibles.
+     *
+     * @param especialidad La especialidad del médico.
+     * @return Regresa la lista de médicos según sus especialidades.
+     * @throws PersistenciaException Lanzará una excepción si ocurre un error
+     * durante la operación.
+     */
     @Override
     public List<Medico> obtenerMedicosPorEspecialidad(String especialidad) throws PersistenciaException {
         List<Medico> medicos = new ArrayList<>();
@@ -63,7 +88,6 @@ public class MedicoDAO implements IMedicoDAO {
                 + "JOIN USUARIOS U ON M.id_usuario = U.id_usuario "
                 + "WHERE M.especialidad = ? AND M.estado = 'Activo'";
 
-        //String consultaSql = "SELECT * FROM MEDICOS M WHERE M.especialidad = ? AND M.estado = 'Activo'";
         try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSql)) {
 
             ps.setString(1, especialidad);
@@ -87,17 +111,6 @@ public class MedicoDAO implements IMedicoDAO {
                     medicos.add(medico);
                 }
 
-                /**
-                 * Medico medico = new Medico();
-                 * medico.setNombre(rs.getString("nombre"));
-                 * medico.setApellido_paterno(rs.getString("apellido_paterno"));
-                 * medico.setApellido_materno(rs.getString("apellido_materno"));
-                 * medico.setEstado(rs.getString("estado"));
-                 * medico.setEspecialidad(rs.getString("especialidad"));
-                 * medico.setCedula(rs.getString("cedula"));
-                 * medicos.add(medico);
-                 *
-                 */
             }
         } catch (SQLException e) {
             logger.severe("Error al obtener médicos: " + e.getMessage());
@@ -106,6 +119,16 @@ public class MedicoDAO implements IMedicoDAO {
         return medicos;
     }
 
+    /**
+     * Este método se encarga de encontrar a un médico por medio de su
+     * identificación. Y poder brindar todos sus datos al ser accedido.
+     *
+     * @param id_medico El identificador único del médico.
+     * @return Regresa los datos del médico para ser utilizado en alguna
+     * operación, o consulta necesaria.
+     * @throws PersistenciaException Lanzará una excepción si ocurre un error
+     * durante la operación.
+     */
     @Override
     public Medico obtenerMedicoPorId(int id_medico) throws PersistenciaException {
         String consultaSQL = "SELECT m.id_usuario, m.nombre, m.apellido_paterno, m.apellido_materno, "
@@ -143,6 +166,16 @@ public class MedicoDAO implements IMedicoDAO {
         return null;
     }
 
+    /**
+     * Este método obtiene el perfil de un médico con ayuda de su ID, para poder
+     * mostrar todos sus datos principales.
+     *
+     * @param idMedico El identificador único del médico.
+     * @return Regresa si es verdadero el perfil completo del médico desde su
+     * nombre completo, especialidad, etc.
+     * @throws PersistenciaException Lanzará una excepción si ocurre un error
+     * durante la operación.
+     */
     @Override
     public Medico obtenerPerfilMedico(int idMedico) throws PersistenciaException {
         String consultaSQL = "SELECT m.id_usuario, m.nombre, m.apellido_paterno, m.apellido_materno, "
@@ -186,6 +219,16 @@ public class MedicoDAO implements IMedicoDAO {
         return null;
     }
 
+    /**
+     * Este método se utiliza para obtener el médico buscando por su nombre de
+     * usuario.
+     *
+     * @param nombreUsuario El nombre de usuario del médico.
+     * @return Regresa un médico si encontró el nombre de usuario, sino entonces
+     * lanzará un mensaje.
+     * @throws PersistenciaException Lanzará una excepción si ocurre un error
+     * durante la operación.
+     */
     @Override
     public Medico obtenerMedicoPorNombreUsuario(String nombreUsuario) throws PersistenciaException {
         String consultaSQL = "SELECT m.id_usuario, m.nombre, m.apellido_paterno, m.apellido_materno, m.estado, "
@@ -221,6 +264,21 @@ public class MedicoDAO implements IMedicoDAO {
         }
     }
 
+    /**
+     * Este método verifica si un médico tiene citas activas en el sistema. en
+     * estado "Activa" asociadas a un médico en particular. Se utiliza una
+     * consulta SQL para contar el número de citas activas del médico con el
+     * identificador proporcionado.
+     *
+     * @param idMedico El identificador único del médico cuya agenda se desea
+     * verificar.
+     * @return Regresamos verdadero si el médico tiene al menos una cita activa,
+     * falso en caso contrario.
+     * @throws SQLException Lanza una excepción si ocurre un error en la
+     * ejecución de la consulta SQL.
+     * @throws PersistenciaException Lanza un error si se produce un error al
+     * acceder a la capa de persistencia.
+     */
     @Override
     public boolean medicoCitasActivas(int idMedico) throws SQLException, PersistenciaException {
         String consultaSQL = "SELECT COUNT(*) FROM CITAS WHERE id_usuario_medico = ? AND estado = 'Activa'";
@@ -236,6 +294,22 @@ public class MedicoDAO implements IMedicoDAO {
         return false;
     }
 
+    /**
+     * En este método se actualiza el estado de un médico en la base de datos.
+     * Permite modificar el estado de un médico identificado por su ID en la
+     * tabla de médicos. Se utiliza para reflejar cambios en la disponibilidad o
+     * situación del médico dentro del sistema.
+     *
+     * @param idMedico El identificador único del médico cuyo estado se
+     * actualizará.
+     * @param nuevoEstado El nuevo estado que se asignará al médico.
+     * @return Regresamos verdadero si la actualización fue exitosa, falso en
+     * caso contrario.
+     * @throws SQLException Lanza una excepción si ocurre un error durante la
+     * ejecución de la consulta SQL.
+     * @throws PersistenciaException Lanza una excepción si se produce un error
+     * al acceder a la capa de persistencia.
+     */
     @Override
     public boolean actualizarEstadoMedico(int idMedico, String nuevoEstado) throws SQLException, PersistenciaException {
         String consultaSQL = "UPDATE MEDICOS SET estado = ? WHERE id_usuario = ?";
@@ -248,55 +322,18 @@ public class MedicoDAO implements IMedicoDAO {
         }
     }
 
-    //@Override
-    //public List<Cita> consultarAgendaMedico(int idMedico) throws PersistenciaException {
-//        List<Cita> citas = new ArrayList<>();
-//
-//        java.sql.Date fechaActual = new java.sql.Date(System.currentTimeMillis());
-//
-//        String consultaSQL = "SELECT c.id_cita, c.fecha_cita, c.hora_cita, c.tipo_cita, c.estado, "
-//                + "p.nombre, p.apellido_paterno, p.apellido_materno "
-//                + "FROM CITAS c "
-//                + "JOIN PACIENTES p ON c.id_paciente = p.id_paciente "
-//                + "WHERE c.id_medico = ? AND c.fecha_cita = ?";
-//
-//        try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
-//
-//            ps.setInt(1, idMedico);
-//            ps.setDate(2, fechaActual);  
-//
-//            try (ResultSet rs = ps.executeQuery()) {
-//
-//                while (rs.next()) {
-//                    Cita cita = new Cita();
-//                    cita.setId_cita(rs.getInt("id_cita"));
-//                    cita.setFecha_cita(rs.getDate("fecha_cita"));
-//                    cita.setHora_cita(rs.getTime("hora_cita"));
-//                    cita.setTipo_cita(rs.getString("tipo_cita"));
-//                    cita.setEstado(rs.getString("estado"));
-//
-//                    Paciente paciente = new Paciente();
-//                    paciente.setNombre(rs.getString("nombre"));
-//                    paciente.setApellido_paterno(rs.getString("apellido_paterno"));
-//                    paciente.setApellido_materno(rs.getString("apellido_materno"));
-//
-//                    cita.setPaciente(paciente); // Asignamos el paciente a la cita
-//
-//                    citas.add(cita); // Añadimos la cita a la lista
-//                }
-//            } catch (SQLException e) {
-//                logger.severe("Error al consultar la agenda del médico: " + e.getMessage());
-//                throw new PersistenciaException("Error al consultar la agenda del médico", e);
-//            }
-//
-//        } catch (SQLException e) {
-//            logger.severe("Error al consultar la agenda del médico: " + e.getMessage());
-//            throw new PersistenciaException("Error al consultar la agenda del médico", e);
-//        }
-//
-//        return citas; 
-    //return null;
-    //}
+    /**
+     * Este método consulta la agenda diaria de un médico, obteniendo las citas
+     * activas del día. Recupera todas las citas programadas para el día actual
+     * de un médico en particular. Devuelve una lista con información detallada
+     * de cada cita.
+     *
+     * @param id_medico El identificador único del médico cuya agenda se
+     * consultará.
+     * @return La lista de las citas activas del día.
+     * @throws PersistenciaException Lanza una excepción si ocurre un error
+     * durante la operación.
+     */
     @Override
     public List<Cita> consultarAgendaMedico(int id_medico) throws PersistenciaException {
         List<Cita> citasDia = new ArrayList<>();
@@ -305,7 +342,7 @@ public class MedicoDAO implements IMedicoDAO {
                 + "c.tipo "
                 + "FROM CITAS c JOIN PACIENTES p ON c.id_usuario_paciente = p.id_usuario "
                 + "WHERE c.id_usuario_medico = ? AND DATE(c.fecha_hora) = CURDATE() "
-                + "AND c.estado = 'Activa' " 
+                + "AND c.estado = 'Activa' "
                 + "ORDER BY c.fecha_hora";
 
         try (Connection con = this.conexion.crearConexion(); PreparedStatement ps = con.prepareStatement(consultaSQL)) {
@@ -340,42 +377,4 @@ public class MedicoDAO implements IMedicoDAO {
         return citasDia;
     }
 
-//    @Override
-//    public List<Cita> consultarAgendaMedico(int idMedico) throws PersistenciaException {
-//    String consultaSQL = "SELECT " +
-//            "CONCAT(p.nombre, ' ', p.apellido_paterno, ' ', p.apellido_materno) AS nombre_paciente, " +
-//            "CURDATE() AS fecha_actual, " +
-//            "c.fecha_hora AS hora_atencion " +
-//            "FROM citas c " +
-//            "JOIN pacientes p ON c.id_usuario_paciente = p.id_usuario " +
-//            "WHERE c.id_usuario_medico = ? " +
-//            "AND DATE(c.fecha_hora) = CURDATE() " +
-//            "AND (c.tipo = 'Agendada' OR c.tipo = 'Emergencia') " +
-//            "ORDER BY c.fecha_hora";
-//
-//    List<Cita> citas = new ArrayList<>();
-//
-//    try (Connection con = this.conexion.crearConexion();
-//         PreparedStatement ps = con.prepareStatement(consultaSQL)) {
-//
-//        ps.setInt(1, idMedico);
-//        ResultSet rs = ps.executeQuery();
-//
-//        while (rs.next()) {
-//            String nombrePaciente = rs.getString("nombre_paciente");
-//            Timestamp horaAtencion = rs.getTimestamp("hora_atencion");
-//
-//            Cita cita = new Cita();
-//            cita.setNombrePaciente(nombrePaciente);
-//            cita.setFecha_hora(horaAtencion);
-//
-//            citas.add(cita);
-//        }
-//
-//    } catch (SQLException e) {
-//        throw new PersistenciaException("Error al obtener la agenda del médico", e);
-//    }
-//
-//    return citas;
-//}
 }

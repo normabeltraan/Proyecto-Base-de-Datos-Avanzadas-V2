@@ -11,12 +11,12 @@ import DTO.ConsultaDTO;
 import DTO.MedicoDTO;
 import Exception.NegocioException;
 import Mapper.CitaMapper;
-import Mapper.MedicoMapper;
 import entidades.Cita;
 import javax.swing.JOptionPane;
 
 /**
- *
+ *  Clase que permite al médico registrar el diagnostico,
+ * tratamiento y observaciones de un paciente.
  * @author norma
  */
 public class AtenderConsulta extends javax.swing.JFrame {
@@ -26,7 +26,9 @@ public class AtenderConsulta extends javax.swing.JFrame {
     private ConsultaBO consultaBO = DependencyInjector.crearConsultaBO();
 
     /**
-     * Creates new form AtenderConsulta
+     * Constructor de la clase con los datos del médico y del paciente.
+     * @param medicoDTO Datos del medico que atenderá la consulta
+     * @param citaDTO Datos de la cita para el paciente
      */
     public AtenderConsulta(MedicoDTO medicoDTO, CitaDTO citaDTO) {
         this.medico = medicoDTO;
@@ -140,11 +142,21 @@ public class AtenderConsulta extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Método que aparece al hacer click en el botón "Cancelar",
+     * regresa a la ventana de la agenda
+     * @param evt evento de acción cuando el usuario hace click en "Cancelar"
+     */
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         new ConsultarAgenda(medico).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    /**
+     * Método que procesa y registra la consulta. 
+     * Cuando hace click en "Registrar".
+     * @param evt evento de acción
+     */
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
         atenderConsultaCitaPrevia();
     }//GEN-LAST:event_btnRegistrarActionPerformed
@@ -164,6 +176,13 @@ public class AtenderConsulta extends javax.swing.JFrame {
     private javax.swing.JTextField txtTratamiento;
     // End of variables declaration//GEN-END:variables
 
+    
+    /**
+     * Método que procesa los datos de la consulta, de una cita que
+     * fue agendada.
+     * Muestra mensajes de advertencia, para que no estén vacíos
+     * los campos.
+     */
     private void atenderConsultaCitaPrevia() {
 
         String diagnostico = txtDiagnostico.getText();

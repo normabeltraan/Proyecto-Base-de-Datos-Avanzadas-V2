@@ -16,7 +16,8 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
+ *  Clase responsable de gestionar la interfaz gráfica para la creación
+ * de una cita de emergencia.
  * @author norma
  */
 public class GenerarCitaEmergencia extends javax.swing.JFrame {
@@ -27,7 +28,9 @@ public class GenerarCitaEmergencia extends javax.swing.JFrame {
     private DefaultTableModel modeloTabla;
 
     /**
-     * Creates new form GenerarCitaEmergencia
+     * Constructor de la clase que inicializa la ventana para generar
+     * la cita de emeregencia.
+     * @param pacienteDTO objeto con los datos del paciente.
      */
     public GenerarCitaEmergencia(PacienteDTO pacienteDTO) {
         this.paciente = pacienteDTO;
@@ -144,15 +147,29 @@ public class GenerarCitaEmergencia extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Método que se invoca al hacer click en el botón "Generar folio".
+     * Llama al método folio para generar la cita.
+     * @param evt Evento de acción al hacer click en el boton
+     */
     private void btnGenerarFolioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarFolioActionPerformed
         folio();
     }//GEN-LAST:event_btnGenerarFolioActionPerformed
 
+    /**
+     * Método que regresa a la pantalla de perfil del paciente, al hacer
+     * click en el botón "Cancelar".
+     * @param evt Evento de acción
+     */
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         new PerfilPaciente(paciente).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    /**
+     * Método que se ejecuta cuando se pone una especialidad en el combobox
+     * @param evt Evento de acción
+     */
     private void txtEspecialidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEspecialidadActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtEspecialidadActionPerformed
@@ -168,6 +185,11 @@ public class GenerarCitaEmergencia extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> txtEspecialidad;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Método que agenda la cita de emergencia del paciente.
+     * Actualiza la tabla con la cita generada.
+     * Muestra mensajes de error si no se selecciona una especialidad.
+     */
     private void folio() {
         String especialidadSeleccionada = (String) txtEspecialidad.getSelectedItem();
         System.out.println(especialidadSeleccionada);
@@ -187,6 +209,10 @@ public class GenerarCitaEmergencia extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que carga las especialidades disponibles en un combobox.
+     * Obtiene una lista de especialidades que tienen los médicos.
+     */
     private void cargarEspecialidades() {
         List<String> especialidades = medicoBO.obtenerEspecialidades();
         if (especialidades != null) {
@@ -197,6 +223,11 @@ public class GenerarCitaEmergencia extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que se encarga de actualizar la tabla con la nueva cita de emergencia
+     * generada.
+     * @param cita La cita de emergencia que se agrega a la tabla.
+     */
     private void actualizarTabla(CitaSinCitaDTO cita) {
         Object[] fila = new Object[]{
             cita.getFolio_emergencia(),

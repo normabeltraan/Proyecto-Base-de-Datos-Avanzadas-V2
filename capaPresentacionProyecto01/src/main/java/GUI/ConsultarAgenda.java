@@ -19,7 +19,8 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
+ * Clase que permite consultar la agenda de un médico y atender las 
+ * citas que tenga.
  * @author norma
  */
 public class ConsultarAgenda extends javax.swing.JFrame {
@@ -28,7 +29,11 @@ public class ConsultarAgenda extends javax.swing.JFrame {
     private MedicoBO medicoBO = DependencyInjector.crearMedicoBO();
 
     /**
-     * Creates new form ConsultarAgenda
+     * Constructor de la clase ConsultarAgenda.
+     * Inicializa los componentes gráficos.
+     * Establece la fecha actual en la interfaz.
+     * Carga la agenda del médico.
+     * @param medicoDTO objeto que contiene los datos del médico
      */
     public ConsultarAgenda(MedicoDTO medicoDTO) {
         this.medico = medicoDTO;
@@ -131,11 +136,21 @@ public class ConsultarAgenda extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Método que se ejecuta cuando se hace click en "Cancelar".
+     * Regresa al perfil del médico, cerrando la ventana de consulta de agenda.
+     * @param evt Evento generado por la acción del botón.
+     */
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         new PerfilMedico(medico).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    /**
+     * Método que se invoca cuando se hace click en el botón de "Atender Cita".
+     * Verifica el tipo de cita y te dirige al formulario para atender la cita.
+     * @param evt 
+     */
     private void btnAtenderCitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtenderCitaActionPerformed
         try {
             pantallaSegunTipoDeConsulta();
@@ -155,6 +170,13 @@ public class ConsultarAgenda extends javax.swing.JFrame {
     private javax.swing.JTextField txtFechaActual;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Método que se encarga ed cargar la agenda del médico y muestra las citas
+     * que tiene.
+     * Obtiene las citas a través de la capa de negocio y las muestra en un
+     * JTable
+     * @throws NegocioException Por si ocurre un error al obtener las citas del médico.
+     */
     private void agendaMedico() throws NegocioException {
         UsuarioDTO usuarioDTO = medico.getUsuario();
         List<CitaDTO> citas = medicoBO.obtenerAgendaMedico(usuarioDTO);
@@ -176,6 +198,10 @@ public class ConsultarAgenda extends javax.swing.JFrame {
 
     }
 
+    /**
+     * Método que muestra la fecha actual en el campo de texto
+     * La fecha se muestra en formato dia, mes y año ("dd/MM/yyyy")
+     */
     private void fechaActual() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -185,6 +211,12 @@ public class ConsultarAgenda extends javax.swing.JFrame {
         txtFechaActual.setEditable(false);
     }
 
+    /**
+     * Método que verifica el tipo de cita seleccionada en la tabla para redirigirte
+     * a su respectiva pantalla (ya sea de citas agendadas o de citas de emergencia).
+     * Si no se seleccionó niniguna fila, entonces muestra un mensaje de error.
+     * @throws NegocioException En caso de que ocurra un error al obtener las citas
+     */
     private void pantallaSegunTipoDeConsulta() throws NegocioException {
         int filaSeleccionada = tablacitas.getSelectedRow();
         if (filaSeleccionada != -1) {

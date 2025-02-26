@@ -42,7 +42,7 @@ public class CapaPersistenciaProyecto01 {
             e.printStackTrace();
         }
         /**
-         * <<<<<<< HEAD Direccion direccionPaciente = new Direccion("Centro",
+         * Direccion direccionPaciente = new Direccion("Centro",
          * "Obregon", "Pitagoras"); Usuario usuarioPaciente = new
          * Usuario(1,"karlacota", "karlita12"); Paciente paciente = new
          * Paciente(usuarioPaciente, "Karla", "Cota", "Hernandez", "7715289543",

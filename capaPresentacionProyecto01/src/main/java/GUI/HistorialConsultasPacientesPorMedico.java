@@ -14,6 +14,8 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
+ * Clase que representa la interfaz gráfica para permitir que un médico obtenga
+ * el historial de consultas de un paciente introduciendo su nombre completo.
  *
  * @author norma
  */
@@ -23,7 +25,10 @@ public class HistorialConsultasPacientesPorMedico extends javax.swing.JFrame {
     private PacienteBO pacienteBO = DependencyInjector.crearPacienteBO();
 
     /**
-     * Creates new form HistorialConsultasPacientes
+     * Constructor de la clase. Recibe un objeto MedicoDTO como parámetro.
+     *
+     * @param medicoDTO Objeto que representa al médico que verá el historial de
+     * consultas de su paciente.
      */
     public HistorialConsultasPacientesPorMedico(MedicoDTO medicoDTO) {
         this.medico = medicoDTO;
@@ -127,11 +132,24 @@ public class HistorialConsultasPacientesPorMedico extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Método invocado cuando el usuario presiona "Cancelar". Cierra la ventana
+     * actual y abre la ventana del perfil del médico.
+     *
+     * @param evt Evento de acción generado por el botón
+     */
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         new PerfilMedico(medico).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    /**
+     * Método que se ejecuta cuando el usuario presiona el botón "Buscar"
+     * Obtiene el nombre del paciente ingresado y busca su historial de
+     * consultas.
+     *
+     * @param evt Evento de acción
+     */
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         String nombrePaciente = txtNombre.getText().trim();
         String nombreCompletoMedico = String.format("%s %s %s",
@@ -159,6 +177,13 @@ public class HistorialConsultasPacientesPorMedico extends javax.swing.JFrame {
     private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Método que se encarga de cargar el historial de consultas de un paciente
+     * con el médico actual. Agrega las consultas obtenidas a una tabla.
+     *
+     * @param nombrePaciente Nombre completo del paciente a buscar.
+     * @param nombreMedico Nombre del médico que realizó las consulta.
+     */
     private void cargarHistorialConsultas(String nombrePaciente, String nombreMedico) {
         try {
 
@@ -173,7 +198,6 @@ public class HistorialConsultasPacientesPorMedico extends javax.swing.JFrame {
                     consulta.getCita().getTipo(),
                     consulta.getDiagnostico(),
                     consulta.getTratamiento()
-                    
                 };
                 tabla.addRow(row);
             }

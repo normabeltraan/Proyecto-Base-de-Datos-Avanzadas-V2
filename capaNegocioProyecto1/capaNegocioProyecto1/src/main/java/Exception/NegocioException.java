@@ -5,8 +5,12 @@
 package Exception;
 
 /**
- * Clase Negocio Exception
- * @author Maximiliano
+ * Esta clase exception se encarga de manejar los errores que ocurran en la capa negocio.
+ * Esto es más que nada para manejar errores específicos en la lógica de negocio en el sistema.
+ * 
+ * @author Norma Alicia Beltrán Martín - 00000252102
+ * @author Maximiliano Reyna Aguilar - 00000244877
+ * @author Katia Ximena Návarez Espinoza - 00000252855
  */
 public class NegocioException extends Exception
 {

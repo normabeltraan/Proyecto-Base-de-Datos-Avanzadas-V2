@@ -10,7 +10,9 @@ import DTO.MedicoDTO;
 import Exception.NegocioException;
 
 /**
- *
+ * Clase que representa la interfaz gráfica para observar el perfil de un médico.
+ * Muestra su nombre, apellidos, especialidad, cédula profesional y estado.
+ * No puede modificar sus datos.
  * @author norma
  */
 public class VerPerfilMedico extends javax.swing.JFrame {
@@ -19,7 +21,10 @@ public class VerPerfilMedico extends javax.swing.JFrame {
     private MedicoBO medicoBO = DependencyInjector.crearMedicoBO();
 
     /**
-     * Creates new form VerPerfilMedico
+     * Constructor de la clase.
+     * @param medicoDTO objeto de tipo MedicoDTO, contiene la información del
+     * médico que se esté usando el sistema en ese momento
+     * @throws NegocioException En caso de error al obtener el perfil del médico.
      */
     public VerPerfilMedico(MedicoDTO medicoDTO) throws NegocioException {
         this.medico = medicoDTO;
@@ -150,6 +155,12 @@ public class VerPerfilMedico extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Método invocado al presionar el botón "Cancelar".
+     * Cierra la ventana actual, y te regresa a la pantalla anterior
+     * donde están las opciones para el médico.
+     * @param evt Evento de acción generado por el click al botón
+     */
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         new PerfilMedico(medico).setVisible(true);
         this.setVisible(false);
@@ -173,6 +184,14 @@ public class VerPerfilMedico extends javax.swing.JFrame {
     private javax.swing.JTextField txtEstado;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Método que se encarga de cargar la información del médico en la interfaz 
+     * gráfica.
+     * Obtiene los datos de la capa de negocio y los muestra en los campos de 
+     * texto correspondientes.
+     * @throws NegocioException En caso de que ocurra un error al obtener los
+     * datos.
+     */
     private void cargarPerfilMedico() throws NegocioException {
         MedicoDTO medicoDTO = medicoBO.perfilMedico(medico.getUsuario());
         if (medicoDTO != null) {

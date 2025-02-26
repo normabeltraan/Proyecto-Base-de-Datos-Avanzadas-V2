@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.proyecto01.capapersistenciaproyecto01"},{"l":"conexion"},{"l":"DAO"},{"l":"entidades"},{"l":"excepciones"}];updateSearchResults();

@@ -20,7 +20,9 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Clase que representa la ventana de inicio de sesión para los usuarios,
+ * tanto médicos como pacientes. Te dirige a la ventana correspondiente según 
+ * tu tipo de usuario.
  * @author norma
  */
 public class IniciarSesion extends javax.swing.JFrame {
@@ -30,7 +32,10 @@ public class IniciarSesion extends javax.swing.JFrame {
     private MedicoBO medicoBO = DependencyInjector.crearMedicoBO();
 
     /**
-     * Creates new form IniciarSesion
+     * Constructor de la clase.
+     * Inicializa los componentes de la interfaz gráfica.
+     * Agrega un listener para que se cierre la aplicación al
+     * cerrar la ventana.
      */
     public IniciarSesion() {
         initComponents();
@@ -42,6 +47,9 @@ public class IniciarSesion extends javax.swing.JFrame {
         });
     }
 
+    /**
+     * Método que cierra la aplicación finalizando el proceso.
+     */
     private void cerrarAplicacion() {
         System.exit(0);
     }
@@ -148,6 +156,11 @@ public class IniciarSesion extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUsuarioActionPerformed
 
+    /**
+     * Método que se invoca cuando se presiona el botón de "Iniciar Sesión".
+     * @param evt Evento de acción que se genera al presionar el botón
+     * de iniciar sesión
+     */
     private void btnIniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesionActionPerformed
         try {
             iniciarSesion();
@@ -156,6 +169,12 @@ public class IniciarSesion extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnIniciarSesionActionPerformed
 
+    /**
+     * Método invocado cuando el usuario presiona el botón "Registrarse".
+     * Abre la ventana de registro de paciente y oculta la ventana de 
+     * inicio de sesión.
+     * @param evt Evento ed acción generado por el click en el botón
+     */
     private void btnRegistrarseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarseActionPerformed
         Registrarse registroFrame = new Registrarse();
         registroFrame.setVisible(true);
@@ -176,6 +195,15 @@ public class IniciarSesion extends javax.swing.JFrame {
     private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Realiza la autenticación del usuario en el sistema.
+     * Valida los datos ingresados, determina el tipo de usuario para
+     * posteriormente mostrar la pantalla con las funcionalidades que le 
+     * correspondan
+     * @throws NegocioException En caso de que haya un error en la lógica de negocio
+     * @throws PersistenciaException Por si ocurre un error al acceder a la base de
+     * datos.
+     */
     public void iniciarSesion() throws NegocioException, PersistenciaException {
         try {
             UsuarioDTO usuarioDTO = new UsuarioDTO();

@@ -12,17 +12,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- * @author Maximiliano
+ * Clase encargada de convertir entre entidades Medico y objetos de transferencia de datos MedicoDTO.
+ * Facilita la conversión bidireccional entre los modelos de negocio y los DTOs para su uso en la capa de negocio o presentación.
+ * 
+ * @author Norma Alicia Beltrán Martín - 00000252102
+ * @author Maximiliano Reyna Aguilar - 00000244877
+ * @author Katia Ximena Návarez Espinoza - 00000252855
  */
 public class MedicoMapper {
     
     private UsuarioMapper usuarioMapper;
     
+    /**
+     * Constructor que inicializa el UsuarioMapper.
+     */
     public MedicoMapper() {
         this.usuarioMapper = new UsuarioMapper();  
     }
     
+    /**
+     * Este método convierte un objeto de tipo MedicoDTO a una entidad Medico.
+     * 
+     * @param medicoDTO El objeto MedicoDTO que se desea convertir a entidad.
+     * @return Regresa una instancia de Medico con los mismos datos que el DTO o null si la entrada es null.
+     */
     public Medico toEntity(MedicoDTO medicoDTO) {
         if (medicoDTO == null) {
             return null;
@@ -44,6 +57,12 @@ public class MedicoMapper {
         );
     }
 
+    /**
+     * Este método convierte una entidad Medico a un objeto de transferencia de datos MedicoDTO.
+     * 
+     * @param medico La entidad Medico que se desea convertir a DTO.
+     * @return Regresa una instancia de MedicoDTO con los mismos datos que la entidad o null si la entrada es null.
+     */
     public MedicoDTO toDTO(Medico medico) {
         if (medico == null) {
             return null;
@@ -65,6 +84,12 @@ public class MedicoMapper {
         );
     }
 
+    /**
+     * Este método convierte una lista de entidades Medico en una lista de objetos MedicoDTO.
+     * 
+     * @param medicos Lista de entidades Medico a convertir.
+     * @return Regresa una lista de MedicoDTO con los datos de las entidades o una lista vacía si la entrada es null o está vacía.
+     */
     public List<MedicoDTO> toDTOList(List<Medico> medicos) {
         if (medicos == null || medicos.isEmpty()) {
             return new ArrayList<>();
@@ -76,6 +101,12 @@ public class MedicoMapper {
         return medicosDTO;
     }
 
+    /**
+     * Este método convierte una lista de objetos CitaDTO en una lista de entidades Cita.
+     * 
+     * @param medicosDTO Lista de objetos MedicoDTO a convertir.
+     * @return Regresa una lista de entidades Medico con los datos de los DTOs o una lista vacía si la entrada es null o está vacía.
+     */
     public List<Medico> toEntityList(List<MedicoDTO> medicosDTO) {
         if (medicosDTO == null || medicosDTO.isEmpty()) {
             return new ArrayList<>();
